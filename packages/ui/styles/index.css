@@ -1,0 +1,26 @@
+/**
+ * ==============================================================================
+ * FILE: packages/ui/styles/index.css
+ * ROLE / OWNERSHIP: Frontend Engineers / UI System Designers
+ * OBJECTIVE: Global design tokens, dark cybersecurity theme variables, and glow effects.
+ * TOOLS & LIBRARIES: CSS3 variables, Tailwind directives
+ * ==============================================================================
+ */
+
+:root {
+  --color-gasha-bg: #0b0f17;
+  --color-gasha-surface: #111827;
+  --color-gasha-border: #1f2937;
+  --color-threat-low: #10b981;
+  --color-threat-med: #f59e0b;
+  --color-threat-high: #f97316;
+  --color-threat-crit: #ef4444;
+}
+
+.glow-critical {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+}
+
+.glow-active {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+}
