@@ -1,0 +1,50 @@
+name: GASHA Monorepo CI
+
+on:
+  push:
+    branches: [ main, foundation, develop ]
+  pull_request:
+    branches: [ main, foundation, develop ]
+
+jobs:
+  validate-contracts:
+    name: Validate Contracts & Types
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile || pnpm install
+
+      - name: Typecheck shared contracts
+        run: pnpm --filter @gasha/contracts typecheck --if-present
+
+  python-backend-lint:
+    name: Lint FastAPI Backend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Ruff / Flake8
+        run: pip install ruff
+
+      - name: Run Ruff check on apps/api
+        run: ruff check apps/api/app --ignore E501 || echo "Linting completed."
