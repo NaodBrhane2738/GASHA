@@ -2,11 +2,11 @@
 ==============================================================================
 FILE: apps/api/app/core/config.py
 ROLE / OWNERSHIP: Backend & DevOps Engineers
-OBJECTIVE: Configuration management and environment variable parsing.
+OBJECTIVE: Configuration management and environment variable parsing with Supabase support.
 TOOLS & LIBRARIES: Pydantic Settings / BaseSettings, python-dotenv
 KEY FEATURES / FUNCTIONS TO IMPLEMENT:
   - class Settings(BaseSettings): Defines typed settings with sensible defaults.
-  - Automatically parses DATABASE_URL, REDIS_URL, JWT_SECRET, AI_PROVIDER, VERCEL/GITHUB tokens.
+  - Parses SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY, DATABASE_URL.
 EXPECTED RESULTS / BEHAVIOR:
   - Centralized, validated configuration object loaded at server startup.
 ==============================================================================
@@ -25,7 +25,12 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "debug"
     CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:3001"]
 
-    DATABASE_URL: str = "postgresql://gasha_user:gasha_password@localhost:5432/gasha_db"
+    # Supabase & Database Configuration
+    SUPABASE_URL: str = "https://your-project-id.supabase.co"
+    SUPABASE_ANON_KEY: str = ""
+    SUPABASE_SERVICE_ROLE_KEY: str = ""
+    DATABASE_URL: str = "postgresql://postgres:password@db.your-project-id.supabase.co:5432/postgres"
+    DIRECT_URL: str = ""
     REDIS_URL: str = "redis://localhost:6379"
 
     JWT_SECRET: str = "super-secret-jwt-key-change-in-production-min32chars"
