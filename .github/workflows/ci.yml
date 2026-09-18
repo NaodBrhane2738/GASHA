@@ -23,10 +23,9 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile || pnpm install
+        run: pnpm install --no-frozen-lockfile || pnpm install
 
       - name: Typecheck shared contracts
         run: pnpm --filter @gasha/contracts typecheck --if-present
@@ -43,7 +42,7 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install Ruff / Flake8
+      - name: Install Ruff
         run: pip install ruff
 
       - name: Run Ruff check on apps/api
