@@ -1,2 +1,0 @@
-# Gasha
-Cyber Defense Platform
