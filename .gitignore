@@ -1,0 +1,39 @@
+# --- Environment / secrets ---
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# --- Node / pnpm (apps/web, packages/*) ---
+node_modules/
+.next/
+out/
+.turbo/
+dist/
+build/
+.pnpm-store/
+
+# --- Python / FastAPI (apps/api) ---
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# --- Editors / OS ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+npm-debug.log*
+
+# --- Docker ---
+*.pid
+
+# --- Misc build/test artifacts ---
+coverage/
+.cache/
