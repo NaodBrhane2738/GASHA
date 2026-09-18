@@ -25,10 +25,10 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile || pnpm install
+        run: pnpm install --no-frozen-lockfile
 
       - name: Typecheck shared contracts
-        run: pnpm --filter @gasha/contracts typecheck --if-present
+        run: pnpm --filter @gasha/contracts run typecheck
 
   python-backend-lint:
     name: Lint FastAPI Backend
