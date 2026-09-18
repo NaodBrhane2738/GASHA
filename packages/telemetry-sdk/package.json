@@ -1,0 +1,12 @@
+{
+  "name": "@gasha/telemetry-sdk",
+  "version": "0.1.0",
+  "main": "typescript/index.ts",
+  "types": "typescript/index.ts",
+  "dependencies": {
+    "@gasha/contracts": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}

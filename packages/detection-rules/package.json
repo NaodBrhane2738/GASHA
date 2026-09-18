@@ -1,0 +1,9 @@
+{
+  "name": "@gasha/detection-rules",
+  "version": "0.1.0",
+  "main": "schemas/index.ts",
+  "types": "schemas/index.ts",
+  "devDependencies": {
+    "typescript": "^5.4.0"
+  }
+}
