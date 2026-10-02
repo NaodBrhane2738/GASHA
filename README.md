@@ -2,6 +2,18 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Configure DeepSeek
+
+Create a local environment file from the example and add your DeepSeek API key:
+
+```bash
+cp .env.example .env.local
+```
+
+Then edit `.env.local` and replace the placeholder value for `DEEPSEEK_API_KEY`.
+
+You can also set `NEXT_PUBLIC_DEEPSEEK_API_KEY` if a browser-facing client needs access, though server-side API calls should prefer `DEEPSEEK_API_KEY`.
+
 First, run the development server:
 
 ```bash
