@@ -1,0 +1,280 @@
+{
+  "investigationId": "inv-8b4bfd5f14ad",
+  "incidentId": "INC-2026-0203",
+  "contextFingerprint": "33af1ba430144ed4ca318c12813504b7d7cb34796d4b367eb74c22a2e95630f6",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0203",
+    "status": "SUCCESS",
+    "summary": "Activity from IP 203.0.138.88 is consistent with an attempt to execute a SQL query on web-app-02, which was blocked by the WAF. The API gateway forwarded the query to db-prod-02, but the database audit logs indicate permission denial. The application service log on api-service-02 reports a successful query execution from the same IP, which is cached and returned with HTTP 200 status. The session sess-web-5501 was terminated normally on web-app-02.",
+    "severity": "MEDIUM",
+    "confidence": {
+      "score": 0.7,
+      "rationale": "The WAF detection event (EV-DET-02) has a confidence score of 0.7, which is considered moderate.",
+      "evidenceCompleteness": "MODERATE",
+      "limitations": [
+        "No direct evidence of successful unauthorized access to the database cluster, only permission denial logs."
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "Inbound HTTP POST request on /api/v2/query from IP 203.0.113.88 on web-app-02 (session sess-web-5501) was detected by the WAF (EV-DET-02).",
+        "evidenceIds": [
+          "EV-REQ-01",
+          "EV-DET-02"
+        ]
+      },
+      {
+        "statement": "The API gateway forwarded the query to db-prod-02 on behalf of session sess-web-5501 (EV-FWD-03).",
+        "evidenceIds": [
+          "EV-FWD-03"
+        ]
+      },
+      {
+        "statement": "The database audit logs on db-prod-02 indicate permission denial for the query (EV-DB-AUDIT-04).",
+        "evidenceIds": [
+          "EV-DB-AUDIT-04"
+        ]
+      },
+      {
+        "statement": "The application service log on api-service-02 reports a successful query execution (EV-APP-LOG-05).",
+        "evidenceIds": [
+          "EV-APP-LOG-05"
+        ]
+      },
+      {
+        "statement": "The session sess-web-5501 was terminated normally on web-app-02 (EV-SESS-06).",
+        "evidenceIds": [
+          "EV-SESS-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The API gateway forwarded the query to db-prod-02, but the database audit logs indicate permission denial, suggesting the query was blocked by the database.",
+        "rationale": "The API gateway event (EV-FWD-03) indicates the query was forwarded to db-prod-02, and the database audit logs (EV-DB-AUDIT-04) show permission denial, implying the query was not executed successfully.",
+        "supportingEvidenceIds": [
+          "EV-FWD-03",
+          "EV-DB-AUDIT-04"
+        ],
+        "confidence": 0.8
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "No evidence of successful unauthorized access to the database cluster was found.",
+        "significance": "It is unclear if the query was executed successfully or if it was blocked by the database.",
+        "recommendedTelemetry": "Monitor the database audit logs for further activity."
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "ENUMERATION",
+        "timestamp": "2026-09-24T10:21:05Z",
+        "sourceEntity": "203.0.113.88",
+        "targetAssetId": "web-app-02",
+        "description": "The attacker initiated a query on the web application.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-REQ-01"
+        ]
+      },
+      {
+        "stepOrder": 2,
+        "phase": "LATERAL-MOBILIZATION",
+        "timestamp": "2026-09-24T10:21:07Z",
+        "sourceEntity": "web-app-02",
+        "targetAssetId": "db-prod-02",
+        "description": "The API gateway forwarded the query to the database, which denied the permission.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-FWD-03",
+          "EV-DB-AUDIT-04"
+        ]
+      },
+      {
+        "stepOrder": 3,
+        "phase": "COMMAND_AND_CONTROL",
+        "timestamp": "2026-09-24T10:21:12Z",
+        "sourceEntity": "api-service-02",
+        "targetAssetId": "web-app-02",
+        "description": "The application service log on the backend API service reported a successful query execution.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-APP-LOG-05"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "web-app-02",
+      "api-service-02",
+      "db-prod-02"
+    ],
+    "citedEvidenceIds": [
+      "EV-REQ-01",
+      "EV-DET-02",
+      "EV-FWD-03",
+      "EV-DB-AUDIT-04",
+      "EV-APP-LOG-05",
+      "EV-SESS-06"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "BLOCK_SOURCE",
+        "targetIdentifier": "203.0.113.88",
+        "targetType": "IP_ADDRESS",
+        "rationale": "The WAF detected and blocked the malicious IP address (203.0.113.88) that initiated the attack.",
+        "confidence": 0.8,
+        "expectedImpact": "Containment of the attack by blocking the malicious IP address.",
+        "supportingEvidenceIds": [
+          "EV-REQ-01",
+          "EV-DET-02"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T00:46:28.860422+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0203",
+    "title": "Conflicting Evidence Across Web and Database Assets",
+    "summary": "Activity from IP 203.0.138.88 is consistent with an attempt to execute a SQL query on web-app-02, which was blocked by the WAF. The API gateway forwarded the query to db-prod-02, but the database audit logs indicate permission denial. The application service log on api-service-02 reports a successful query execution from the same IP, which is cached and returned with HTTP 200 status. The session sess-web-5501 was terminated normally on web-app-02.",
+    "severity": "MEDIUM",
+    "confidence": 0.7,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T10:21:05Z",
+        "phase": "ENUMERATION",
+        "description": "The attacker initiated a query on the web application.",
+        "affectedAssetIds": [
+          "web-app-02"
+        ],
+        "evidenceIds": [
+          "EV-REQ-01"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 2,
+        "timestamp": "2026-09-24T10:21:07Z",
+        "phase": "LATERAL-MOBILIZATION",
+        "description": "The API gateway forwarded the query to the database, which denied the permission.",
+        "affectedAssetIds": [
+          "db-prod-02"
+        ],
+        "evidenceIds": [
+          "EV-FWD-03",
+          "EV-DB-AUDIT-04"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 3,
+        "timestamp": "2026-09-24T10:21:12Z",
+        "phase": "COMMAND_AND_CONTROL",
+        "description": "The application service log on the backend API service reported a successful query execution.",
+        "affectedAssetIds": [
+          "web-app-02"
+        ],
+        "evidenceIds": [
+          "EV-APP-LOG-05"
+        ],
+        "isAttemptOnly": true
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "Inbound HTTP POST request on /api/v2/query from IP 203.0.113.88 on web-app-02 (session sess-web-5501) was detected by the WAF (EV-DET-02).",
+        "evidenceIds": [
+          "EV-REQ-01",
+          "EV-DET-02"
+        ]
+      },
+      {
+        "statement": "The API gateway forwarded the query to db-prod-02 on behalf of session sess-web-5501 (EV-FWD-03).",
+        "evidenceIds": [
+          "EV-FWD-03"
+        ]
+      },
+      {
+        "statement": "The database audit logs on db-prod-02 indicate permission denial for the query (EV-DB-AUDIT-04).",
+        "evidenceIds": [
+          "EV-DB-AUDIT-04"
+        ]
+      },
+      {
+        "statement": "The application service log on api-service-02 reports a successful query execution (EV-APP-LOG-05).",
+        "evidenceIds": [
+          "EV-APP-LOG-05"
+        ]
+      },
+      {
+        "statement": "The session sess-web-5501 was terminated normally on web-app-02 (EV-SESS-06).",
+        "evidenceIds": [
+          "EV-SESS-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The API gateway forwarded the query to db-prod-02, but the database audit logs indicate permission denial, suggesting the query was blocked by the database.",
+        "rationale": "The API gateway event (EV-FWD-03) indicates the query was forwarded to db-prod-02, and the database audit logs (EV-DB-AUDIT-04) show permission denial, implying the query was not executed successfully.",
+        "supportingEvidenceIds": [
+          "EV-FWD-03",
+          "EV-DB-AUDIT-04"
+        ],
+        "confidence": 0.8
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "No evidence of successful unauthorized access to the database cluster was found.",
+        "significance": "It is unclear if the query was executed successfully or if it was blocked by the database.",
+        "recommendedTelemetry": "Monitor the database audit logs for further activity."
+      }
+    ],
+    "uncertainty": "No evidence of successful unauthorized access to the database cluster was found. No direct evidence of successful unauthorized access to the database cluster, only permission denial logs.",
+    "affectedAssetIds": [
+      "web-app-02",
+      "api-service-02",
+      "db-prod-02"
+    ],
+    "citedEvidenceIds": [
+      "EV-APP-LOG-05",
+      "EV-DB-AUDIT-04",
+      "EV-DET-02",
+      "EV-FWD-03",
+      "EV-REQ-01",
+      "EV-SESS-06"
+    ],
+    "generatedAt": "2026-09-24T00:46:28.860714+00:00",
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "BLOCK_SOURCE",
+      "targetIdentifier": "203.0.113.88",
+      "targetType": "IP_ADDRESS",
+      "rationale": "The WAF detected and blocked the malicious IP address (203.0.113.88) that initiated the attack.",
+      "confidence": 0.8,
+      "expectedImpact": "Containment of the attack by blocking the malicious IP address.",
+      "supportingEvidenceIds": [
+        "EV-REQ-01",
+        "EV-DET-02"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T00:46:28.860820+00:00",
+  "executionDurationMs": 101386.31
+}

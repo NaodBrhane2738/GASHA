@@ -1,0 +1,87 @@
+{
+  "incidentId": "INC-2026-B",
+  "status": "SUCCESS",
+  "summary": "An authorized maintenance event resulted in unexpected read access to the /etc/shadow file, indicating potential unauthorized access or privilege escalation.",
+  "severity": "HIGH",
+  "confidence": {
+    "score": 0.85,
+    "rationale": "The evidence IDs EV-B-1 and EV-B-2 provide clear and direct proof of the incident, with EV-B-1 confirming the maintenance event and EV-B-2 showing unauthorized access to a sensitive file.",
+    "evidenceCompleteness": "HIGH",
+    "limitations": [
+      "No evidence of successful access or data exfiltration"
+    ]
+  },
+  "observedFacts": [
+    {
+      "statement": "An approved maintenance event (EV-B-1) was recorded.",
+      "evidenceIds": [
+        "EV-B-1"
+      ]
+    },
+    {
+      "statement": "An unexpected read access to the /etc/shadow file (EV-B-2) was recorded.",
+      "evidenceIds": [
+        "EV-B-2"
+      ]
+    }
+  ],
+  "inferences": [
+    {
+      "statement": "The maintenance event (EV-B-1) was likely authorized, but the read access to /etc/shadow (EV-B-2) suggests unauthorized access or privilege escalation.",
+      "rationale": "The maintenance event confirms the presence of authorized personnel, while the read access to a sensitive file indicates potential unauthorized actions.",
+      "supportingEvidenceIds": [
+        "EV-B-1",
+        "EV-B-2"
+      ],
+      "confidence": 0.8
+    }
+  ],
+  "unknowns": [
+    {
+      "statement": "The exact nature of the unauthorized access or privilege escalation is not clear from the provided evidence.",
+      "significance": "Understanding the full extent of the incident requires additional investigation.",
+      "recommendedTelemetry": "Audit logs for the /etc/shadow file access (EV-B-2)"
+    }
+  ],
+  "attackProgression": [
+    {
+      "stepOrder": 1,
+      "phase": "RECONNAISSANCE",
+      "timestamp": "now",
+      "sourceEntity": "Maintenance personnel (not specified in context)",
+      "targetAssetId": "asset-1",
+      "description": "Maintenance personnel accessed the /etc/shadow file on the Server asset.",
+      "isAttemptOnly": false,
+      "evidenceIds": [
+        "EV-B-2"
+      ]
+    }
+  ],
+  "affectedAssetIds": [
+    "asset-1"
+  ],
+  "citedEvidenceIds": [
+    "EV-B-1",
+    "EV-B-2"
+  ],
+  "recommendedActions": [
+    {
+      "id": "rec-1",
+      "actionType": "ISOLATE_RESOURCE",
+      "targetIdentifier": "asset-1",
+      "targetType": "ASSET_ID",
+      "rationale": "The maintenance event was likely authorized, but the read access to /etc/shadow suggests potential unauthorized actions. Isolating the asset may prevent further unauthorized access.",
+      "confidence": 0.7,
+      "expectedImpact": "Containment of the asset to prevent further unauthorized access.",
+      "supportingEvidenceIds": [
+        "EV-B-1",
+        "EV-B-2"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T10:45:09.856284+00:00",
+  "errorMessage": null,
+  "compromiseAssessment": "NOT_ESTABLISHED",
+  "attributionAssessment": "UNCONFIRMED"
+}

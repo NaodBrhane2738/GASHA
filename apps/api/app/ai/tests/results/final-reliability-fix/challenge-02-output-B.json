@@ -1,0 +1,244 @@
+{
+  "investigationId": "inv-f598ce0f2378",
+  "incidentId": "INC-2026-0302-B",
+  "contextFingerprint": "a455ec27363e62c18cbd6be46d90e498e331035d1de502af1f279ab5627c6b27",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0302-B",
+    "status": "SUCCESS",
+    "summary": "An unauthorized attempt to access the Admin API 04 resource resulted in a 403 Forbidden response, followed by a denied privilege change. The activity is consistent with an attacker probing for administrative access.",
+    "severity": "HIGH",
+    "confidence": {
+      "score": 0.95,
+      "rationale": "The evidence IDs EV-B-01, EV-B-02, and EV-B-03 provide a clear sequence of events with no contradictions. The 403 Forbidden response and the denied privilege change are strong indicators of an unauthorized attempt.",
+      "evidenceCompleteness": "HIGH",
+      "limitations": [
+        "No direct evidence of successful access or data exfiltration"
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "An authentication session was successfully created for the user.",
+        "evidenceIds": [
+          "EV-B-01"
+        ]
+      },
+      {
+        "statement": "An attempt to access the /admin/keys resource resulted in a 403 Forbidden response.",
+        "evidenceIds": [
+          "EV-B-02"
+        ]
+      },
+      {
+        "statement": "A privilege change attempt for the 'admin' user was denied.",
+        "evidenceIds": [
+          "EV-B-03"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The activity is consistent with an attacker probing for administrative access.",
+        "rationale": "The 403 Forbidden response and the denied privilege change suggest that the attacker was attempting to access a protected resource and change the user's privileges, but their attempt was unsuccessful.",
+        "supportingEvidenceIds": [
+          "EV-B-02",
+          "EV-B-03"
+        ],
+        "confidence": 0.9
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The sequence of events does not provide evidence of successful access or data exfiltration.",
+        "significance": "It is not clear if the attacker was able to access any sensitive data or if they were able to escalate their privileges.",
+        "recommendedTelemetry": "Audit logs for the compromised session (EV-B-01)"
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "PROBING",
+        "timestamp": "2026-09-24T12:01:00Z",
+        "sourceEntity": "Unknown",
+        "targetAssetId": "admin-api-04",
+        "description": "An authentication session was created for the user.",
+        "isAttemptOnly": false,
+        "evidenceIds": [
+          "EV-B-01"
+        ]
+      },
+      {
+        "stepOrder": 2,
+        "phase": "PROBING",
+        "timestamp": "2026-09-24T12:01:10Z",
+        "sourceEntity": "Unknown",
+        "targetAssetId": "admin-api-04",
+        "description": "An attempt to access the /admin/keys resource resulted in a 403 Forbidden response.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-B-02"
+        ]
+      },
+      {
+        "stepOrder": 3,
+        "phase": "PROBING",
+        "timestamp": "2026-09-24T12:01:20Z",
+        "sourceEntity": "Unknown",
+        "targetAssetId": "admin-api-04",
+        "description": "A privilege change attempt for the 'admin' user was denied.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-B-03"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "admin-api-04"
+    ],
+    "citedEvidenceIds": [
+      "EV-B-01",
+      "EV-B-02",
+      "EV-B-03"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "ISOLATE_RESOURCE",
+        "targetIdentifier": "admin-api-04",
+        "targetType": "ASSET_ID",
+        "rationale": "The compromised API resource should be isolated to prevent any further unauthorized access or data exfiltration.",
+        "confidence": 0.9,
+        "expectedImpact": "Containment of the compromised API to prevent unauthorized access.",
+        "supportingEvidenceIds": [
+          "EV-B-01",
+          "EV-B-02",
+          "EV-B-03"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T11:16:04.175503+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "SUSPECTED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0302-B",
+    "title": "Unauthorized Admin Resource Attempt",
+    "summary": "An unauthorized attempt to access the Admin API 04 resource resulted in a 403 Forbidden response, followed by a denied privilege change. The activity is consistent with an attacker probing for administrative access.",
+    "severity": "HIGH",
+    "confidence": 0.95,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T12:01:00Z",
+        "phase": "PROBING",
+        "description": "An authentication session was created for the user.",
+        "affectedAssetIds": [
+          "admin-api-04"
+        ],
+        "evidenceIds": [
+          "EV-B-01"
+        ],
+        "isAttemptOnly": false
+      },
+      {
+        "order": 2,
+        "timestamp": "2026-09-24T12:01:10Z",
+        "phase": "PROBING",
+        "description": "An attempt to access the /admin/keys resource resulted in a 403 Forbidden response.",
+        "affectedAssetIds": [
+          "admin-api-04"
+        ],
+        "evidenceIds": [
+          "EV-B-02"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 3,
+        "timestamp": "2026-09-24T12:01:20Z",
+        "phase": "PROBING",
+        "description": "A privilege change attempt for the 'admin' user was denied.",
+        "affectedAssetIds": [
+          "admin-api-04"
+        ],
+        "evidenceIds": [
+          "EV-B-03"
+        ],
+        "isAttemptOnly": true
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "An authentication session was successfully created for the user.",
+        "evidenceIds": [
+          "EV-B-01"
+        ]
+      },
+      {
+        "statement": "An attempt to access the /admin/keys resource resulted in a 403 Forbidden response.",
+        "evidenceIds": [
+          "EV-B-02"
+        ]
+      },
+      {
+        "statement": "A privilege change attempt for the 'admin' user was denied.",
+        "evidenceIds": [
+          "EV-B-03"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The activity is consistent with an attacker probing for administrative access.",
+        "rationale": "The 403 Forbidden response and the denied privilege change suggest that the attacker was attempting to access a protected resource and change the user's privileges, but their attempt was unsuccessful.",
+        "supportingEvidenceIds": [
+          "EV-B-02",
+          "EV-B-03"
+        ],
+        "confidence": 0.9
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The sequence of events does not provide evidence of successful access or data exfiltration.",
+        "significance": "It is not clear if the attacker was able to access any sensitive data or if they were able to escalate their privileges.",
+        "recommendedTelemetry": "Audit logs for the compromised session (EV-B-01)"
+      }
+    ],
+    "uncertainty": "The sequence of events does not provide evidence of successful access or data exfiltration. No direct evidence of successful access or data exfiltration. Successful compromise or data exfiltration is not established by the supplied evidence.",
+    "affectedAssetIds": [
+      "admin-api-04"
+    ],
+    "citedEvidenceIds": [
+      "EV-B-01",
+      "EV-B-02",
+      "EV-B-03"
+    ],
+    "generatedAt": "2026-09-24T11:16:04.176297+00:00",
+    "compromiseAssessment": "SUSPECTED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "ISOLATE_RESOURCE",
+      "targetIdentifier": "admin-api-04",
+      "targetType": "ASSET_ID",
+      "rationale": "The compromised API resource should be isolated to prevent any further unauthorized access or data exfiltration.",
+      "confidence": 0.9,
+      "expectedImpact": "Containment of the compromised API to prevent unauthorized access.",
+      "supportingEvidenceIds": [
+        "EV-B-01",
+        "EV-B-02",
+        "EV-B-03"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T11:16:04.176394+00:00",
+  "executionDurationMs": 75587.98
+}

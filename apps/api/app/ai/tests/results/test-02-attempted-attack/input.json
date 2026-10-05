@@ -1,0 +1,153 @@
+{
+  "incident": {
+    "id": "INC-2026-0102",
+    "title": "External Scanning & Blocked Authentication Attempt",
+    "severity": "MEDIUM",
+    "status": "INVESTIGATING",
+    "primaryAffectedAssetId": "api-gateway-prod",
+    "relatedAssetIds": [
+      "api-gateway-prod",
+      "srv-vault-prod"
+    ],
+    "detectionEventIds": [
+      "DET-SCAN-01"
+    ],
+    "attackPathId": null,
+    "createdAt": "2026-09-24T03:05:00Z",
+    "updatedAt": "2026-09-24T03:06:30Z",
+    "summary": "High frequency failed API key requests and path traversal probe blocked by API gateway filter."
+  },
+  "evidence": [
+    {
+      "id": "EV-SCAN-01",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.gateway",
+      "timestamp": "2026-09-24T03:05:00Z",
+      "summary": "10 failed API key authentication requests from IP 198.51.100.89 against /vault/v1/secrets",
+      "content": {
+        "ip": "198.51.100.89",
+        "target": "/vault/v1/secrets",
+        "responseCode": 401,
+        "attempts": 10
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-SCAN-02",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.gateway",
+      "timestamp": "2026-09-24T03:05:20Z",
+      "summary": "15 failed token authentication attempts from IP 198.51.100.89",
+      "content": {
+        "ip": "198.51.100.89",
+        "target": "/vault/v1/auth",
+        "responseCode": 401,
+        "attempts": 15
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-REQ-03",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.waf",
+      "timestamp": "2026-09-24T03:05:45Z",
+      "summary": "Directory traversal probe GET /../../etc/shadow from 198.51.100.89 returning 400 Bad Request",
+      "content": {
+        "ip": "198.51.100.89",
+        "path": "/../../etc/shadow",
+        "responseCode": 400,
+        "status": "BLOCKED"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-ACCESS-04",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.gateway",
+      "timestamp": "2026-09-24T03:06:10Z",
+      "summary": "Unauthorized access attempt against /admin/keys from 198.51.100.89 blocked with 403 Forbidden",
+      "content": {
+        "ip": "198.51.100.89",
+        "path": "/admin/keys",
+        "responseCode": 403,
+        "status": "DENIED"
+      },
+      "verified": true
+    }
+  ],
+  "detections": [
+    {
+      "id": "DET-SCAN-01",
+      "ruleId": "RULE-SCAN-01",
+      "ruleName": "Reconnaissance and Probing Filter",
+      "description": "Repeated authentication failures and forbidden resource access attempts from external IP",
+      "severity": "MEDIUM",
+      "confidence": 0.8,
+      "matchedEventIds": [
+        "EV-SCAN-01",
+        "EV-SCAN-02",
+        "EV-REQ-03",
+        "EV-ACCESS-04"
+      ],
+      "primaryAssetId": "api-gateway-prod",
+      "timestamp": "2026-09-24T03:06:20Z",
+      "evidenceSummary": "External probe from 198.51.100.89 with all requests blocked/denied",
+      "metadata": {}
+    }
+  ],
+  "telemetryEvents": [],
+  "assets": [
+    {
+      "id": "api-gateway-prod",
+      "name": "Production API Gateway",
+      "type": "API_GATEWAY",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": true,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    },
+    {
+      "id": "srv-vault-prod",
+      "name": "Internal Secrets Vault",
+      "type": "VAULT",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": false,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    }
+  ],
+  "attackPath": null,
+  "vulnerabilities": [],
+  "riskSnapshot": null,
+  "availableResponseActions": [
+    {
+      "actionType": "BLOCK_SOURCE",
+      "allowedTargetTypes": [
+        "IP_ADDRESS"
+      ],
+      "description": "Block incoming traffic from a malicious external IP address",
+      "requiresApproval": true
+    },
+    {
+      "actionType": "DISABLE_SESSION",
+      "allowedTargetTypes": [
+        "USER_SESSION",
+        "SESSION_ID"
+      ],
+      "description": "Revoke an active compromised user authentication session",
+      "requiresApproval": true
+    },
+    {
+      "actionType": "ISOLATE_RESOURCE",
+      "allowedTargetTypes": [
+        "ASSET_ID"
+      ],
+      "description": "Sever network egress and ingress for a compromised asset",
+      "requiresApproval": true
+    }
+  ],
+  "assembledAt": "2026-09-24T00:14:35.720874+00:00",
+  "contextVersion": "1.0.0"
+}

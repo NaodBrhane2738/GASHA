@@ -1,0 +1,199 @@
+{
+  "investigationId": "inv-3936c4f75746",
+  "incidentId": "INC-2026-0202",
+  "contextFingerprint": "01aa0daec085558590aca960b2c999337d270ccb9815b8fb8b462720e8f3a415",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0202",
+    "status": "SUCCESS",
+    "summary": "Activity from IP 198.51.100.44 is consistent with repeated unauthorized access attempts targeting sensitive resources on customer-portal-01 and billing-api-01.",
+    "severity": "MEDIUM",
+    "confidence": {
+      "score": 0.85,
+      "rationale": "The DET-RBAC-01 detection event has a high confidence score based on multiple verified telemetry events.",
+      "evidenceCompleteness": "HIGH",
+      "limitations": [
+        "No direct evidence of successful unauthorized access or data exfiltration"
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "Session sess-support-204 attempted unauthorized access to sensitive resources on customer-portal-01 and billing-api-01.",
+        "evidenceIds": [
+          "EV-AUTH-01",
+          "EV-DENY-03",
+          "EV-DENY-05",
+          "EV-SEC-06"
+        ]
+      },
+      {
+        "statement": "Session sess-support-204 was quarantined due to repeated access policy violations.",
+        "evidenceIds": [
+          "EV-SEC-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The unauthorized access attempts were likely part of a reconnaissance phase to identify and exploit vulnerabilities.",
+        "rationale": "The session sess-support-204 exhibited multiple unauthorized access attempts targeting sensitive resources, which is consistent with reconnaissance activities.",
+        "supportingEvidenceIds": [
+          "EV-AUTH-01",
+          "EV-DENY-03",
+          "EV-DENY-05"
+        ],
+        "confidence": 0.8
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The exact nature of the vulnerabilities exploited by the attacker is unknown.",
+        "significance": "Understanding the specific vulnerabilities could help in mitigating future attacks.",
+        "recommendedTelemetry": "Log source for the session sess-support-204 for further analysis."
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "RECONNOITER",
+        "timestamp": "2026-09-24T09:14:00Z",
+        "sourceEntity": "IP 198.51.100.44",
+        "targetAssetId": "customer-portal-01",
+        "description": "User customer-support-42 performed a legitimate support lookup and attempted unauthorized access to sensitive resources.",
+        "isAttemptOnly": false,
+        "evidenceIds": [
+          "EV-AUTH-01",
+          "EV-DENY-03",
+          "EV-DENY-05"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "customer-portal-01",
+      "billing-api-01"
+    ],
+    "citedEvidenceIds": [
+      "EV-AUTH-01",
+      "EV-DENY-03",
+      "EV-DENY-05",
+      "EV-SEC-06",
+      "DET-RBAC-01"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "BLOCK_SOURCE",
+        "targetIdentifier": "198.51.100.44",
+        "targetType": "IP_ADDRESS",
+        "rationale": "Block the IP address 198.51.100.44 to prevent further unauthorized access attempts.",
+        "confidence": 0.85,
+        "expectedImpact": "Containment of the attack by preventing further access attempts.",
+        "supportingEvidenceIds": [
+          "EV-AUTH-01",
+          "EV-DENY-03",
+          "EV-DENY-05"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T00:44:47.471278+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0202",
+    "title": "Suspicious Session Activity Across Protected Resources",
+    "summary": "Activity from IP 198.51.100.44 is consistent with repeated unauthorized access attempts targeting sensitive resources on customer-portal-01 and billing-api-01.",
+    "severity": "MEDIUM",
+    "confidence": 0.85,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T09:14:00Z",
+        "phase": "RECONNOITER",
+        "description": "User customer-support-42 performed a legitimate support lookup and attempted unauthorized access to sensitive resources.",
+        "affectedAssetIds": [
+          "customer-portal-01"
+        ],
+        "evidenceIds": [
+          "EV-AUTH-01",
+          "EV-DENY-03",
+          "EV-DENY-05"
+        ],
+        "isAttemptOnly": true
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "Session sess-support-204 attempted unauthorized access to sensitive resources on customer-portal-01 and billing-api-01.",
+        "evidenceIds": [
+          "EV-AUTH-01",
+          "EV-DENY-03",
+          "EV-DENY-05",
+          "EV-SEC-06"
+        ]
+      },
+      {
+        "statement": "Session sess-support-204 was quarantined due to repeated access policy violations.",
+        "evidenceIds": [
+          "EV-SEC-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The unauthorized access attempts were likely part of a reconnaissance phase to identify and exploit vulnerabilities.",
+        "rationale": "The session sess-support-204 exhibited multiple unauthorized access attempts targeting sensitive resources, which is consistent with reconnaissance activities.",
+        "supportingEvidenceIds": [
+          "EV-AUTH-01",
+          "EV-DENY-03",
+          "EV-DENY-05"
+        ],
+        "confidence": 0.8
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The exact nature of the vulnerabilities exploited by the attacker is unknown.",
+        "significance": "Understanding the specific vulnerabilities could help in mitigating future attacks.",
+        "recommendedTelemetry": "Log source for the session sess-support-204 for further analysis."
+      }
+    ],
+    "uncertainty": "The exact nature of the vulnerabilities exploited by the attacker is unknown. No direct evidence of successful unauthorized access or data exfiltration. Successful compromise or data exfiltration is not established by the supplied evidence.",
+    "affectedAssetIds": [
+      "customer-portal-01",
+      "billing-api-01"
+    ],
+    "citedEvidenceIds": [
+      "EV-AUTH-01",
+      "EV-DENY-03",
+      "EV-DENY-05",
+      "EV-SEC-06"
+    ],
+    "generatedAt": "2026-09-24T00:44:47.471633+00:00",
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "BLOCK_SOURCE",
+      "targetIdentifier": "198.51.100.44",
+      "targetType": "IP_ADDRESS",
+      "rationale": "Block the IP address 198.51.100.44 to prevent further unauthorized access attempts.",
+      "confidence": 0.85,
+      "expectedImpact": "Containment of the attack by preventing further access attempts.",
+      "supportingEvidenceIds": [
+        "EV-AUTH-01",
+        "EV-DENY-03",
+        "EV-DENY-05"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T00:44:47.471750+00:00",
+  "executionDurationMs": 62885.79
+}

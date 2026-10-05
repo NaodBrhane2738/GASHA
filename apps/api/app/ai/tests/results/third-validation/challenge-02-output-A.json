@@ -1,0 +1,250 @@
+{
+  "investigationId": "inv-967ceafff7e7",
+  "incidentId": "INC-2026-0302-A",
+  "contextFingerprint": "35e752fb181f2d3a3e9f7429151f36246c00e28bca69216d21a7917b96f16348",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0302-A",
+    "status": "SUCCESS",
+    "summary": "Suspicious authentication attempts against the Customer Portal 04 are observed, with one successful login session. The WAF logs indicate multiple failed authentication attempts from the same IP address, which is also the source of a suspicious API request. The successful login session is noted, but the WAF logs do not provide evidence of a successful unauthorized access or session creation.",
+    "severity": "MEDIUM",
+    "confidence": {
+      "score": 0.6,
+      "rationale": "The evidence includes multiple failed authentication attempts and a successful login session, but the WAF logs do not provide direct evidence of a successful unauthorized access or session creation.",
+      "evidenceCompleteness": "MODERATE",
+      "limitations": [
+        "The WAF logs do not indicate a successful unauthorized access or session creation."
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "Multiple failed authentication attempts were observed from the IP address 198.51.100.20.",
+        "evidenceIds": [
+          "EV-A-01",
+          "EV-A-02"
+        ]
+      },
+      {
+        "statement": "A suspicious API request to /api/login was observed from the IP address 198.51.100.20.",
+        "evidenceIds": [
+          "EV-A-03"
+        ]
+      },
+      {
+        "statement": "A successful login session (session=sess-A-001) was observed from the IP address 198.51.100.20.",
+        "evidenceIds": [
+          "EV-A-04"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The suspicious API request and successful login session are consistent with an attempt to access the Customer Portal 04.",
+        "rationale": "The API request target matches the Customer Portal 04, and the successful login session is from the same IP address.",
+        "supportingEvidenceIds": [
+          "EV-A-03",
+          "EV-A-04"
+        ],
+        "confidence": 0.8
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The WAF logs do not provide evidence of a successful unauthorized access or session creation.",
+        "significance": "The lack of such evidence prevents a definitive conclusion about a successful unauthorized access.",
+        "recommendedTelemetry": "WAF logs for subsequent events"
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "PROBING",
+        "timestamp": "2026-09-24T12:01:00Z",
+        "sourceEntity": "198.51.100.20",
+        "targetAssetId": "customer-portal-04",
+        "description": "Multiple failed authentication attempts were observed.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-A-01",
+          "EV-A-02"
+        ]
+      },
+      {
+        "stepOrder": 2,
+        "phase": "PROBING",
+        "timestamp": "2026-09-24T12:01:10Z",
+        "sourceEntity": "198.51.100.20",
+        "targetAssetId": "customer-portal-04",
+        "description": "A suspicious API request to /api/login was observed.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-A-03"
+        ]
+      },
+      {
+        "stepOrder": 3,
+        "phase": "AUTHENTICATION",
+        "timestamp": "2026-09-24T12:02:00Z",
+        "sourceEntity": "198.51.100.20",
+        "targetAssetId": "customer-portal-04",
+        "description": "A successful login session was observed.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-A-04"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "customer-portal-04"
+    ],
+    "citedEvidenceIds": [
+      "EV-A-01",
+      "EV-A-02",
+      "EV-A-03",
+      "EV-A-04"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "BLOCK_SOURCE",
+        "targetIdentifier": "198.51.100.20",
+        "targetType": "IP_ADDRESS",
+        "rationale": "The WAF logs indicate multiple failed authentication attempts and a suspicious API request from the same IP address, which is a potential threat vector.",
+        "confidence": 0.7,
+        "expectedImpact": "Containment of the threat by blocking the IP address.",
+        "supportingEvidenceIds": [
+          "EV-A-01",
+          "EV-A-02",
+          "EV-A-03"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T10:53:33.902159+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "ATTEMPT_ONLY",
+    "attributionAssessment": "CONSISTENT_WITH_THREAT"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0302-A",
+    "title": "Suspicious Authentication Against Customer Portal",
+    "summary": "Suspicious authentication attempts against the Customer Portal 04 are observed, with one successful login session. The WAF logs indicate multiple failed authentication attempts from the same IP address, which is also the source of a suspicious API request. The successful login session is noted, but the WAF logs do not provide evidence of a successful unauthorized access or session creation.",
+    "severity": "MEDIUM",
+    "confidence": 0.6,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T12:01:00Z",
+        "phase": "PROBING",
+        "description": "Multiple failed authentication attempts were observed.",
+        "affectedAssetIds": [
+          "customer-portal-04"
+        ],
+        "evidenceIds": [
+          "EV-A-01",
+          "EV-A-02"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 2,
+        "timestamp": "2026-09-24T12:01:10Z",
+        "phase": "PROBING",
+        "description": "A suspicious API request to /api/login was observed.",
+        "affectedAssetIds": [
+          "customer-portal-04"
+        ],
+        "evidenceIds": [
+          "EV-A-03"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 3,
+        "timestamp": "2026-09-24T12:02:00Z",
+        "phase": "AUTHENTICATION",
+        "description": "A successful login session was observed.",
+        "affectedAssetIds": [
+          "customer-portal-04"
+        ],
+        "evidenceIds": [
+          "EV-A-04"
+        ],
+        "isAttemptOnly": true
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "Multiple failed authentication attempts were observed from the IP address 198.51.100.20.",
+        "evidenceIds": [
+          "EV-A-01",
+          "EV-A-02"
+        ]
+      },
+      {
+        "statement": "A suspicious API request to /api/login was observed from the IP address 198.51.100.20.",
+        "evidenceIds": [
+          "EV-A-03"
+        ]
+      },
+      {
+        "statement": "A successful login session (session=sess-A-001) was observed from the IP address 198.51.100.20.",
+        "evidenceIds": [
+          "EV-A-04"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The suspicious API request and successful login session are consistent with an attempt to access the Customer Portal 04.",
+        "rationale": "The API request target matches the Customer Portal 04, and the successful login session is from the same IP address.",
+        "supportingEvidenceIds": [
+          "EV-A-03",
+          "EV-A-04"
+        ],
+        "confidence": 0.8
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The WAF logs do not provide evidence of a successful unauthorized access or session creation.",
+        "significance": "The lack of such evidence prevents a definitive conclusion about a successful unauthorized access.",
+        "recommendedTelemetry": "WAF logs for subsequent events"
+      }
+    ],
+    "uncertainty": "The WAF logs do not provide evidence of a successful unauthorized access or session creation. The WAF logs do not indicate a successful unauthorized access or session creation. Successful compromise or data exfiltration is not established by the supplied evidence.",
+    "affectedAssetIds": [
+      "customer-portal-04"
+    ],
+    "citedEvidenceIds": [
+      "EV-A-01",
+      "EV-A-02",
+      "EV-A-03",
+      "EV-A-04"
+    ],
+    "generatedAt": "2026-09-24T10:53:33.903184+00:00",
+    "compromiseAssessment": "ATTEMPT_ONLY",
+    "attributionAssessment": "CONSISTENT_WITH_THREAT"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "BLOCK_SOURCE",
+      "targetIdentifier": "198.51.100.20",
+      "targetType": "IP_ADDRESS",
+      "rationale": "The WAF logs indicate multiple failed authentication attempts and a suspicious API request from the same IP address, which is a potential threat vector.",
+      "confidence": 0.7,
+      "expectedImpact": "Containment of the threat by blocking the IP address.",
+      "supportingEvidenceIds": [
+        "EV-A-01",
+        "EV-A-02",
+        "EV-A-03"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T10:53:33.903307+00:00",
+  "executionDurationMs": 90313.09
+}

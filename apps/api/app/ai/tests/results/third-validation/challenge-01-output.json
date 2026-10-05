@@ -1,0 +1,236 @@
+{
+  "investigationId": "inv-0fc93bfd80c9",
+  "incidentId": "INC-2026-0301",
+  "contextFingerprint": "b3f516d2ea69c21b560669f4fe30a90d09801ae6b567ec597c83e714ad4daa92",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0301",
+    "status": "SUCCESS",
+    "summary": "An unauthorized user attempted to authenticate and access resources, but was denied. The user then attempted to access a restricted resource, which was also denied. The incident is consistent with an attempt to bypass authentication and access restricted resources.",
+    "severity": "HIGH",
+    "confidence": {
+      "score": 0.95,
+      "rationale": "The evidence IDs EV-0301-01, EV-0301-02, and EV-0301-06 provide a clear sequence of events that align with the summary statement.",
+      "evidenceCompleteness": "HIGH",
+      "limitations": [
+        "No evidence of successful access to the restricted resource, only an attempt"
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "An unauthorized user attempted to authenticate and was denied (EV-0301-01).",
+        "evidenceIds": [
+          "EV-0301-01",
+          "EV-0301-02"
+        ]
+      },
+      {
+        "statement": "The user then attempted to access a restricted resource (/admin/secrets) and was denied (EV-0301-06).",
+        "evidenceIds": [
+          "EV-0301-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The user's authentication attempt was unsuccessful, and they attempted to access a restricted resource, which was also denied.",
+        "rationale": "The sequence of events and the status codes (401 and 403) clearly indicate an attempt to authenticate and access a restricted resource.",
+        "supportingEvidenceIds": [
+          "EV-0301-01",
+          "EV-0301-02",
+          "EV-0301-06"
+        ],
+        "confidence": 0.9
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The user's identity and the source IP address are not known.",
+        "significance": "Determining the user's identity and the source IP address is crucial for attribution and containment.",
+        "recommendedTelemetry": "AdminApp logs for more details on the user's session and WAF logs for more details on the source IP."
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "PROBING",
+        "timestamp": "2026-09-24T11:01:05Z",
+        "sourceEntity": "203.0.113.120",
+        "targetAssetId": "auth-service-03",
+        "description": "The user attempted to authenticate to the Auth Service.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-0301-02"
+        ]
+      },
+      {
+        "stepOrder": 2,
+        "phase": "PROBING",
+        "timestamp": "2026-09-24T11:02:00Z",
+        "sourceEntity": "sess-0301-x",
+        "targetAssetId": "admin-api-03",
+        "description": "The user accessed a restricted resource (/admin/dashboard) and was denied.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-0301-03"
+        ]
+      },
+      {
+        "stepOrder": 3,
+        "phase": "PROBING",
+        "timestamp": "2026-09-24T11:02:40Z",
+        "sourceEntity": "sess-0301-x",
+        "targetAssetId": "admin-api-03",
+        "description": "The user attempted to access a restricted resource (/admin/secrets) and was denied.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-0301-06"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "auth-service-03",
+      "admin-api-03"
+    ],
+    "citedEvidenceIds": [
+      "EV-0301-01",
+      "EV-0301-02",
+      "EV-0301-03",
+      "EV-0301-06"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "BLOCK_SOURCE",
+        "targetIdentifier": "203.0.113.120",
+        "targetType": "IP_ADDRESS",
+        "rationale": "Block the source IP address to prevent further unauthorized access attempts.",
+        "confidence": 0.9,
+        "expectedImpact": "Contain the threat by preventing further unauthorized access attempts.",
+        "supportingEvidenceIds": [
+          "EV-0301-02"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T10:52:03.561912+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "CONSISTENT_WITH_THREAT"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0301",
+    "title": "Out-of-Order Authentication and Privilege Events",
+    "summary": "An unauthorized user attempted to authenticate and access resources, but was denied. The user then attempted to access a restricted resource, which was also denied. The incident is consistent with an attempt to bypass authentication and access restricted resources.",
+    "severity": "HIGH",
+    "confidence": 0.95,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T11:01:05Z",
+        "phase": "PROBING",
+        "description": "The user attempted to authenticate to the Auth Service.",
+        "affectedAssetIds": [
+          "auth-service-03"
+        ],
+        "evidenceIds": [
+          "EV-0301-02"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 2,
+        "timestamp": "2026-09-24T11:02:00Z",
+        "phase": "PROBING",
+        "description": "The user accessed a restricted resource (/admin/dashboard) and was denied.",
+        "affectedAssetIds": [
+          "admin-api-03"
+        ],
+        "evidenceIds": [
+          "EV-0301-03"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 3,
+        "timestamp": "2026-09-24T11:02:40Z",
+        "phase": "PROBING",
+        "description": "The user attempted to access a restricted resource (/admin/secrets) and was denied.",
+        "affectedAssetIds": [
+          "admin-api-03"
+        ],
+        "evidenceIds": [
+          "EV-0301-06"
+        ],
+        "isAttemptOnly": true
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "An unauthorized user attempted to authenticate and was denied (EV-0301-01).",
+        "evidenceIds": [
+          "EV-0301-01",
+          "EV-0301-02"
+        ]
+      },
+      {
+        "statement": "The user then attempted to access a restricted resource (/admin/secrets) and was denied (EV-0301-06).",
+        "evidenceIds": [
+          "EV-0301-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The user's authentication attempt was unsuccessful, and they attempted to access a restricted resource, which was also denied.",
+        "rationale": "The sequence of events and the status codes (401 and 403) clearly indicate an attempt to authenticate and access a restricted resource.",
+        "supportingEvidenceIds": [
+          "EV-0301-01",
+          "EV-0301-02",
+          "EV-0301-06"
+        ],
+        "confidence": 0.9
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The user's identity and the source IP address are not known.",
+        "significance": "Determining the user's identity and the source IP address is crucial for attribution and containment.",
+        "recommendedTelemetry": "AdminApp logs for more details on the user's session and WAF logs for more details on the source IP."
+      }
+    ],
+    "uncertainty": "The user's identity and the source IP address are not known. No evidence of successful access to the restricted resource, only an attempt. Successful compromise or data exfiltration is not established by the supplied evidence.",
+    "affectedAssetIds": [
+      "auth-service-03",
+      "admin-api-03"
+    ],
+    "citedEvidenceIds": [
+      "EV-0301-01",
+      "EV-0301-02",
+      "EV-0301-03",
+      "EV-0301-06"
+    ],
+    "generatedAt": "2026-09-24T10:52:03.563855+00:00",
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "CONSISTENT_WITH_THREAT"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "BLOCK_SOURCE",
+      "targetIdentifier": "203.0.113.120",
+      "targetType": "IP_ADDRESS",
+      "rationale": "Block the source IP address to prevent further unauthorized access attempts.",
+      "confidence": 0.9,
+      "expectedImpact": "Contain the threat by preventing further unauthorized access attempts.",
+      "supportingEvidenceIds": [
+        "EV-0301-02"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T10:52:03.563992+00:00",
+  "executionDurationMs": 94964.09
+}

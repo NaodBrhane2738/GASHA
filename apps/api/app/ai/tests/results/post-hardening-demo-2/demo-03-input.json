@@ -1,0 +1,205 @@
+{
+  "incident": {
+    "id": "INC-2026-0203",
+    "title": "Conflicting Evidence Across Web and Database Assets",
+    "severity": "MEDIUM",
+    "status": "INVESTIGATING",
+    "primaryAffectedAssetId": "web-app-02",
+    "relatedAssetIds": [
+      "web-app-02",
+      "api-service-02",
+      "db-prod-02"
+    ],
+    "detectionEventIds": [
+      "DET-WAF-02"
+    ],
+    "attackPathId": null,
+    "createdAt": "2026-09-24T10:21:00Z",
+    "updatedAt": "2026-09-24T10:21:30Z",
+    "summary": "Contradictory signals across tiers: API gateway reports successful query while DB audit records permission denied and DB integrity monitor reports zero modifications."
+  },
+  "evidence": [
+    {
+      "id": "EV-REQ-01",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.web",
+      "timestamp": "2026-09-24T10:21:05Z",
+      "summary": "Inbound HTTP POST /api/v2/query from IP 203.0.113.88 on web-app-02 (session sess-web-5501)",
+      "content": {
+        "ip": "203.0.113.88",
+        "sessionId": "sess-web-5501",
+        "path": "/api/v2/query",
+        "method": "POST",
+        "asset": "web-app-02"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-DET-02",
+      "type": "DETECTION_MATCH",
+      "source": "probe.waf",
+      "timestamp": "2026-09-24T10:21:07Z",
+      "summary": "WAF Detection DET-WAF-02: Anomalous SQL pattern detected in query body from 203.0.113.88",
+      "content": {
+        "rule": "SQLI_ANOMALY_PATTERNS",
+        "severity": "MEDIUM",
+        "target": "/api/v2/query",
+        "asset": "web-app-02"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-FWD-03",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.api_gateway",
+      "timestamp": "2026-09-24T10:21:09Z",
+      "summary": "API Gateway forwarded database query to db-prod-02 on behalf of session sess-web-5501",
+      "content": {
+        "sessionId": "sess-web-5501",
+        "targetDb": "db-prod-02",
+        "originatingAsset": "api-service-02"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-DB-AUDIT-04",
+      "type": "TELEMETRY_EVENT",
+      "source": "audit.db_engine",
+      "timestamp": "2026-09-24T10:21:11Z",
+      "summary": "Database Engine Audit on db-prod-02: Query execution DENIED with SQLSTATE 42501 (permission denied for table accounts)",
+      "content": {
+        "asset": "db-prod-02",
+        "sqlState": "42501",
+        "status": "DENIED",
+        "query": "SELECT * FROM accounts WHERE id = 'admin'",
+        "rowsReturned": 0
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-APP-LOG-05",
+      "type": "TELEMETRY_EVENT",
+      "source": "app.service_log",
+      "timestamp": "2026-09-24T10:21:12Z",
+      "summary": "Application service log on api-service-02: 'Database query succeeded' and returned HTTP 200 from cache",
+      "content": {
+        "asset": "api-service-02",
+        "message": "database query succeeded",
+        "statusCode": 200,
+        "servedFromCache": true
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-SESS-06",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.session",
+      "timestamp": "2026-09-24T10:21:14Z",
+      "summary": "Session sess-web-5501 disconnected / terminated normally on web-app-02",
+      "content": {
+        "sessionId": "sess-web-5501",
+        "action": "DISCONNECT",
+        "asset": "web-app-02"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-MON-07",
+      "type": "TELEMETRY_EVENT",
+      "source": "monitor.integrity",
+      "timestamp": "2026-09-24T10:21:20Z",
+      "summary": "Asset integrity monitor on db-prod-02 reports database cluster untouched with 0 rows modified and 0 data exfiltrated",
+      "content": {
+        "asset": "db-prod-02",
+        "integrityStatus": "UNMODIFIED",
+        "tablesAltered": 0,
+        "rowsModified": 0,
+        "dataExportDetected": false
+      },
+      "verified": true
+    }
+  ],
+  "detections": [
+    {
+      "id": "DET-WAF-02",
+      "ruleId": "RULE-WAF-02",
+      "ruleName": "Anomalous SQL Query Pattern Detected on Public Endpoint",
+      "description": "Inbound POST request on /api/v2/query contained SQL pattern tokens",
+      "severity": "MEDIUM",
+      "confidence": 0.7,
+      "matchedEventIds": [
+        "EV-REQ-01",
+        "EV-DET-02"
+      ],
+      "primaryAssetId": "web-app-02",
+      "timestamp": "2026-09-24T10:21:07Z",
+      "evidenceSummary": "Inbound request from 203.0.113.88 matched SQL pattern heuristics",
+      "metadata": {}
+    }
+  ],
+  "telemetryEvents": [],
+  "assets": [
+    {
+      "id": "web-app-02",
+      "name": "Public Web Application",
+      "type": "WEB_SERVER",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": true,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    },
+    {
+      "id": "api-service-02",
+      "name": "Internal Backend API Service",
+      "type": "API_GATEWAY",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": false,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    },
+    {
+      "id": "db-prod-02",
+      "name": "Production Database Cluster",
+      "type": "DATABASE",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": false,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    }
+  ],
+  "attackPath": null,
+  "vulnerabilities": [],
+  "riskSnapshot": null,
+  "availableResponseActions": [
+    {
+      "actionType": "BLOCK_SOURCE",
+      "allowedTargetTypes": [
+        "IP_ADDRESS"
+      ],
+      "description": "Block incoming traffic from a malicious external IP address",
+      "requiresApproval": true
+    },
+    {
+      "actionType": "DISABLE_SESSION",
+      "allowedTargetTypes": [
+        "USER_SESSION",
+        "SESSION_ID"
+      ],
+      "description": "Revoke an active compromised user authentication session",
+      "requiresApproval": true
+    },
+    {
+      "actionType": "ISOLATE_RESOURCE",
+      "allowedTargetTypes": [
+        "ASSET_ID"
+      ],
+      "description": "Sever network egress and ingress for a compromised asset",
+      "requiresApproval": true
+    }
+  ],
+  "assembledAt": "2026-09-24T00:44:47.474381+00:00",
+  "contextVersion": "1.0.0"
+}

@@ -1,0 +1,157 @@
+{
+  "incident": {
+    "id": "INC-2026-0301",
+    "title": "Out-of-Order Authentication and Privilege Events",
+    "severity": "HIGH",
+    "status": "ACTIVE",
+    "primaryAffectedAssetId": "portal-03",
+    "relatedAssetIds": [
+      "auth-service-03",
+      "admin-api-03"
+    ],
+    "detectionEventIds": [],
+    "attackPathId": null,
+    "createdAt": "2026-09-24T11:00:00Z",
+    "updatedAt": "2026-09-24T11:05:00Z",
+    "summary": null
+  },
+  "evidence": [
+    {
+      "id": "EV-0301-01",
+      "type": "TELEMETRY_EVENT",
+      "source": "IAM",
+      "timestamp": "2026-09-24T11:02:20Z",
+      "summary": "PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED",
+      "content": {
+        "session": "sess-0301-x",
+        "role": "SUPER_ADMIN",
+        "result": "DENIED"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-0301-02",
+      "type": "TELEMETRY_EVENT",
+      "source": "Gateway",
+      "timestamp": "2026-09-24T11:01:05Z",
+      "summary": "AUTH_FAILURE, 203.0.113.120, 401",
+      "content": {
+        "ip": "203.0.113.120",
+        "status": 401
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-0301-03",
+      "type": "TELEMETRY_EVENT",
+      "source": "AdminApp",
+      "timestamp": "2026-09-24T11:02:00Z",
+      "summary": "RESOURCE_ACCESS, /admin/dashboard, SUCCESS",
+      "content": {
+        "path": "/admin/dashboard",
+        "result": "SUCCESS"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-0301-04",
+      "type": "TELEMETRY_EVENT",
+      "source": "IAM",
+      "timestamp": "2026-09-24T11:03:00Z",
+      "summary": "AUTH_SUCCESS, sess-0301-x",
+      "content": {
+        "session": "sess-0301-x"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-0301-05",
+      "type": "TELEMETRY_EVENT",
+      "source": "WAF",
+      "timestamp": "2026-09-24T11:01:40Z",
+      "summary": "SUSPICIOUS_REQUEST, /api/auth",
+      "content": {
+        "path": "/api/auth"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-0301-06",
+      "type": "TELEMETRY_EVENT",
+      "source": "AdminApp",
+      "timestamp": "2026-09-24T11:02:40Z",
+      "summary": "RESOURCE_ACCESS, /admin/secrets, 403",
+      "content": {
+        "path": "/admin/secrets",
+        "status": 403
+      },
+      "verified": true
+    }
+  ],
+  "detections": [],
+  "telemetryEvents": [],
+  "assets": [
+    {
+      "id": "portal-03",
+      "name": "Portal 3",
+      "type": "WEB",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": false,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    },
+    {
+      "id": "auth-service-03",
+      "name": "Auth Service",
+      "type": "SERVICE",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": false,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    },
+    {
+      "id": "admin-api-03",
+      "name": "Admin API",
+      "type": "API",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": false,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    }
+  ],
+  "attackPath": null,
+  "vulnerabilities": [],
+  "riskSnapshot": null,
+  "availableResponseActions": [
+    {
+      "actionType": "BLOCK_SOURCE",
+      "allowedTargetTypes": [
+        "IP_ADDRESS"
+      ],
+      "description": "Block incoming traffic from a malicious external IP address",
+      "requiresApproval": true
+    },
+    {
+      "actionType": "DISABLE_SESSION",
+      "allowedTargetTypes": [
+        "USER_SESSION",
+        "SESSION_ID"
+      ],
+      "description": "Revoke an active compromised user authentication session",
+      "requiresApproval": true
+    },
+    {
+      "actionType": "ISOLATE_RESOURCE",
+      "allowedTargetTypes": [
+        "ASSET_ID"
+      ],
+      "description": "Sever network egress and ingress for a compromised asset",
+      "requiresApproval": true
+    }
+  ],
+  "assembledAt": "2026-09-24T11:11:13.999762+00:00",
+  "contextVersion": "1.0.0"
+}

@@ -1,0 +1,158 @@
+{
+  "incident": {
+    "id": "INC-2026-0303",
+    "title": "Privileged API Access With Conflicting Authorization Claims",
+    "severity": "HIGH",
+    "status": "ACTIVE",
+    "primaryAffectedAssetId": "finance-api-05",
+    "relatedAssetIds": [
+      "finance-db-05"
+    ],
+    "detectionEventIds": [],
+    "attackPathId": null,
+    "createdAt": "2026-09-24T13:00:00Z",
+    "updatedAt": "2026-09-24T13:05:00Z",
+    "summary": null
+  },
+  "evidence": [
+    {
+      "id": "EV-FIN-01",
+      "type": "TELEMETRY_EVENT",
+      "source": "IAM",
+      "timestamp": "2026-09-24T13:01:00Z",
+      "summary": "AUTH_SUCCESS, source=203.0.113.155, session=sess-fin-777",
+      "content": {
+        "ip": "203.0.113.155",
+        "session": "sess-fin-777"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-FIN-02",
+      "type": "TELEMETRY_EVENT",
+      "source": "FinanceApp",
+      "timestamp": "2026-09-24T13:02:00Z",
+      "summary": "RESOURCE_ACCESS, target=/finance/export, result=SUCCESS",
+      "content": {
+        "target": "/finance/export",
+        "result": "SUCCESS"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-FIN-03",
+      "type": "TELEMETRY_EVENT",
+      "source": "FinanceDB",
+      "timestamp": "2026-09-24T13:03:00Z",
+      "summary": "RESOURCE_ACCESS, target=finance-db-05, result=SUCCESS",
+      "content": {
+        "target": "finance-db-05",
+        "result": "SUCCESS"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-FIN-04",
+      "type": "TELEMETRY_EVENT",
+      "source": "IAM",
+      "timestamp": "2026-09-24T13:04:00Z",
+      "summary": "PRIVILEGE_CHANGE, role=FINANCE_ADMIN, result=SUCCESS",
+      "content": {
+        "role": "FINANCE_ADMIN",
+        "result": "SUCCESS"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-FIN-05",
+      "type": "CONFIG_DIFF",
+      "source": "TicketSystem",
+      "timestamp": "2026-09-24T13:00:00Z",
+      "summary": "apparent authorization",
+      "content": {
+        "change_ticket": "CHG-2026-9999",
+        "approved_by": "finance-admin",
+        "maintenance_window": "11:00-11:30"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-FIN-06",
+      "type": "TELEMETRY_EVENT",
+      "source": "ChangeAudit",
+      "timestamp": "2026-09-24T13:05:00Z",
+      "summary": "CHANGE_MANAGEMENT_AUDIT \u2014 ticket=CHG-2026-9999, status=REJECTED, approved_by=NONE",
+      "content": {
+        "change_ticket": "CHG-2026-9999",
+        "status": "REJECTED",
+        "approved_by": "NONE"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-FIN-07",
+      "type": "TELEMETRY_EVENT",
+      "source": "IdentityAudit",
+      "timestamp": "2026-09-24T13:05:10Z",
+      "summary": "IDENTITY_AUDIT \u2014 finance-service NOT authorized for FINANCE_ADMIN role assignment",
+      "content": {},
+      "verified": true
+    }
+  ],
+  "detections": [],
+  "telemetryEvents": [],
+  "assets": [
+    {
+      "id": "finance-api-05",
+      "name": "Finance API 05",
+      "type": "API",
+      "criticality": "TIER_2_MEDIUM",
+      "isPubliclyExposed": false,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    },
+    {
+      "id": "finance-db-05",
+      "name": "Finance DB 05",
+      "type": "DB",
+      "criticality": "TIER_2_MEDIUM",
+      "isPubliclyExposed": false,
+      "environmentId": null,
+      "status": "ACTIVE",
+      "metadata": {}
+    }
+  ],
+  "attackPath": null,
+  "vulnerabilities": [],
+  "riskSnapshot": null,
+  "availableResponseActions": [
+    {
+      "actionType": "BLOCK_SOURCE",
+      "allowedTargetTypes": [
+        "IP_ADDRESS"
+      ],
+      "description": "Block incoming traffic from a malicious external IP address",
+      "requiresApproval": true
+    },
+    {
+      "actionType": "DISABLE_SESSION",
+      "allowedTargetTypes": [
+        "USER_SESSION",
+        "SESSION_ID"
+      ],
+      "description": "Revoke an active compromised user authentication session",
+      "requiresApproval": true
+    },
+    {
+      "actionType": "ISOLATE_RESOURCE",
+      "allowedTargetTypes": [
+        "ASSET_ID"
+      ],
+      "description": "Sever network egress and ingress for a compromised asset",
+      "requiresApproval": true
+    }
+  ],
+  "assembledAt": "2026-09-24T10:54:56.742378+00:00",
+  "contextVersion": "1.0.0"
+}

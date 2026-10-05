@@ -1,0 +1,312 @@
+{
+  "investigationId": "inv-41ad47ad65d9",
+  "incidentId": "INC-2026-0101",
+  "contextFingerprint": "30ba63ec669fc9830c4bdd53be3dc01b0b773d69593fa7f8033822ebf1d5c9a3",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0101",
+    "status": "SUCCESS",
+    "summary": "Activity from IP 203.0.113.55 is consistent with a multi-stage web compromise and privilege escalation attack, resulting in the unauthorized access and role escalation of the devops_admin user to SUPER_ADMIN on the db-backend-01 asset.",
+    "severity": "HIGH",
+    "confidence": {
+      "score": 0.95,
+      "rationale": "The detection event DET-COMPROMISE-01 has a high confidence score based on the matched event IDs and the severity of the attack path.",
+      "evidenceCompleteness": "HIGH",
+      "limitations": [
+        "No direct evidence of the attacker's identity or external threat actor attribution is provided."
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "Failed login attempts for user devops_admin from IP 203.0.113.55 (3 attempts).",
+        "evidenceIds": [
+          "EV-AUTH-01",
+          "EV-AUTH-02",
+          "EV-AUTH-03"
+        ]
+      },
+      {
+        "statement": "Suspicious HTTP POST probe with SQLi/parameter injection from IP 203.0.113.55 to /api/v1/login?debug=true.",
+        "evidenceIds": [
+          "EV-REQ-04"
+        ]
+      },
+      {
+        "statement": "Successful authentication for user devops_admin resulting in session sess-devops-888 from IP 203.0.113.55.",
+        "evidenceIds": [
+          "EV-AUTH-05"
+        ]
+      },
+      {
+        "statement": "Session sess-devops-888 escalated role to SUPER_ADMIN and queried confidential database table on db-backend-01.",
+        "evidenceIds": [
+          "EV-PRIV-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The attacker used a compromised user account (devops_admin) to escalate privileges to SUPER_ADMIN on the db-backend-01 asset.",
+        "rationale": "The sequence of events includes failed login attempts, a suspicious probe, a successful login, and a role escalation to SUPER_ADMIN.",
+        "supportingEvidenceIds": [
+          "EV-AUTH-01",
+          "EV-AUTH-02",
+          "EV-AUTH-03",
+          "EV-REQ-04",
+          "EV-AUTH-05",
+          "EV-PRIV-06"
+        ],
+        "confidence": 0.95
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "Visibility gaps exist regarding the attacker's initial access method (e.g., whether the account was compromised via brute force or another method).",
+        "significance": "Understanding the initial access method could provide additional context for the attack.",
+        "recommendedTelemetry": "Log source for the initial authentication attempt (EV-AUTH-01, EV-AUTH-02, EV-AUTH-03)"
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "Gaining Access",
+        "timestamp": "2026-09-24T03:00:10Z",
+        "sourceEntity": "IP 203.0.113.55",
+        "targetAssetId": "web-frontend-01",
+        "description": "Failed login attempts for user devops_admin.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-AUTH-01",
+          "EV-AUTH-02",
+          "EV-AUTH-03"
+        ]
+      },
+      {
+        "stepOrder": 2,
+        "phase": "Privilege Escalation",
+        "timestamp": "2026-09-24T03:01:05Z",
+        "sourceEntity": "IP 203.0.113.55",
+        "targetAssetId": "web-frontend-01",
+        "description": "Suspicious HTTP POST probe with SQLi/parameter injection.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-REQ-04"
+        ]
+      },
+      {
+        "stepOrder": 3,
+        "phase": "Privilege Escalation",
+        "timestamp": "2026-09-24T03:01:30Z",
+        "sourceEntity": "IP 203.0.113.55",
+        "targetAssetId": "web-frontend-01",
+        "description": "Successful authentication for user devops_admin resulting in session sess-devops-888.",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-AUTH-05"
+        ]
+      },
+      {
+        "stepOrder": 4,
+        "phase": "Privilege Escalation",
+        "timestamp": "2026-09-24T03:02:15Z",
+        "sourceEntity": "IP 203.0.113.55",
+        "targetAssetId": "db-backend-01",
+        "description": "Session sess-devops-888 escalated role to SUPER_ADMIN and queried confidential database table.",
+        "isAttemptOnly": false,
+        "evidenceIds": [
+          "EV-PRIV-06"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "web-frontend-01",
+      "db-backend-01"
+    ],
+    "citedEvidenceIds": [
+      "EV-AUTH-01",
+      "EV-AUTH-02",
+      "EV-AUTH-03",
+      "EV-REQ-04",
+      "EV-AUTH-05",
+      "EV-PRIV-06",
+      "DET-COMPROMISE-01"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "BLOCK_SOURCE",
+        "targetIdentifier": "203.0.113.55",
+        "targetType": "IP_ADDRESS",
+        "rationale": "Block incoming traffic from the attacker's IP address to prevent further unauthorized access.",
+        "confidence": 0.95,
+        "expectedImpact": "Containment of the attack by preventing the attacker from further exploiting the compromised user account.",
+        "supportingEvidenceIds": [
+          "EV-AUTH-01",
+          "EV-AUTH-02",
+          "EV-AUTH-03",
+          "EV-REQ-04",
+          "EV-AUTH-05",
+          "EV-PRIV-06"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T00:32:42.049145+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "CONSISTENT_WITH_THREAT"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0101",
+    "title": "Multi-Stage Web Compromise & Privilege Escalation",
+    "summary": "Activity from IP 203.0.113.55 is consistent with a multi-stage web compromise and privilege escalation attack, resulting in the unauthorized access and role escalation of the devops_admin user to SUPER_ADMIN on the db-backend-01 asset.",
+    "severity": "HIGH",
+    "confidence": 0.95,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T03:00:10Z",
+        "phase": "Gaining Access",
+        "description": "Failed login attempts for user devops_admin.",
+        "affectedAssetIds": [
+          "web-frontend-01"
+        ],
+        "evidenceIds": [
+          "EV-AUTH-01",
+          "EV-AUTH-02",
+          "EV-AUTH-03"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 2,
+        "timestamp": "2026-09-24T03:01:05Z",
+        "phase": "Privilege Escalation",
+        "description": "Suspicious HTTP POST probe with SQLi/parameter injection.",
+        "affectedAssetIds": [
+          "web-frontend-01"
+        ],
+        "evidenceIds": [
+          "EV-REQ-04"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 3,
+        "timestamp": "2026-09-24T03:01:30Z",
+        "phase": "Privilege Escalation",
+        "description": "Successful authentication for user devops_admin resulting in session sess-devops-888.",
+        "affectedAssetIds": [
+          "web-frontend-01"
+        ],
+        "evidenceIds": [
+          "EV-AUTH-05"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 4,
+        "timestamp": "2026-09-24T03:02:15Z",
+        "phase": "Privilege Escalation",
+        "description": "Session sess-devops-888 escalated role to SUPER_ADMIN and queried confidential database table.",
+        "affectedAssetIds": [
+          "db-backend-01"
+        ],
+        "evidenceIds": [
+          "EV-PRIV-06"
+        ],
+        "isAttemptOnly": false
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "Failed login attempts for user devops_admin from IP 203.0.113.55 (3 attempts).",
+        "evidenceIds": [
+          "EV-AUTH-01",
+          "EV-AUTH-02",
+          "EV-AUTH-03"
+        ]
+      },
+      {
+        "statement": "Suspicious HTTP POST probe with SQLi/parameter injection from IP 203.0.113.55 to /api/v1/login?debug=true.",
+        "evidenceIds": [
+          "EV-REQ-04"
+        ]
+      },
+      {
+        "statement": "Successful authentication for user devops_admin resulting in session sess-devops-888 from IP 203.0.113.55.",
+        "evidenceIds": [
+          "EV-AUTH-05"
+        ]
+      },
+      {
+        "statement": "Session sess-devops-888 escalated role to SUPER_ADMIN and queried confidential database table on db-backend-01.",
+        "evidenceIds": [
+          "EV-PRIV-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The attacker used a compromised user account (devops_admin) to escalate privileges to SUPER_ADMIN on the db-backend-01 asset.",
+        "rationale": "The sequence of events includes failed login attempts, a suspicious probe, a successful login, and a role escalation to SUPER_ADMIN.",
+        "supportingEvidenceIds": [
+          "EV-AUTH-01",
+          "EV-AUTH-02",
+          "EV-AUTH-03",
+          "EV-REQ-04",
+          "EV-AUTH-05",
+          "EV-PRIV-06"
+        ],
+        "confidence": 0.95
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "Visibility gaps exist regarding the attacker's initial access method (e.g., whether the account was compromised via brute force or another method).",
+        "significance": "Understanding the initial access method could provide additional context for the attack.",
+        "recommendedTelemetry": "Log source for the initial authentication attempt (EV-AUTH-01, EV-AUTH-02, EV-AUTH-03)"
+      }
+    ],
+    "uncertainty": "Visibility gaps exist regarding the attacker's initial access method (e.g., whether the account was compromised via brute force or another method). No direct evidence of the attacker's identity or external threat actor attribution is provided. Successful compromise or data exfiltration is not established by the supplied evidence.",
+    "affectedAssetIds": [
+      "web-frontend-01",
+      "db-backend-01"
+    ],
+    "citedEvidenceIds": [
+      "EV-AUTH-01",
+      "EV-AUTH-02",
+      "EV-AUTH-03",
+      "EV-AUTH-05",
+      "EV-PRIV-06",
+      "EV-REQ-04"
+    ],
+    "generatedAt": "2026-09-24T00:32:42.049764+00:00",
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "CONSISTENT_WITH_THREAT"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "BLOCK_SOURCE",
+      "targetIdentifier": "203.0.113.55",
+      "targetType": "IP_ADDRESS",
+      "rationale": "Block incoming traffic from the attacker's IP address to prevent further unauthorized access.",
+      "confidence": 0.95,
+      "expectedImpact": "Containment of the attack by preventing the attacker from further exploiting the compromised user account.",
+      "supportingEvidenceIds": [
+        "EV-AUTH-01",
+        "EV-AUTH-02",
+        "EV-AUTH-03",
+        "EV-REQ-04",
+        "EV-AUTH-05",
+        "EV-PRIV-06"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T00:32:42.049942+00:00",
+  "executionDurationMs": 131008.51
+}

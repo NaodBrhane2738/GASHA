@@ -1,0 +1,93 @@
+{
+  "incidentId": "INC-2026-0203",
+  "status": "SUCCESS",
+  "summary": "Activity from IP 203.0.113.88 is inconsistent, with one event showing access denied and another showing login success. This suggests an attempt to authenticate but was denied.",
+  "severity": "HIGH",
+  "confidence": {
+    "score": 0.85,
+    "rationale": "The evidence IDs EV-1 and EV-2 provide clear and conflicting information, indicating an attempt to authenticate but being denied.",
+    "evidenceCompleteness": "HIGH",
+    "limitations": [
+      "No direct evidence of successful unauthorized access or data exfiltration"
+    ]
+  },
+  "observedFacts": [
+    {
+      "statement": "Access attempt from IP 203.0.113.88 was denied (EV-1)",
+      "evidenceIds": [
+        "EV-1"
+      ]
+    },
+    {
+      "statement": "Access attempt from IP 203.0.113.88 was successful (EV-2)",
+      "evidenceIds": [
+        "EV-2"
+      ]
+    }
+  ],
+  "inferences": [
+    {
+      "statement": "Activity from IP 203.0.113.88 is consistent with an attempt to authenticate but being denied.",
+      "rationale": "The two events (EV-1 and EV-2) show conflicting outcomes for the same IP address, suggesting an attempt to authenticate but being denied.",
+      "supportingEvidenceIds": [
+        "EV-1",
+        "EV-2"
+      ],
+      "confidence": 0.85
+    }
+  ],
+  "unknowns": [
+    {
+      "statement": "The exact outcome of the authentication attempt (success or failure) is unknown.",
+      "significance": "Determining whether the attempt was successful or denied is crucial for understanding the nature of the threat.",
+      "recommendedTelemetry": "Additional audit logs from the application and database to confirm the authentication attempt and its outcome."
+    },
+    {
+      "statement": "Contradicting evidence detected for global.",
+      "significance": "Contradicting evidence for global: Some sources claim success while others claim failure/denial.",
+      "recommendedTelemetry": "Manual review of sources required."
+    }
+  ],
+  "attackProgression": [
+    {
+      "stepOrder": 1,
+      "phase": "PROBING",
+      "timestamp": "now",
+      "sourceEntity": "203.0.113.88",
+      "targetAssetId": "asset-1",
+      "description": "Probe attempt to access server asset-1",
+      "isAttemptOnly": true,
+      "evidenceIds": [
+        "EV-1",
+        "EV-2"
+      ]
+    }
+  ],
+  "affectedAssetIds": [
+    "asset-1"
+  ],
+  "citedEvidenceIds": [
+    "EV-1",
+    "EV-2"
+  ],
+  "recommendedActions": [
+    {
+      "id": "rec-1",
+      "actionType": "BLOCK_SOURCE",
+      "targetIdentifier": "203.0.113.88",
+      "targetType": "IP_ADDRESS",
+      "rationale": "Block the IP address 203.0.113.88 to prevent further unauthorized access attempts.",
+      "confidence": 0.85,
+      "expectedImpact": "Prevent further unauthorized access attempts from this IP address.",
+      "supportingEvidenceIds": [
+        "EV-1",
+        "EV-2"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T10:42:48.760501+00:00",
+  "errorMessage": null,
+  "compromiseAssessment": "ATTEMPT_ONLY",
+  "attributionAssessment": "UNCONFIRMED"
+}

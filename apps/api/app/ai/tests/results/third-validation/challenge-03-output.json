@@ -1,0 +1,72 @@
+{
+  "investigationId": "inv-8fa7bbf0af9c",
+  "incidentId": "INC-2026-0303",
+  "contextFingerprint": "873a9898a6cd3118ee08bc42d56a9f4d8d7500afde6db0ec0b17a14f1233bea8",
+  "model": "qwen2.5:3b",
+  "status": "UNAVAILABLE",
+  "isFallback": true,
+  "result": {
+    "incidentId": "INC-2026-0303",
+    "status": "UNAVAILABLE",
+    "summary": "Automated AI investigation unavailable (UNAVAILABLE). Fallback summary derived from 0 deterministic detection(s).",
+    "severity": "HIGH",
+    "confidence": {
+      "score": 0.0,
+      "rationale": "Fallback result generated deterministically due to: AI provider request timed out: Ollama request timed out after 300.0s: ",
+      "evidenceCompleteness": "INSUFFICIENT",
+      "limitations": [
+        "AI provider request timed out: Ollama request timed out after 300.0s: ",
+        "Analysis was generated without LLM cognitive synthesis."
+      ]
+    },
+    "observedFacts": [],
+    "inferences": [],
+    "unknowns": [
+      {
+        "statement": "Detailed attack narrative and root-cause analysis unavailable due to AI fallback.",
+        "significance": "Manual analyst review required to reconstruct full attack progression.",
+        "recommendedTelemetry": null
+      }
+    ],
+    "attackProgression": [],
+    "affectedAssetIds": [
+      "finance-api-05",
+      "finance-db-05"
+    ],
+    "citedEvidenceIds": [],
+    "recommendedActions": [],
+    "generatedAt": "2026-09-24T10:59:57.441562+00:00",
+    "errorMessage": "AI provider request timed out: Ollama request timed out after 300.0s: ",
+    "compromiseAssessment": "NOT_ESTABLISHED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0303",
+    "title": "Incident Story: Privileged API Access With Conflicting Authorization Claims",
+    "summary": "Deterministic fallback story for incident INC-2026-0303. Observed 0 stage(s) derived directly from verified detections and telemetry.",
+    "severity": "HIGH",
+    "confidence": 0.0,
+    "stages": [],
+    "observedFacts": [],
+    "inferences": [],
+    "unknowns": [
+      {
+        "statement": "Cognitive root-cause synthesis and intermediate lateral movement unobserved.",
+        "significance": "Determines whether attacker established persistence.",
+        "recommendedTelemetry": null
+      }
+    ],
+    "uncertainty": "Detailed attack narrative and root-cause analysis generated via deterministic fallback due to: AI provider request timed out: Ollama request timed out after 300.0s: . Analysis was generated without LLM cognitive synthesis. Manual analyst review required to reconstruct unobserved intermediate stages.",
+    "affectedAssetIds": [
+      "finance-db-05",
+      "finance-api-05"
+    ],
+    "citedEvidenceIds": [],
+    "generatedAt": "2026-09-24T10:59:57.444194+00:00",
+    "compromiseAssessment": "NOT_ESTABLISHED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "recommendations": [],
+  "generatedAt": "2026-09-24T10:59:57.444340+00:00",
+  "executionDurationMs": 300700.57
+}

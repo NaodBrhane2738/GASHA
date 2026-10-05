@@ -1,0 +1,234 @@
+{
+  "investigationId": "inv-4efb405d0936",
+  "incidentId": "INC-2026-0201",
+  "contextFingerprint": "e61229a9772a94fa52d7fbe3f1b9f0a857b8067ec7e0f72594af2a079693256e",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0201",
+    "status": "SUCCESS",
+    "summary": "Off-hours administrative activity during approved maintenance window CHG-2026-0892 by ops-admin. The activity was consistent with the approved change and maintenance window.",
+    "severity": "LOW",
+    "confidence": {
+      "score": 0.5,
+      "rationale": "The detection event DET-MAINT-01 has a confidence score of 0.5, based on the matched events EV-AUTH-02, EV-CONF-04, and EV-SRV-05.",
+      "evidenceCompleteness": "MODERATE",
+      "limitations": [
+        "No direct evidence of unauthorized access or data exfiltration"
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "Approved change ticket CHG-2026-0892 scheduled for web-admin-01 (window: 02:00-02:15 UTC, engineer: ops-admin)",
+        "evidenceIds": [
+          "EV-CHG-01"
+        ]
+      },
+      {
+        "statement": "Successful SSH authentication for user ops-admin from internal bastion IP 10.10.20.15 (session sess-admin-901)",
+        "evidenceIds": [
+          "EV-AUTH-02"
+        ]
+      },
+      {
+        "statement": "Configuration reads on web-admin-01: /etc/nginx/nginx.conf and /app/config.json by ops-admin (sess-admin-901)",
+        "evidenceIds": [
+          "EV-CONF-03"
+        ]
+      },
+      {
+        "statement": "Privileged configuration modification to /etc/nginx/nginx.conf (updated worker processes & TLS ciphers) by ops-admin",
+        "evidenceIds": [
+          "EV-CONF-04"
+        ]
+      },
+      {
+        "statement": "Graceful service reload issued for nginx daemon on web-admin-01 by ops-admin",
+        "evidenceIds": [
+          "EV-SRV-05"
+        ]
+      },
+      {
+        "statement": "Automated health check GET /api/health returned HTTP 200 OK (all internal checks passing)",
+        "evidenceIds": [
+          "EV-HLT-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "Activity from IP 10.10.20.15 is consistent with the approved maintenance window and change ticket CHG-2026-0892.",
+        "rationale": "The successful SSH authentication and configuration modifications observed are consistent with the approved maintenance window and change ticket.",
+        "supportingEvidenceIds": [
+          "EV-AUTH-02",
+          "EV-CONF-04",
+          "EV-SRV-05"
+        ],
+        "confidence": 0.8
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "Visibility into the internal bastion IP and the specific user session (sess-admin-901) is limited to the provided telemetry.",
+        "significance": "Understanding the specific user session and the internal bastion IP could provide additional context for the activity.",
+        "recommendedTelemetry": "Log source: probe.auth for more detailed session information."
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "PRE-EXPLOITATION",
+        "timestamp": "2026-09-24T02:05:30Z",
+        "sourceEntity": "ops-admin (sess-admin-901)",
+        "targetAssetId": "web-admin-01",
+        "description": "Privileged configuration modification to /etc/nginx/nginx.conf by ops-admin (sess-admin-901)",
+        "isAttemptOnly": false,
+        "evidenceIds": [
+          "EV-CONF-04"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "web-admin-01"
+    ],
+    "citedEvidenceIds": [
+      "EV-CHG-01",
+      "EV-AUTH-02",
+      "EV-CONF-03",
+      "EV-CONF-04",
+      "EV-SRV-05",
+      "EV-HLT-06"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "ISOLATE_RESOURCE",
+        "targetIdentifier": "web-admin-01",
+        "targetType": "ASSET_ID",
+        "rationale": "The activity was consistent with the approved maintenance window and change ticket, but no direct evidence of unauthorized access or data exfiltration.",
+        "confidence": 0.8,
+        "expectedImpact": "Containment of the asset to prevent any potential further unauthorized activity.",
+        "supportingEvidenceIds": [
+          "EV-CONF-04"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T00:43:44.582790+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0201",
+    "title": "Scheduled Administrative Maintenance",
+    "summary": "Off-hours administrative activity during approved maintenance window CHG-2026-0892 by ops-admin. The activity was consistent with the approved change and maintenance window.",
+    "severity": "LOW",
+    "confidence": 0.5,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T02:05:30Z",
+        "phase": "PRE-EXPLOITATION",
+        "description": "Privileged configuration modification to /etc/nginx/nginx.conf by ops-admin (sess-admin-901)",
+        "affectedAssetIds": [
+          "web-admin-01"
+        ],
+        "evidenceIds": [
+          "EV-CONF-04"
+        ],
+        "isAttemptOnly": false
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "Approved change ticket CHG-2026-0892 scheduled for web-admin-01 (window: 02:00-02:15 UTC, engineer: ops-admin)",
+        "evidenceIds": [
+          "EV-CHG-01"
+        ]
+      },
+      {
+        "statement": "Successful SSH authentication for user ops-admin from internal bastion IP 10.10.20.15 (session sess-admin-901)",
+        "evidenceIds": [
+          "EV-AUTH-02"
+        ]
+      },
+      {
+        "statement": "Configuration reads on web-admin-01: /etc/nginx/nginx.conf and /app/config.json by ops-admin (sess-admin-901)",
+        "evidenceIds": [
+          "EV-CONF-03"
+        ]
+      },
+      {
+        "statement": "Privileged configuration modification to /etc/nginx/nginx.conf (updated worker processes & TLS ciphers) by ops-admin",
+        "evidenceIds": [
+          "EV-CONF-04"
+        ]
+      },
+      {
+        "statement": "Graceful service reload issued for nginx daemon on web-admin-01 by ops-admin",
+        "evidenceIds": [
+          "EV-SRV-05"
+        ]
+      },
+      {
+        "statement": "Automated health check GET /api/health returned HTTP 200 OK (all internal checks passing)",
+        "evidenceIds": [
+          "EV-HLT-06"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "Activity from IP 10.10.20.15 is consistent with the approved maintenance window and change ticket CHG-2026-0892.",
+        "rationale": "The successful SSH authentication and configuration modifications observed are consistent with the approved maintenance window and change ticket.",
+        "supportingEvidenceIds": [
+          "EV-AUTH-02",
+          "EV-CONF-04",
+          "EV-SRV-05"
+        ],
+        "confidence": 0.8
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "Visibility into the internal bastion IP and the specific user session (sess-admin-901) is limited to the provided telemetry.",
+        "significance": "Understanding the specific user session and the internal bastion IP could provide additional context for the activity.",
+        "recommendedTelemetry": "Log source: probe.auth for more detailed session information."
+      }
+    ],
+    "uncertainty": "Visibility into the internal bastion IP and the specific user session (sess-admin-901) is limited to the provided telemetry. No direct evidence of unauthorized access or data exfiltration. Successful compromise or data exfiltration is not established by the supplied evidence.",
+    "affectedAssetIds": [
+      "web-admin-01"
+    ],
+    "citedEvidenceIds": [
+      "EV-AUTH-02",
+      "EV-CHG-01",
+      "EV-CONF-03",
+      "EV-CONF-04",
+      "EV-HLT-06",
+      "EV-SRV-05"
+    ],
+    "generatedAt": "2026-09-24T00:43:44.583450+00:00",
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "ISOLATE_RESOURCE",
+      "targetIdentifier": "web-admin-01",
+      "targetType": "ASSET_ID",
+      "rationale": "The activity was consistent with the approved maintenance window and change ticket, but no direct evidence of unauthorized access or data exfiltration.",
+      "confidence": 0.8,
+      "expectedImpact": "Containment of the asset to prevent any potential further unauthorized activity.",
+      "supportingEvidenceIds": [
+        "EV-CONF-04"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T00:43:44.583629+00:00",
+  "executionDurationMs": 74499.2
+}

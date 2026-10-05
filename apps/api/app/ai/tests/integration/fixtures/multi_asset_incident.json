@@ -1,0 +1,136 @@
+{
+  "contextVersion": "1.0.0",
+  "incident": {
+    "id": "INC-PROD-106",
+    "title": "Lateral Movement Across Multi-Tier Infrastructure",
+    "severity": "CRITICAL",
+    "status": "INVESTIGATING",
+    "primaryAffectedAssetId": "srv-web-frontend",
+    "relatedAssetIds": ["srv-app-middleware", "db-financial-cluster"],
+    "detectionEventIds": ["DET-LAT-01", "DET-LAT-02"],
+    "attackPathId": "PATH-MULTI-01",
+    "createdAt": "2026-09-24T02:50:00Z",
+    "updatedAt": "2026-09-24T02:55:00Z",
+    "summary": "Attacker compromised web frontend, pivoted through middleware API, and attempted SQL extraction on financial DB."
+  },
+  "evidence": [
+    {
+      "id": "EV-MULTI-01",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.web_frontend",
+      "timestamp": "2026-09-24T02:50:30Z",
+      "summary": "Exploitation of web app leading to reverse shell from 198.51.100.15",
+      "content": {
+        "sourceIp": "198.51.100.15",
+        "action": "RCE_PAYLOAD"
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-MULTI-02",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.middleware",
+      "timestamp": "2026-09-24T02:52:00Z",
+      "summary": "Internal lateral connection from srv-web-frontend to srv-app-middleware on port 8080",
+      "content": {
+        "sourceAsset": "srv-web-frontend",
+        "targetAsset": "srv-app-middleware",
+        "port": 8080
+      },
+      "verified": true
+    },
+    {
+      "id": "EV-MULTI-03",
+      "type": "TELEMETRY_EVENT",
+      "source": "probe.db_proxy",
+      "timestamp": "2026-09-24T02:53:30Z",
+      "summary": "Unauthorized connection from srv-app-middleware to db-financial-cluster",
+      "content": {
+        "sourceAsset": "srv-app-middleware",
+        "targetAsset": "db-financial-cluster",
+        "query": "SELECT * FROM ledgers"
+      },
+      "verified": true
+    }
+  ],
+  "detections": [
+    {
+      "id": "DET-LAT-01",
+      "ruleId": "RULE-LAT-001",
+      "ruleName": "Suspicious East-West Traffic Pattern",
+      "description": "Anomalous lateral API invocation",
+      "severity": "HIGH",
+      "confidence": 0.90,
+      "matchedEventIds": ["EV-MULTI-02"],
+      "primaryAssetId": "srv-app-middleware",
+      "timestamp": "2026-09-24T02:52:10Z",
+      "evidenceSummary": "Lateral network connection detected."
+    },
+    {
+      "id": "DET-LAT-02",
+      "ruleId": "RULE-DB-008",
+      "ruleName": "Financial Ledger Extraction Attempt",
+      "description": "Sensitive ledger query from non-whitelisted service account",
+      "severity": "CRITICAL",
+      "confidence": 0.95,
+      "matchedEventIds": ["EV-MULTI-03"],
+      "primaryAssetId": "db-financial-cluster",
+      "timestamp": "2026-09-24T02:53:40Z",
+      "evidenceSummary": "Critical ledger query detected."
+    }
+  ],
+  "assets": [
+    {
+      "id": "srv-web-frontend",
+      "name": "Public Web Frontend",
+      "type": "WEB_SERVER",
+      "criticality": "TIER_2_MEDIUM",
+      "isPubliclyExposed": true
+    },
+    {
+      "id": "srv-app-middleware",
+      "name": "Application Middleware",
+      "type": "APP_SERVER",
+      "criticality": "TIER_2_MEDIUM",
+      "isPubliclyExposed": false
+    },
+    {
+      "id": "db-financial-cluster",
+      "name": "Core Financial Database",
+      "type": "DATABASE",
+      "criticality": "TIER_1_CRITICAL",
+      "isPubliclyExposed": false
+    }
+  ],
+  "attackPath": {
+    "id": "PATH-MULTI-01",
+    "entryPointAssetId": "srv-web-frontend",
+    "targetAssetId": "db-financial-cluster",
+    "severity": "CRITICAL",
+    "pathScore": 0.98,
+    "nodes": [
+      {
+        "stepOrder": 1,
+        "assetId": "srv-web-frontend",
+        "assetName": "Public Web Frontend",
+        "assetType": "WEB_SERVER",
+        "description": "Initial foothold via web vulnerability."
+      },
+      {
+        "stepOrder": 2,
+        "assetId": "srv-app-middleware",
+        "assetName": "Application Middleware",
+        "assetType": "APP_SERVER",
+        "description": "Lateral API traversal."
+      },
+      {
+        "stepOrder": 3,
+        "assetId": "db-financial-cluster",
+        "assetName": "Core Financial Database",
+        "assetType": "DATABASE",
+        "description": "Direct financial ledger extraction."
+      }
+    ],
+    "isActive": true
+  }
+}

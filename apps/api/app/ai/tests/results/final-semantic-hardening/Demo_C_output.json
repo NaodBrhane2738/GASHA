@@ -1,0 +1,59 @@
+{
+  "incidentId": "INC-2026-C",
+  "status": "INSUFFICIENT_EVIDENCE",
+  "summary": "The incident lacks sufficient evidence to determine the nature of the security event. The presence of conflicting telemetry events suggests a compromised host, but the telemetry does not provide clear evidence of successful unauthorized access or data exfiltration.",
+  "severity": "HIGH",
+  "confidence": {
+    "score": 0.6,
+    "rationale": "The presence of conflicting telemetry events (host compromised vs. host healthy) indicates a high likelihood of a security event, but the lack of clear evidence of unauthorized access or data exfiltration limits the confidence.",
+    "evidenceCompleteness": "MODERATE",
+    "limitations": [
+      "Insufficient telemetry events to definitively determine the nature of the security event."
+    ]
+  },
+  "observedFacts": [
+    {
+      "statement": "A telemetry event indicates a compromised host, malware detected.",
+      "evidenceIds": [
+        "EV-C-1"
+      ]
+    },
+    {
+      "statement": "A telemetry event indicates the host is healthy, no changes detected.",
+      "evidenceIds": [
+        "EV-C-2"
+      ]
+    }
+  ],
+  "inferences": [
+    {
+      "statement": "The telemetry events are conflicting, suggesting a compromised host.",
+      "rationale": "The presence of both a telemetry event indicating a compromised host and a telemetry event indicating the host is healthy, with no changes detected, indicates a potential security event.",
+      "supportingEvidenceIds": [
+        "EV-C-1",
+        "EV-C-2"
+      ],
+      "confidence": 0.7
+    }
+  ],
+  "unknowns": [
+    {
+      "statement": "The telemetry events do not provide clear evidence of successful unauthorized access or data exfiltration.",
+      "significance": "The lack of clear evidence of unauthorized access or data exfiltration limits the ability to determine the nature of the security event.",
+      "recommendedTelemetry": "Additional telemetry events to confirm the nature of the security event."
+    }
+  ],
+  "attackProgression": [],
+  "affectedAssetIds": [
+    "asset-1"
+  ],
+  "citedEvidenceIds": [
+    "EV-C-1",
+    "EV-C-2"
+  ],
+  "recommendedActions": [],
+  "generatedAt": "2026-09-24T10:45:44.415236+00:00",
+  "errorMessage": null,
+  "compromiseAssessment": "NOT_ESTABLISHED",
+  "attributionAssessment": "UNCONFIRMED"
+}

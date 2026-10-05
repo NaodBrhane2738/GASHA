@@ -1,0 +1,34 @@
+{
+  "incidentId": "INC-2026-0201",
+  "status": "INVALID",
+  "summary": "Automated AI investigation unavailable (INVALID). Fallback summary derived from 0 deterministic detection(s).",
+  "severity": "HIGH",
+  "confidence": {
+    "score": 0.3,
+    "rationale": "Fallback result generated deterministically due to: Evidence grounding validation failed: Recommendation ISOLATE_RESOURCE rejected: Context indicates authorized maintenance without verified compromise.",
+    "evidenceCompleteness": "INSUFFICIENT",
+    "limitations": [
+      "Evidence grounding validation failed: Recommendation ISOLATE_RESOURCE rejected: Context indicates authorized maintenance without verified compromise.",
+      "Analysis was generated without LLM cognitive synthesis."
+    ]
+  },
+  "observedFacts": [],
+  "inferences": [],
+  "unknowns": [
+    {
+      "statement": "Detailed attack narrative and root-cause analysis unavailable due to AI fallback.",
+      "significance": "Manual analyst review required to reconstruct full attack progression.",
+      "recommendedTelemetry": null
+    }
+  ],
+  "attackProgression": [],
+  "affectedAssetIds": [
+    "asset-1"
+  ],
+  "citedEvidenceIds": [],
+  "recommendedActions": [],
+  "generatedAt": "2026-09-24T10:41:02.079466+00:00",
+  "errorMessage": "Evidence grounding validation failed: Recommendation ISOLATE_RESOURCE rejected: Context indicates authorized maintenance without verified compromise.",
+  "compromiseAssessment": "NOT_ESTABLISHED",
+  "attributionAssessment": "UNCONFIRMED"
+}

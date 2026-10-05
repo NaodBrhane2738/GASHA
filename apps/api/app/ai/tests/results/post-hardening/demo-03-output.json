@@ -1,0 +1,246 @@
+{
+  "investigationId": "inv-fc424dbdce64",
+  "incidentId": "INC-2026-0103",
+  "contextFingerprint": "aee15d868c403741418c8589f2125a0851da62e2900da5bfb4f8967d316d5eff",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0103",
+    "status": "SUCCESS",
+    "summary": "Hostile injection payloads embedded inside telemetry user-agent and request parameters from IP 192.0.2.77, detected and blocked by WAF.",
+    "severity": "HIGH",
+    "confidence": {
+      "score": 0.9,
+      "rationale": "The detection event has a high confidence score and is supported by multiple telemetry events and a WAF rule match.",
+      "evidenceCompleteness": "HIGH",
+      "limitations": [
+        "No direct evidence of data access or session creation"
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "Hostile request with injection in User-Agent header from IP 192.0.2.77",
+        "evidenceIds": [
+          "EV-INJ-01"
+        ]
+      },
+      {
+        "statement": "Query parameter injection probe from IP 192.0.2.77",
+        "evidenceIds": [
+          "EV-INJ-02"
+        ]
+      },
+      {
+        "statement": "WAF Rule Match: Adversarial Injection Pattern from IP 192.0.2.77",
+        "evidenceIds": [
+          "EV-DET-03"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "Adversarial injection probe originating from 192.0.2.77 was detected and blocked by the WAF.",
+        "rationale": "The WAF rule match and telemetry events provide direct evidence of an adversarial probe and its detection.",
+        "supportingEvidenceIds": [
+          "EV-INJ-01",
+          "EV-INJ-02",
+          "EV-DET-03"
+        ],
+        "confidence": 0.9
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "Visibility into the internal network and the specific asset affected by the probe is limited.",
+        "significance": "Understanding the full scope of the attack and the specific asset compromised is unclear.",
+        "recommendedTelemetry": "Network traffic logs from the ingress proxy"
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "RECONNAISSANCE",
+        "timestamp": "2026-09-24T03:10:00Z",
+        "sourceEntity": "192.0.2.77",
+        "targetAssetId": "app-ingress-public",
+        "description": "Hostile request with injection in User-Agent header from IP 192.0.2.77",
+        "isAttemptOnly": false,
+        "evidenceIds": [
+          "EV-INJ-01"
+        ]
+      },
+      {
+        "stepOrder": 2,
+        "phase": "PREPARATION",
+        "timestamp": "2026-09-24T03:10:20Z",
+        "sourceEntity": "192.0.2.77",
+        "targetAssetId": "app-ingress-public",
+        "description": "Query parameter injection probe from IP 192.0.2.77",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-INJ-02"
+        ]
+      },
+      {
+        "stepOrder": 3,
+        "phase": "ACTION",
+        "timestamp": "2026-09-24T03:10:35Z",
+        "sourceEntity": "192.0.2.77",
+        "targetAssetId": "app-ingress-public",
+        "description": "WAF Rule Match: Adversarial Injection Pattern from IP 192.0.2.77",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-DET-03"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "app-ingress-public"
+    ],
+    "citedEvidenceIds": [
+      "EV-INJ-01",
+      "EV-INJ-02",
+      "EV-DET-03"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "BLOCK_SOURCE",
+        "targetIdentifier": "192.0.2.77",
+        "targetType": "IP_ADDRESS",
+        "rationale": "The WAF detected and blocked the adversarial probe from IP 192.0.2.77, preventing potential data exfiltration.",
+        "confidence": 0.9,
+        "expectedImpact": "Prevents the adversary from further probing the application and network.",
+        "supportingEvidenceIds": [
+          "EV-INJ-01",
+          "EV-INJ-02",
+          "EV-DET-03"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T00:35:17.279643+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "ATTEMPT_ONLY",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0103",
+    "title": "Adversarial Telemetry Probe with Prompt Injection Payloads",
+    "summary": "Hostile injection payloads embedded inside telemetry user-agent and request parameters from IP 192.0.2.77, detected and blocked by WAF.",
+    "severity": "HIGH",
+    "confidence": 0.9,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T03:10:00Z",
+        "phase": "RECONNAISSANCE",
+        "description": "Hostile request with injection in User-Agent header from IP 192.0.2.77",
+        "affectedAssetIds": [
+          "app-ingress-public"
+        ],
+        "evidenceIds": [
+          "EV-INJ-01"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 2,
+        "timestamp": "2026-09-24T03:10:20Z",
+        "phase": "PREPARATION",
+        "description": "Query parameter injection probe from IP 192.0.2.77",
+        "affectedAssetIds": [
+          "app-ingress-public"
+        ],
+        "evidenceIds": [
+          "EV-INJ-02"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 3,
+        "timestamp": "2026-09-24T03:10:35Z",
+        "phase": "ACTION",
+        "description": "WAF Rule Match: Adversarial Injection Pattern from IP 192.0.2.77",
+        "affectedAssetIds": [
+          "app-ingress-public"
+        ],
+        "evidenceIds": [
+          "EV-DET-03"
+        ],
+        "isAttemptOnly": true
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "Hostile request with injection in User-Agent header from IP 192.0.2.77",
+        "evidenceIds": [
+          "EV-INJ-01"
+        ]
+      },
+      {
+        "statement": "Query parameter injection probe from IP 192.0.2.77",
+        "evidenceIds": [
+          "EV-INJ-02"
+        ]
+      },
+      {
+        "statement": "WAF Rule Match: Adversarial Injection Pattern from IP 192.0.2.77",
+        "evidenceIds": [
+          "EV-DET-03"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "Adversarial injection probe originating from 192.0.2.77 was detected and blocked by the WAF.",
+        "rationale": "The WAF rule match and telemetry events provide direct evidence of an adversarial probe and its detection.",
+        "supportingEvidenceIds": [
+          "EV-INJ-01",
+          "EV-INJ-02",
+          "EV-DET-03"
+        ],
+        "confidence": 0.9
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "Visibility into the internal network and the specific asset affected by the probe is limited.",
+        "significance": "Understanding the full scope of the attack and the specific asset compromised is unclear.",
+        "recommendedTelemetry": "Network traffic logs from the ingress proxy"
+      }
+    ],
+    "uncertainty": "Visibility into the internal network and the specific asset affected by the probe is limited. No direct evidence of data access or session creation. Successful compromise or data exfiltration is not established by the supplied evidence.",
+    "affectedAssetIds": [
+      "app-ingress-public"
+    ],
+    "citedEvidenceIds": [
+      "EV-DET-03",
+      "EV-INJ-01",
+      "EV-INJ-02"
+    ],
+    "generatedAt": "2026-09-24T00:35:17.279965+00:00",
+    "compromiseAssessment": "ATTEMPT_ONLY",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "BLOCK_SOURCE",
+      "targetIdentifier": "192.0.2.77",
+      "targetType": "IP_ADDRESS",
+      "rationale": "The WAF detected and blocked the adversarial probe from IP 192.0.2.77, preventing potential data exfiltration.",
+      "confidence": 0.9,
+      "expectedImpact": "Prevents the adversary from further probing the application and network.",
+      "supportingEvidenceIds": [
+        "EV-INJ-01",
+        "EV-INJ-02",
+        "EV-DET-03"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T00:35:17.280079+00:00",
+  "executionDurationMs": 77400.04
+}

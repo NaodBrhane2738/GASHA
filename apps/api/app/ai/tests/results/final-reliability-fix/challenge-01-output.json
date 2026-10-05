@@ -1,0 +1,367 @@
+{
+  "investigationId": "inv-a0b71201e199",
+  "incidentId": "INC-2026-0301",
+  "contextFingerprint": "b3f516d2ea69c21b560669f4fe30a90d09801ae6b567ec597c83e714ad4daa92",
+  "model": "qwen2.5:3b",
+  "status": "COMPLETED",
+  "isFallback": false,
+  "result": {
+    "incidentId": "INC-2026-0301",
+    "status": "SUCCESS",
+    "summary": "An unauthorized user attempted to authenticate and access privileged resources, but was denied. The user then attempted to access a restricted resource, which was also denied. The incident involves a compromised session and a potential lateral movement attempt.",
+    "severity": "HIGH",
+    "confidence": {
+      "score": 0.95,
+      "rationale": "The incident is supported by multiple telemetry events and verified audit logs, providing a strong basis for the analysis.",
+      "evidenceCompleteness": "HIGH",
+      "limitations": [
+        "No direct evidence of successful lateral movement or data exfiltration",
+        "Temporal anomaly detected: RESOURCE_ACCESS_BEFORE_AUTH",
+        "Contradictory evidence: SUCCESS_VS_DENIED"
+      ]
+    },
+    "observedFacts": [
+      {
+        "statement": "A user attempted to authenticate to the IAM service and was denied (PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED, EV-0301-01).",
+        "evidenceIds": [
+          "EV-0301-01"
+        ]
+      },
+      {
+        "statement": "A user attempted to access the /admin/dashboard endpoint via the AdminApp and was granted access (RESOURCE_ACCESS, /admin/dashboard, SUCCESS, EV-0301-03).",
+        "evidenceIds": [
+          "EV-0301-03"
+        ]
+      },
+      {
+        "statement": "A user attempted to access the /admin/secrets endpoint via the AdminApp and was denied (RESOURCE_ACCESS, /admin/secrets, 403, EV-0301-06).",
+        "evidenceIds": [
+          "EV-0301-06"
+        ]
+      },
+      {
+        "statement": "A user attempted to access the /api/auth endpoint via the AdminApp and was blocked by the WAF (SUSPICIOUS_REQUEST, /api/auth, EV-0301-05).",
+        "evidenceIds": [
+          "EV-0301-05"
+        ]
+      },
+      {
+        "statement": "A user session (sess-0301-x) was created and granted SUPER_ADMIN privileges by the IAM service (AUTH_SUCCESS, sess-0301-x, EV-0301-04).",
+        "evidenceIds": [
+          "EV-0301-04"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The user's session was created and granted SUPER_ADMIN privileges, but was denied access to the /admin/dashboard endpoint (PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED, EV-0301-01).",
+        "rationale": "The user's session creation and subsequent access attempts are consistent with an initial access and privilege escalation attempt.",
+        "supportingEvidenceIds": [
+          "EV-0301-01",
+          "EV-0301-04",
+          "EV-0301-03"
+        ],
+        "confidence": 0.9
+      },
+      {
+        "statement": "The user's session was created and granted SUPER_ADMIN privileges, but was denied access to the /admin/secrets endpoint (PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED, EV-0301-01).",
+        "rationale": "The user's session creation and subsequent access attempts are consistent with an initial access and privilege escalation attempt.",
+        "supportingEvidenceIds": [
+          "EV-0301-01",
+          "EV-0301-04",
+          "EV-0301-06"
+        ],
+        "confidence": 0.9
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The user's session creation and subsequent access attempts are consistent with an initial access and privilege escalation attempt.",
+        "significance": "The sequence of events suggests an initial access and privilege escalation, but the exact lateral movement or data exfiltration steps are not observed.",
+        "recommendedTelemetry": "AdminApp logs for the /admin/secrets endpoint"
+      },
+      {
+        "statement": "Temporal anomaly: Successful resource access '/admin/dashboard' (EV-0301-03) at 2026-09-24T11:02:00Z preceded recorded authentication success (EV-0301-04) at 2026-09-24T11:03:00Z.",
+        "significance": "Causality between events cannot be confirmed due to out-of-order execution or pre-existing session token.",
+        "recommendedTelemetry": "Correlate upstream reverse proxy and session cache logs."
+      },
+      {
+        "statement": "Contradictory evidence detected for sess-0301-x.",
+        "significance": "Conflicting telemetry on sess-0301-x: Sources ['EV-0301-04'] report success while ['EV-0301-01'] report denial/failure.",
+        "recommendedTelemetry": "Manual review of conflicting authoritative sources required."
+      }
+    ],
+    "attackProgression": [
+      {
+        "stepOrder": 1,
+        "phase": "OBSERVED_ACTIVITY",
+        "timestamp": "2026-09-24T11:01:40Z",
+        "sourceEntity": "203.0.113.120",
+        "targetAssetId": "auth-service-03",
+        "description": "The user attempted to access the /api/auth endpoint via the AdminApp and was blocked by the WAF (SUSPICIOUS_REQUEST, /api/auth, EV-0301-05).",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-0301-05"
+        ]
+      },
+      {
+        "stepOrder": 2,
+        "phase": "RESOURCE_ACCESS",
+        "timestamp": "2026-09-24T11:02:00Z",
+        "sourceEntity": "203.0.113.120",
+        "targetAssetId": "admin-api-03",
+        "description": "The user attempted to access the /admin/dashboard endpoint via the AdminApp and was granted access (RESOURCE_ACCESS, /admin/dashboard, SUCCESS, EV-0301-03).",
+        "isAttemptOnly": false,
+        "evidenceIds": [
+          "EV-0301-03"
+        ]
+      },
+      {
+        "stepOrder": 3,
+        "phase": "INITIAL_ACCESS",
+        "timestamp": "2026-09-24T11:02:20Z",
+        "sourceEntity": "203.0.113.120",
+        "targetAssetId": "auth-service-03",
+        "description": "The user attempted to authenticate to the IAM service and was denied (PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED, EV-0301-01).",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-0301-01"
+        ]
+      },
+      {
+        "stepOrder": 4,
+        "phase": "RESOURCE_ACCESS",
+        "timestamp": "2026-09-24T11:02:40Z",
+        "sourceEntity": "203.0.113.120",
+        "targetAssetId": "admin-api-03",
+        "description": "The user attempted to access the /admin/secrets endpoint via the AdminApp and was denied (RESOURCE_ACCESS, /admin/secrets, 403, EV-0301-06).",
+        "isAttemptOnly": true,
+        "evidenceIds": [
+          "EV-0301-06"
+        ]
+      },
+      {
+        "stepOrder": 5,
+        "phase": "PRIVILEGE_ATTEMPT",
+        "timestamp": "2026-09-24T11:02:20Z",
+        "sourceEntity": "203.0.113.120",
+        "targetAssetId": "auth-service-03",
+        "description": "The user's session (sess-0301-x) was created and granted SUPER_ADMIN privileges (AUTH_SUCCESS, sess-0301-x, EV-0301-04).",
+        "isAttemptOnly": false,
+        "evidenceIds": [
+          "EV-0301-04"
+        ]
+      }
+    ],
+    "affectedAssetIds": [
+      "auth-service-03",
+      "admin-api-03"
+    ],
+    "citedEvidenceIds": [
+      "EV-0301-01",
+      "EV-0301-02",
+      "EV-0301-03",
+      "EV-0301-04",
+      "EV-0301-05",
+      "EV-0301-06"
+    ],
+    "recommendedActions": [
+      {
+        "id": "rec-1",
+        "actionType": "BLOCK_SOURCE",
+        "targetIdentifier": "203.0.113.120",
+        "targetType": "IP_ADDRESS",
+        "rationale": "Block the IP address that attempted to authenticate and access privileged resources (EV-0301-01, EV-0301-02).",
+        "confidence": 0.9,
+        "expectedImpact": "Prevent further unauthorized access attempts from this IP address.",
+        "supportingEvidenceIds": [
+          "EV-0301-01",
+          "EV-0301-02"
+        ],
+        "priority": "HIGH"
+      }
+    ],
+    "generatedAt": "2026-09-24T11:13:47.336750+00:00",
+    "errorMessage": null,
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "attackStory": {
+    "incidentId": "INC-2026-0301",
+    "title": "Out-of-Order Authentication and Privilege Events",
+    "summary": "An unauthorized user attempted to authenticate and access privileged resources, but was denied. The user then attempted to access a restricted resource, which was also denied. The incident involves a compromised session and a potential lateral movement attempt.",
+    "severity": "HIGH",
+    "confidence": 0.95,
+    "stages": [
+      {
+        "order": 1,
+        "timestamp": "2026-09-24T11:01:40Z",
+        "phase": "OBSERVED_ACTIVITY",
+        "description": "The user attempted to access the /api/auth endpoint via the AdminApp and was blocked by the WAF (SUSPICIOUS_REQUEST, /api/auth, EV-0301-05).",
+        "affectedAssetIds": [
+          "auth-service-03"
+        ],
+        "evidenceIds": [
+          "EV-0301-05"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 2,
+        "timestamp": "2026-09-24T11:02:00Z",
+        "phase": "RESOURCE_ACCESS",
+        "description": "The user attempted to access the /admin/dashboard endpoint via the AdminApp and was granted access (RESOURCE_ACCESS, /admin/dashboard, SUCCESS, EV-0301-03).",
+        "affectedAssetIds": [
+          "admin-api-03"
+        ],
+        "evidenceIds": [
+          "EV-0301-03"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 3,
+        "timestamp": "2026-09-24T11:02:20Z",
+        "phase": "INITIAL_ACCESS",
+        "description": "The user attempted to authenticate to the IAM service and was denied (PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED, EV-0301-01).",
+        "affectedAssetIds": [
+          "auth-service-03"
+        ],
+        "evidenceIds": [
+          "EV-0301-01"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 4,
+        "timestamp": "2026-09-24T11:02:40Z",
+        "phase": "RESOURCE_ACCESS",
+        "description": "The user attempted to access the /admin/secrets endpoint via the AdminApp and was denied (RESOURCE_ACCESS, /admin/secrets, 403, EV-0301-06).",
+        "affectedAssetIds": [
+          "admin-api-03"
+        ],
+        "evidenceIds": [
+          "EV-0301-06"
+        ],
+        "isAttemptOnly": true
+      },
+      {
+        "order": 5,
+        "timestamp": "2026-09-24T11:02:20Z",
+        "phase": "PRIVILEGE_ATTEMPT",
+        "description": "The user's session (sess-0301-x) was created and granted SUPER_ADMIN privileges (AUTH_SUCCESS, sess-0301-x, EV-0301-04).",
+        "affectedAssetIds": [
+          "auth-service-03"
+        ],
+        "evidenceIds": [
+          "EV-0301-04"
+        ],
+        "isAttemptOnly": false
+      }
+    ],
+    "observedFacts": [
+      {
+        "statement": "A user attempted to authenticate to the IAM service and was denied (PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED, EV-0301-01).",
+        "evidenceIds": [
+          "EV-0301-01"
+        ]
+      },
+      {
+        "statement": "A user attempted to access the /admin/dashboard endpoint via the AdminApp and was granted access (RESOURCE_ACCESS, /admin/dashboard, SUCCESS, EV-0301-03).",
+        "evidenceIds": [
+          "EV-0301-03"
+        ]
+      },
+      {
+        "statement": "A user attempted to access the /admin/secrets endpoint via the AdminApp and was denied (RESOURCE_ACCESS, /admin/secrets, 403, EV-0301-06).",
+        "evidenceIds": [
+          "EV-0301-06"
+        ]
+      },
+      {
+        "statement": "A user attempted to access the /api/auth endpoint via the AdminApp and was blocked by the WAF (SUSPICIOUS_REQUEST, /api/auth, EV-0301-05).",
+        "evidenceIds": [
+          "EV-0301-05"
+        ]
+      },
+      {
+        "statement": "A user session (sess-0301-x) was created and granted SUPER_ADMIN privileges by the IAM service (AUTH_SUCCESS, sess-0301-x, EV-0301-04).",
+        "evidenceIds": [
+          "EV-0301-04"
+        ]
+      }
+    ],
+    "inferences": [
+      {
+        "statement": "The user's session was created and granted SUPER_ADMIN privileges, but was denied access to the /admin/dashboard endpoint (PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED, EV-0301-01).",
+        "rationale": "The user's session creation and subsequent access attempts are consistent with an initial access and privilege escalation attempt.",
+        "supportingEvidenceIds": [
+          "EV-0301-01",
+          "EV-0301-04",
+          "EV-0301-03"
+        ],
+        "confidence": 0.9
+      },
+      {
+        "statement": "The user's session was created and granted SUPER_ADMIN privileges, but was denied access to the /admin/secrets endpoint (PRIVILEGE_CHANGE, sess-0301-x, SUPER_ADMIN, DENIED, EV-0301-01).",
+        "rationale": "The user's session creation and subsequent access attempts are consistent with an initial access and privilege escalation attempt.",
+        "supportingEvidenceIds": [
+          "EV-0301-01",
+          "EV-0301-04",
+          "EV-0301-06"
+        ],
+        "confidence": 0.9
+      }
+    ],
+    "unknowns": [
+      {
+        "statement": "The user's session creation and subsequent access attempts are consistent with an initial access and privilege escalation attempt.",
+        "significance": "The sequence of events suggests an initial access and privilege escalation, but the exact lateral movement or data exfiltration steps are not observed.",
+        "recommendedTelemetry": "AdminApp logs for the /admin/secrets endpoint"
+      },
+      {
+        "statement": "Temporal anomaly: Successful resource access '/admin/dashboard' (EV-0301-03) at 2026-09-24T11:02:00Z preceded recorded authentication success (EV-0301-04) at 2026-09-24T11:03:00Z.",
+        "significance": "Causality between events cannot be confirmed due to out-of-order execution or pre-existing session token.",
+        "recommendedTelemetry": "Correlate upstream reverse proxy and session cache logs."
+      },
+      {
+        "statement": "Contradictory evidence detected for sess-0301-x.",
+        "significance": "Conflicting telemetry on sess-0301-x: Sources ['EV-0301-04'] report success while ['EV-0301-01'] report denial/failure.",
+        "recommendedTelemetry": "Manual review of conflicting authoritative sources required."
+      }
+    ],
+    "uncertainty": "The user's session creation and subsequent access attempts are consistent with an initial access and privilege escalation attempt. Temporal anomaly: Successful resource access '/admin/dashboard' (EV-0301-03) at 2026-09-24T11:02:00Z preceded recorded authentication success (EV-0301-04) at 2026-09-24T11:03:00Z. Contradictory evidence detected for sess-0301-x. No direct evidence of successful lateral movement or data exfiltration. Temporal anomaly detected: RESOURCE_ACCESS_BEFORE_AUTH. Contradictory evidence: SUCCESS_VS_DENIED. Successful compromise or data exfiltration is not established by the supplied evidence.",
+    "affectedAssetIds": [
+      "auth-service-03",
+      "admin-api-03"
+    ],
+    "citedEvidenceIds": [
+      "EV-0301-01",
+      "EV-0301-03",
+      "EV-0301-04",
+      "EV-0301-05",
+      "EV-0301-06"
+    ],
+    "generatedAt": "2026-09-24T11:13:47.338298+00:00",
+    "compromiseAssessment": "CONFIRMED",
+    "attributionAssessment": "UNCONFIRMED"
+  },
+  "recommendations": [
+    {
+      "id": "rec-1",
+      "actionType": "BLOCK_SOURCE",
+      "targetIdentifier": "203.0.113.120",
+      "targetType": "IP_ADDRESS",
+      "rationale": "Block the IP address that attempted to authenticate and access privileged resources (EV-0301-01, EV-0301-02).",
+      "confidence": 0.9,
+      "expectedImpact": "Prevent further unauthorized access attempts from this IP address.",
+      "supportingEvidenceIds": [
+        "EV-0301-01",
+        "EV-0301-02"
+      ],
+      "priority": "HIGH"
+    }
+  ],
+  "generatedAt": "2026-09-24T11:13:47.338415+00:00",
+  "executionDurationMs": 153337.61
+}

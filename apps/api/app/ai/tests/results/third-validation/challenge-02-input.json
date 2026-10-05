@@ -1,0 +1,207 @@
+{
+  "context_a": {
+    "incident": {
+      "id": "INC-2026-0302-A",
+      "title": "Suspicious Authentication Against Customer Portal",
+      "severity": "MEDIUM",
+      "status": "ACTIVE",
+      "primaryAffectedAssetId": "customer-portal-04",
+      "relatedAssetIds": [],
+      "detectionEventIds": [],
+      "attackPathId": null,
+      "createdAt": "2026-09-24T12:00:00Z",
+      "updatedAt": "2026-09-24T12:05:00Z",
+      "summary": null
+    },
+    "evidence": [
+      {
+        "id": "EV-A-01",
+        "type": "TELEMETRY_EVENT",
+        "source": "WAF",
+        "timestamp": "2026-09-24T12:01:00Z",
+        "summary": "AUTH_FAILURE, source=198.51.100.20",
+        "content": {
+          "ip": "198.51.100.20"
+        },
+        "verified": true
+      },
+      {
+        "id": "EV-A-02",
+        "type": "TELEMETRY_EVENT",
+        "source": "WAF",
+        "timestamp": "2026-09-24T12:01:10Z",
+        "summary": "AUTH_FAILURE, source=198.51.100.20",
+        "content": {
+          "ip": "198.51.100.20"
+        },
+        "verified": true
+      },
+      {
+        "id": "EV-A-03",
+        "type": "TELEMETRY_EVENT",
+        "source": "WAF",
+        "timestamp": "2026-09-24T12:01:20Z",
+        "summary": "SUSPICIOUS_REQUEST, target=/api/login",
+        "content": {
+          "target": "/api/login"
+        },
+        "verified": true
+      },
+      {
+        "id": "EV-A-04",
+        "type": "TELEMETRY_EVENT",
+        "source": "IAM",
+        "timestamp": "2026-09-24T12:02:00Z",
+        "summary": "AUTH_SUCCESS, session=sess-A-001",
+        "content": {
+          "session": "sess-A-001"
+        },
+        "verified": true
+      }
+    ],
+    "detections": [],
+    "telemetryEvents": [],
+    "assets": [
+      {
+        "id": "customer-portal-04",
+        "name": "Customer Portal 04",
+        "type": "WEB",
+        "criticality": "TIER_2_MEDIUM",
+        "isPubliclyExposed": false,
+        "environmentId": null,
+        "status": "ACTIVE",
+        "metadata": {}
+      }
+    ],
+    "attackPath": null,
+    "vulnerabilities": [],
+    "riskSnapshot": null,
+    "availableResponseActions": [
+      {
+        "actionType": "BLOCK_SOURCE",
+        "allowedTargetTypes": [
+          "IP_ADDRESS"
+        ],
+        "description": "Block incoming traffic from a malicious external IP address",
+        "requiresApproval": true
+      },
+      {
+        "actionType": "DISABLE_SESSION",
+        "allowedTargetTypes": [
+          "USER_SESSION",
+          "SESSION_ID"
+        ],
+        "description": "Revoke an active compromised user authentication session",
+        "requiresApproval": true
+      },
+      {
+        "actionType": "ISOLATE_RESOURCE",
+        "allowedTargetTypes": [
+          "ASSET_ID"
+        ],
+        "description": "Sever network egress and ingress for a compromised asset",
+        "requiresApproval": true
+      }
+    ],
+    "assembledAt": "2026-09-24T10:52:03.588142+00:00",
+    "contextVersion": "1.0.0"
+  },
+  "context_b": {
+    "incident": {
+      "id": "INC-2026-0302-B",
+      "title": "Unauthorized Admin Resource Attempt",
+      "severity": "HIGH",
+      "status": "ACTIVE",
+      "primaryAffectedAssetId": "admin-api-04",
+      "relatedAssetIds": [],
+      "detectionEventIds": [],
+      "attackPathId": null,
+      "createdAt": "2026-09-24T12:00:00Z",
+      "updatedAt": "2026-09-24T12:05:00Z",
+      "summary": null
+    },
+    "evidence": [
+      {
+        "id": "EV-B-01",
+        "type": "TELEMETRY_EVENT",
+        "source": "IAM",
+        "timestamp": "2026-09-24T12:01:00Z",
+        "summary": "AUTH_SUCCESS, session=sess-B-009",
+        "content": {
+          "session": "sess-B-009"
+        },
+        "verified": true
+      },
+      {
+        "id": "EV-B-02",
+        "type": "TELEMETRY_EVENT",
+        "source": "AdminApp",
+        "timestamp": "2026-09-24T12:01:10Z",
+        "summary": "RESOURCE_ACCESS, target=/admin/keys, result=403",
+        "content": {
+          "target": "/admin/keys",
+          "result": 403
+        },
+        "verified": true
+      },
+      {
+        "id": "EV-B-03",
+        "type": "TELEMETRY_EVENT",
+        "source": "IAM",
+        "timestamp": "2026-09-24T12:01:20Z",
+        "summary": "PRIVILEGE_CHANGE, target=admin, result=DENIED",
+        "content": {
+          "target": "admin",
+          "result": "DENIED"
+        },
+        "verified": true
+      }
+    ],
+    "detections": [],
+    "telemetryEvents": [],
+    "assets": [
+      {
+        "id": "admin-api-04",
+        "name": "Admin API 04",
+        "type": "API",
+        "criticality": "TIER_2_MEDIUM",
+        "isPubliclyExposed": false,
+        "environmentId": null,
+        "status": "ACTIVE",
+        "metadata": {}
+      }
+    ],
+    "attackPath": null,
+    "vulnerabilities": [],
+    "riskSnapshot": null,
+    "availableResponseActions": [
+      {
+        "actionType": "BLOCK_SOURCE",
+        "allowedTargetTypes": [
+          "IP_ADDRESS"
+        ],
+        "description": "Block incoming traffic from a malicious external IP address",
+        "requiresApproval": true
+      },
+      {
+        "actionType": "DISABLE_SESSION",
+        "allowedTargetTypes": [
+          "USER_SESSION",
+          "SESSION_ID"
+        ],
+        "description": "Revoke an active compromised user authentication session",
+        "requiresApproval": true
+      },
+      {
+        "actionType": "ISOLATE_RESOURCE",
+        "allowedTargetTypes": [
+          "ASSET_ID"
+        ],
+        "description": "Sever network egress and ingress for a compromised asset",
+        "requiresApproval": true
+      }
+    ],
+    "assembledAt": "2026-09-24T10:52:03.588217+00:00",
+    "contextVersion": "1.0.0"
+  }
+}
