@@ -6,7 +6,7 @@ OBJECTIVE: Application entry point for the GASHA FastAPI backend service.
 TOOLS & LIBRARIES: FastAPI, Uvicorn, CORSMiddleware, Asyncpg / SQLAlchemy
 KEY FEATURES / FUNCTIONS TO IMPLEMENT:
   - create_app() -> FastAPI: Configures lifespan events, CORS, exception handlers, and routers.
-  - Registers sub-routers for auth, discovery, digital twin, telemetry, detection, incidents, AI investigation, and responses.
+  - Registers sub-routers for auth, discovery, digital twin, telemetry, detection, incidents, deterministic investigations, and responses.
   - WebSocket / SSE endpoint for live telemetry & state broadcasting.
 EXPECTED RESULTS / BEHAVIOR:
   - Serves REST API at /api/v1/* and manages application startup/shutdown lifecycles.
@@ -54,9 +54,31 @@ def create_app() -> FastAPI:
         CORSMiddleware,
         allow_origins=settings.CORS_ORIGINS,
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allow_headers=[
+            "Authorization",
+            "Content-Type",
+            "Accept",
+            "Origin",
+            "User-Agent",
+            "X-Requested-With",
+            "X-Telemetry-Api-Key",
+            "X-GASHA-TELEMETRY-KEY",
+            "X-GASHA-ENVIRONMENT",
+            "X-API-Key",
+            "X-Session-ID"
+        ],
     )
+
+    @app.middleware("http")
+    async def add_security_headers(request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Permissions-Policy"] = "geolocation=(), camera=(), microphone=()"
+        return response
 
     # Register API v1 Routers
     api_v1_prefix = "/api/v1"
@@ -71,7 +93,7 @@ def create_app() -> FastAPI:
     app.include_router(telemetry.router, prefix=f"{api_v1_prefix}/telemetry", tags=["Telemetry Pipeline"])
     app.include_router(detections.router, prefix=f"{api_v1_prefix}/detections", tags=["Detection Engine"])
     app.include_router(incidents.router, prefix=f"{api_v1_prefix}/incidents", tags=["Incidents"])
-    app.include_router(investigations.router, prefix=f"{api_v1_prefix}/investigations", tags=["AI Investigations"])
+    app.include_router(investigations.router, prefix=f"{api_v1_prefix}/investigations", tags=["Deterministic Investigations"])
     app.include_router(responses.router, prefix=f"{api_v1_prefix}/responses", tags=["Controlled Response"])
     app.include_router(environment.router, prefix=f"{api_v1_prefix}/environment", tags=["Environment State"])
     app.include_router(realtime.router, prefix=f"{api_v1_prefix}/realtime", tags=["Realtime Stream"])

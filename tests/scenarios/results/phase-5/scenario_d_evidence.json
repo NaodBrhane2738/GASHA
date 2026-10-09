@@ -1,0 +1,30 @@
+{
+  "scenario": "Scenario D - Session Containment Verification",
+  "timestamp": "2026-10-09T16:56:37.104505+00:00",
+  "sessionId": "sess-analyst-9ae912bb",
+  "statusBefore": 200,
+  "statusAfterRejection": 200,
+  "statusAfterExecution": 401,
+  "executionResponse": {
+    "id": "resp-e8e80f71b2",
+    "incidentId": "inc-sess-0abbc64d",
+    "environmentId": "env-prod",
+    "actionType": "DISABLE_SESSION",
+    "targetType": "USER_SESSION",
+    "targetIdentifier": "sess-analyst-9ae912bb",
+    "status": "SUCCEEDED",
+    "reason": "Verified compromised session invalidation",
+    "supportingEvidenceIds": [],
+    "proposedAt": "2026-10-09T16:56:37.086567Z",
+    "proposedBy": "lead-analyst-1",
+    "approvedAt": "2026-10-09T16:56:37.093728Z",
+    "approvedBy": "lead-analyst-1",
+    "executedAt": "2026-10-09T16:56:37.098560Z",
+    "executionMessage": "Revoked active session token 'sess-analyst-9ae912bb' in target session store.",
+    "verificationStatus": "VERIFIED",
+    "verificationMessage": "Verified: Session 'sess-analyst-9ae912bb' is actively revoked.",
+    "auditId": "aud-3e178ae975b5",
+    "metadata": {}
+  },
+  "status": "PASS"
+}

@@ -1,0 +1,20 @@
+{
+  "scenario": "Scenario C - Source-Blocking Verification",
+  "timestamp": "2026-10-09T16:56:37.459603+00:00",
+  "status": "PASS",
+  "attackerIp": "198.51.100.205",
+  "unrelatedIp": "198.51.100.99",
+  "responseId": "resp-cd038ce330",
+  "incidentId": "inc-a94ab037",
+  "preApprovalAccessStatus": 200,
+  "postExecutionAccessStatus": 403,
+  "unrelatedSourceAccessStatus": 200,
+  "executionDurationSeconds": 0.004,
+  "auditVerification": {
+    "verified": true,
+    "totalRecords": 4,
+    "environmentId": "env-prod",
+    "latestHash": "106632ca0d6805f4b70a94977e3d498fbf176a41b511d71c661aeaf46bd38358",
+    "error": null
+  }
+}

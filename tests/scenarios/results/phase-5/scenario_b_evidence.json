@@ -1,0 +1,121 @@
+{
+  "scenario": "Scenario B - Suspicious Web Probe",
+  "timestamp": "2026-10-09T16:56:36.968808+00:00",
+  "attackerIp": "198.51.100.102",
+  "targetResponse": {
+    "status": "safe_handled",
+    "detectedPattern": "SQL_INJECTION",
+    "warning": "Detected attack pattern [SQL_INJECTION]. Payload neutralized.",
+    "results": []
+  },
+  "detection": {
+    "id": "det-443de8dd3b",
+    "rule": {
+      "ruleId": "RULE-INJ-002",
+      "name": "Suspicious Web Request / Injection Probe",
+      "description": "Flags anomalous request patterns indicating SQL injection, XSS, or directory traversal.",
+      "severity": "MEDIUM",
+      "confidence": 0.85
+    },
+    "matchedEventIds": [
+      "telem-ff1dc2122204"
+    ],
+    "primaryAssetId": "asset:web-service:env-prod",
+    "timestamp": "2026-10-09T16:56:36.963280Z",
+    "severity": "MEDIUM",
+    "confidence": 0.85,
+    "evidenceSummary": "Observed passive attack pattern indicator [SQL_INJECTION] targeting path '/api/customers/lookup' originating from source IP '198.51.100.102'.",
+    "environmentId": "env-prod",
+    "incidentId": "inc-c9f0d50e",
+    "metadata": {
+      "environmentId": "env-prod",
+      "sourceIp": "198.51.100.102",
+      "targetPath": "/api/customers/lookup",
+      "patternType": "SQL_INJECTION",
+      "mitreTechniqueId": "T1190"
+    }
+  },
+  "incident": {
+    "id": "inc-c9f0d50e",
+    "title": "Suspicious Web Intrusion & Injection Probes [198.51.100.102]",
+    "severity": "MEDIUM",
+    "status": "ACTIVE",
+    "primaryAffectedAssetId": "asset:web-service:env-prod",
+    "relatedAssetIds": [],
+    "detectionEventIds": [
+      "det-443de8dd3b"
+    ],
+    "attackPathId": null,
+    "createdAt": "2026-10-09T16:56:36.963330Z",
+    "updatedAt": "2026-10-09T16:56:36.963330Z",
+    "summary": "Deterministic correlation engine detected suspicious activity: Observed passive attack pattern indicator [SQL_INJECTION] targeting path '/api/customers/lookup' originating from source IP '198.51.100.102'. Mapped to MITRE ATT&CK technique T1190.",
+    "environmentId": "env-prod",
+    "correlationKey": "env-prod:INJ:198.51.100.102:asset:web-service:env-prod"
+  },
+  "investigation": {
+    "incidentId": "inc-c9f0d50e",
+    "summary": "Deterministic forensic analysis for Incident 'inc-c9f0d50e' in environment 'env-prod': Assessed 1 detection match(es) (RULE-INJ-002) targeting asset 'asset:web-service:env-prod'. Observed malicious indicators associated with source(s) [198.51.100.102]. Behavioral patterns map deterministically to ATT&CK techniques [T1190]. Analysis confirmed 0 ungrounded assumptions and verified all facts against authoritative event IDs.",
+    "severity": "MEDIUM",
+    "confidenceScore": 0.85,
+    "attackStory": {
+      "observedFacts": [
+        "Incident 'inc-c9f0d50e' on primary asset 'asset:web-service:env-prod' with severity 'MEDIUM' in environment 'env-prod'.",
+        "Detection 'det-443de8dd3b' triggered deterministic rule 'RULE-INJ-002' (Suspicious Web Request / Injection Probe) citing 1 verified event ID(s) [matched IDs: telem-ff1dc2122204]."
+      ],
+      "reasonableInferences": [],
+      "unknownsAndGaps": [
+        "Attacker true origin, infrastructure ownership, and geolocation cannot be authenticated without authoritative ISP/threat intelligence telemetry."
+      ],
+      "narrativeSummary": "Deterministic forensic analysis for Incident 'inc-c9f0d50e' in environment 'env-prod': Assessed 1 detection match(es) (RULE-INJ-002) targeting asset 'asset:web-service:env-prod'. Observed malicious indicators associated with source(s) [198.51.100.102]. Behavioral patterns map deterministically to ATT&CK techniques [T1190]. Analysis confirmed 0 ungrounded assumptions and verified all facts against authoritative event IDs."
+    },
+    "groundedEvidence": [
+      {
+        "id": "det-443de8dd3b",
+        "type": "DETECTION_MATCH",
+        "source": "asset:web-service:env-prod",
+        "timestamp": "2026-10-09T16:56:36.963280Z",
+        "content": {
+          "ruleId": "RULE-INJ-002",
+          "ruleName": "Suspicious Web Request / Injection Probe",
+          "severity": "MEDIUM",
+          "confidence": 0.85,
+          "metadata": {
+            "environmentId": "env-prod",
+            "sourceIp": "198.51.100.102",
+            "targetPath": "/api/customers/lookup",
+            "patternType": "SQL_INJECTION",
+            "mitreTechniqueId": "T1190"
+          }
+        },
+        "relevanceExplanation": "Observed passive attack pattern indicator [SQL_INJECTION] targeting path '/api/customers/lookup' originating from source IP '198.51.100.102'.",
+        "verified": true
+      },
+      {
+        "id": "telem-ff1dc2122204",
+        "type": "TELEMETRY_EVENT",
+        "source": "198.51.100.102",
+        "timestamp": "2026-10-09T16:56:36.963280Z",
+        "content": {
+          "detectionId": "det-443de8dd3b",
+          "ruleId": "RULE-INJ-002",
+          "outcome": "EVALUATED"
+        },
+        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-443de8dd3b'",
+        "verified": true
+      }
+    ],
+    "recommendations": [
+      {
+        "id": "rec-05ac5288",
+        "actionType": "BLOCK_SOURCE",
+        "targetIdentifier": "198.51.100.102",
+        "targetType": "IP_ADDRESS",
+        "rationale": "Direct source IP '198.51.100.102' identified in deterministic detection 'det-443de8dd3b' triggering rule 'RULE-INJ-002' (Suspicious Web Request / Injection Probe).",
+        "confidence": 0.85,
+        "expectedImpact": "Enforces perimeter block on '198.51.100.102', halting inbound attacker requests."
+      }
+    ],
+    "generatedAt": "2026-10-09T16:56:36.966897Z"
+  },
+  "status": "PASS"
+}

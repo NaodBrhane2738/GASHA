@@ -7,12 +7,13 @@ TOOLS & LIBRARIES: Pydantic v2
 KEY FEATURES / FUNCTIONS TO IMPLEMENT:
   - AssetBase, AssetCreate, AssetResponse: Serialization models for discovered infrastructure.
   - RelationshipBase, RelationshipResponse: Models for directed graph edges.
+  - DiscoveredAssetsResponse: Enriched response model for discovery API.
 EXPECTED RESULTS / BEHAVIOR:
   - Strict type validation and JSON serialization matching TypeScript contracts.
 ==============================================================================
 """
 
-from typing import Optional, Dict, Any, Literal
+from typing import Optional, Dict, Any, List, Literal
 from pydantic import BaseModel, Field
 
 AssetType = Literal[
@@ -30,6 +31,18 @@ AssetType = Literal[
 AssetCriticality = Literal['TIER_0_CROWN_JEWEL', 'TIER_1_HIGH', 'TIER_2_MEDIUM', 'TIER_3_LOW']
 AssetStatus = Literal['ACTIVE', 'DEGRADED', 'ISOLATED', 'INACTIVE']
 
+RelationshipType = Literal[
+    'CALLS',
+    'CONNECTS_TO',
+    'AUTHENTICATES_WITH',
+    'HOSTS',
+    'READS_FROM',
+    'WRITES_TO',
+    'DEPLOYS',
+    'DEPENDS_ON'
+]
+
+
 class AssetBase(BaseModel):
     name: str
     type: AssetType
@@ -40,15 +53,32 @@ class AssetBase(BaseModel):
     isPubliclyExposed: bool = False
     status: AssetStatus = 'ACTIVE'
 
+
+class AssetCreate(AssetBase):
+    id: Optional[str] = None
+
+
 class AssetResponse(AssetBase):
     id: str
     createdAt: str
     updatedAt: str
 
-class RelationshipResponse(BaseModel):
-    id: str
+
+class RelationshipBase(BaseModel):
     sourceAssetId: str
     targetAssetId: str
-    type: Literal['CALLS', 'CONNECTS_TO', 'AUTHENTICATES_WITH', 'HOSTS', 'READS_FROM', 'WRITES_TO', 'DEPLOYS', 'DEPENDS_ON']
+    type: RelationshipType
     metadata: Dict[str, Any] = Field(default_factory=dict)
+
+
+class RelationshipResponse(RelationshipBase):
+    id: str
     createdAt: str
+
+
+class DiscoveredAssetsResponse(BaseModel):
+    environmentId: str
+    totalAssets: int
+    totalRelationships: int
+    assets: List[AssetResponse]
+    relationships: List[RelationshipResponse]

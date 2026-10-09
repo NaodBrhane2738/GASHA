@@ -45,15 +45,16 @@ class Settings(BaseSettings):
     GITHUB_CLIENT_ID: str = ""
     GITHUB_CLIENT_SECRET: str = ""
 
-    AI_PROVIDER: str = "ollama"
-    AI_MODEL_NAME: str = "qwen2.5-coder:7b"
-    AI_TEMPERATURE: float = 0.1
-    OLLAMA_BASE_URL: str = "http://localhost:11434"
-    OPENAI_API_KEY: str = ""
-    ANTHROPIC_API_KEY: str = ""
-    GEMINI_API_KEY: str = ""
+    # Integration Credential Security
+    CREDENTIAL_ENCRYPTION_KEY: str = ""
 
+    # Telemetry Pipeline Configuration
     GASHA_TELEMETRY_API_KEY: str = "gasha-telemetry-demo-key-2026"
+    GASHA_TELEMETRY_ENVIRONMENT: str = "env-prod"
+    GASHA_TELEMETRY_MAX_BATCH_SIZE: int = 100
+    GASHA_TELEMETRY_MAX_PAYLOAD_BYTES: int = 1048576  # 1MB
+    GASHA_TELEMETRY_TRUSTED_PROXIES: List[str] = ["127.0.0.1", "::1"]
+    GASHA_TELEMETRY_BUFFER_CAPACITY: int = 5000
 
     class Config:
         env_file = ".env"

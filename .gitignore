@@ -37,3 +37,5 @@ npm-debug.log*
 # --- Misc build/test artifacts ---
 coverage/
 .cache/
+scratch/
+*.db

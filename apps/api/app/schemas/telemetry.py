@@ -28,6 +28,7 @@ TelemetryEventType = Literal[
 
 class TelemetryEventPayloadSchema(BaseModel):
     sourceIp: Optional[str] = None
+    observedPeerIp: Optional[str] = None
     userAgent: Optional[str] = None
     userId: Optional[str] = None
     sessionId: Optional[str] = None
@@ -35,10 +36,15 @@ class TelemetryEventPayloadSchema(BaseModel):
     httpPath: Optional[str] = None
     httpStatusCode: Optional[int] = None
     resourceAccessed: Optional[str] = None
+    action: Optional[str] = None
+    outcome: Optional[str] = None
+    latencyMs: Optional[float] = None
+    correlationId: Optional[str] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 class TelemetryEventSchema(BaseModel):
     id: str
+    schemaVersion: Optional[str] = "1.0.0"
     eventType: TelemetryEventType
     timestamp: str
     sourceService: str
@@ -47,3 +53,18 @@ class TelemetryEventSchema(BaseModel):
 
 class TelemetryBatchIngestRequest(BaseModel):
     events: List[TelemetryEventSchema]
+
+class TelemetryItemResult(BaseModel):
+    id: str
+    status: Literal['accepted', 'duplicate', 'rejected', 'failed']
+    reason: Optional[str] = None
+
+class TelemetryBatchIngestResponse(BaseModel):
+    status: Literal['ACCEPTED', 'PARTIALLY_ACCEPTED', 'REJECTED']
+    acceptedCount: int
+    rejectedCount: int
+    duplicateCount: int
+    totalCount: int
+    results: List[TelemetryItemResult]
+    timestamp: str
+    eventsProcessed: int = 0  # Backward-compatible alias for acceptedCount

@@ -1,55 +1,103 @@
 """
 ==============================================================================
 FILE: apps/api/app/api/investigations.py
-ROLE / OWNERSHIP: AI & Backend Engineers
-OBJECTIVE: Endpoints to trigger grounded AI investigations and query attack stories.
-TOOLS & LIBRARIES: FastAPI APIRouter, app.schemas.investigation
-KEY FEATURES / FUNCTIONS TO IMPLEMENT:
-  - POST /api/v1/investigations/{incident_id}/run: Assembles context and triggers grounded LLM analysis.
-  - GET /api/v1/investigations/{incident_id}: Returns AttackStory, grounded Evidence, and Recommendations.
-EXPECTED RESULTS / BEHAVIOR:
-  - Returns structured investigation results with strict evidence grounding; flags uncertainties.
+ROLE / OWNERSHIP: Cybersecurity & Backend Engineers
+OBJECTIVE: Operational REST API for Deterministic Investigations and Evidence Timelines.
 ==============================================================================
 """
 
-from fastapi import APIRouter, Depends
-from app.core.auth import get_current_user
-from app.schemas.investigation import InvestigationResultResponse
+from typing import Optional
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+
+from app.core.auth import get_current_user, enforce_environment_boundary
+from app.schemas.investigation import (
+    InvestigationResultResponse,
+    InvestigationTimelineResponse
+)
+from app.investigation.engine import get_investigation_engine
 
 router = APIRouter()
 
-@router.post("/{incident_id}/run", response_model=InvestigationResultResponse)
-async def run_investigation(incident_id: str, user: dict = Depends(get_current_user)):
-    return {
-        "incidentId": incident_id,
-        "summary": "Attacker performed brute force authentication followed by unauthorized DB query.",
-        "severity": "HIGH",
-        "confidenceScore": 0.92,
-        "attackStory": {
-            "observedFacts": [
-                "5 consecutive AUTH_FAILURE events from 198.51.100.42 within 40 seconds.",
-                "Subsequent AUTH_SUCCESS for user admin from same IP.",
-                "RESOURCE_ACCESS on crown jewel customer DB."
-            ],
-            "reasonableInferences": [
-                "Probable credential stuffing attack exploiting leaked credentials."
-            ],
-            "unknownsAndGaps": [
-                "Whether credential was exfiltrated via external phishing or public breach."
-            ],
-            "narrativeSummary": "High-confidence compromise of admin account from external IP 198.51.100.42."
-        },
-        "groundedEvidence": [],
-        "recommendations": [
-            {
-                "id": "rec-1",
-                "actionType": "BLOCK_SOURCE",
-                "targetIdentifier": "198.51.100.42",
-                "targetType": "IP_ADDRESS",
-                "rationale": "Direct source of brute force and unauthorized DB query.",
-                "confidence": 0.95,
-                "expectedImpact": "Immediately halts active attacker traffic."
-            }
-        ],
-        "generatedAt": "2026-09-18T00:00:00Z"
-    }
+
+@router.post(
+    "/{incident_id}/run",
+    response_model=InvestigationResultResponse,
+    summary="Run Deterministic Incident Investigation"
+)
+async def run_investigation(
+    incident_id: str,
+    environment_id: Optional[str] = Query(None, alias="environmentId"),
+    user: dict = Depends(get_current_user)
+) -> InvestigationResultResponse:
+    """
+    Executes a deterministic, evidence-grounded investigation of an active incident.
+    Constructs factual attack story, timeline, grounded evidence references, and recommendations.
+    Strictly scoped to authorized environment.
+    """
+    auth_env = enforce_environment_boundary(user, environment_id)
+    engine = get_investigation_engine()
+
+    result, err = engine.investigate_incident(incident_id, environment_id=auth_env)
+    if err:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=err
+        )
+    return result
+
+
+@router.get(
+    "/{incident_id}",
+    response_model=InvestigationResultResponse,
+    summary="Get Investigation Result"
+)
+async def get_investigation(
+    incident_id: str,
+    environment_id: Optional[str] = Query(None, alias="environmentId"),
+    user: dict = Depends(get_current_user)
+) -> InvestigationResultResponse:
+    """Retrieves an existing investigation result for the specified incident within authorized environment."""
+    auth_env = enforce_environment_boundary(user, environment_id)
+    engine = get_investigation_engine()
+
+    result = engine.get_investigation(incident_id, environment_id=auth_env)
+    if not result:
+        result, err = engine.investigate_incident(incident_id, environment_id=auth_env)
+        if err:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=err
+            )
+    return result
+
+
+@router.get(
+    "/{incident_id}/timeline",
+    response_model=InvestigationTimelineResponse,
+    summary="Get Investigation Forensic Timeline"
+)
+async def get_investigation_timeline(
+    incident_id: str,
+    environment_id: Optional[str] = Query(None, alias="environmentId"),
+    user: dict = Depends(get_current_user)
+) -> InvestigationTimelineResponse:
+    """Retrieves the authoritative chronological timeline within authorized environment."""
+    auth_env = enforce_environment_boundary(user, environment_id)
+    engine = get_investigation_engine()
+
+    timeline = engine.get_timeline(incident_id, environment_id=auth_env)
+    if not timeline:
+        result, err = engine.investigate_incident(incident_id, environment_id=auth_env)
+        if err:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=err
+            )
+        timeline = engine.get_timeline(incident_id, environment_id=auth_env)
+
+    if not timeline:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Timeline for incident '{incident_id}' could not be generated in environment '{auth_env}'."
+        )
+    return timeline

@@ -13,9 +13,16 @@ EXPECTED RESULTS / BEHAVIOR:
 ==============================================================================
 """
 
+import sys
 from typing import Set
 
 _disabled_sessions: Set[str] = set()
+
+# Register aliases in sys.modules to prevent disjoint module instances
+_this_module = sys.modules.get(__name__)
+if _this_module:
+    sys.modules["security.sessions"] = _this_module
+    sys.modules["apps.demo_target.security.sessions"] = _this_module
 
 def disable_session(session_id: str) -> None:
     _disabled_sessions.add(session_id)
@@ -25,3 +32,7 @@ def is_session_disabled(session_id: str) -> bool:
 
 def clear_disabled_sessions() -> None:
     _disabled_sessions.clear()
+
+def get_disabled_sessions() -> Set[str]:
+    return set(_disabled_sessions)
+

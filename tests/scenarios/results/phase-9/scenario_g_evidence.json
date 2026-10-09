@@ -1,0 +1,20 @@
+{
+  "scenario": "Scenario G - Failure-Path Verification",
+  "timestamp": "2026-10-09T16:56:37.539409+00:00",
+  "status": "PASS",
+  "tests": {
+    "telemetryAuthRejection": {
+      "statusCode": 401,
+      "detail": "Invalid or missing telemetry ingestion API key"
+    },
+    "providerErrorResilience": {
+      "providerStatus": "ERROR",
+      "findingsPreserved": true
+    },
+    "proposalRejectionSafety": {
+      "rejectedStatus": "REJECTED",
+      "executionPrevented": true,
+      "targetIPRemainsAccessible": true
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "scenario": "Scenario E - Full Defensive Loop Source Blocking",
+  "timestamp": "2026-10-09T16:56:37.243051+00:00",
+  "attackerIp": "198.51.100.105",
+  "benignIp": "198.51.100.200",
+  "attackerStatusBefore": 200,
+  "attackerStatusAfter": 403,
+  "benignStatus": 200,
+  "auditVerification": {
+    "verified": true,
+    "totalRecords": 4,
+    "environmentId": "env-prod",
+    "latestHash": "914044ea82847a4fe62c285d44a4bf4295ee2652d17d6d54ca7c07cb35e07995",
+    "error": null
+  },
+  "status": "PASS"
+}

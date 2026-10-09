@@ -1,16 +1,16 @@
 """
 ==============================================================================
 FILE: apps/api/app/schemas/investigation.py
-ROLE / OWNERSHIP: AI Engineers & Backend Engineers
+ROLE / OWNERSHIP: Cybersecurity & Backend Engineers
 OBJECTIVE: Pydantic schemas for structured Evidence, Attack Stories, and Investigation Results.
 TOOLS & LIBRARIES: Pydantic v2
 KEY FEATURES / FUNCTIONS TO IMPLEMENT:
   - EvidenceSchema: Structured forensic evidence object.
-  - RecommendationSchema: AI proposed allowlisted mitigation action.
+  - RecommendationSchema: Deterministic allowlisted mitigation action.
   - AttackStorySchema: Delineated observed facts, reasonable inferences, and unknowns.
   - InvestigationResultResponse: Final aggregated investigation response payload.
 EXPECTED RESULTS / BEHAVIOR:
-  - Validates that AI output strictly conforms to grounded evidence schemas.
+  - Validates that deterministic investigation output strictly conforms to grounded evidence schemas.
 ==============================================================================
 """
 
@@ -52,3 +52,24 @@ class InvestigationResultResponse(BaseModel):
     groundedEvidence: List[EvidenceSchema]
     recommendations: List[RecommendationSchema]
     generatedAt: str
+
+
+class TimelineEventResponse(BaseModel):
+    timestamp: str
+    eventId: str
+    eventType: str
+    source: str
+    outcome: str
+    summary: str
+    details: Dict[str, Any] = {}
+    flag: Optional[str] = None
+
+
+class InvestigationTimelineResponse(BaseModel):
+    incidentId: str
+    environmentId: str
+    events: List[TimelineEventResponse]
+    totalEvents: int
+    hasContradictions: bool
+    notes: List[str] = []
+

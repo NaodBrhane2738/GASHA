@@ -1,0 +1,9 @@
+{
+  "scenario": "Scenario C - Mixed Authorized and Denied Activity",
+  "timestamp": "2026-10-09T16:56:37.050328+00:00",
+  "clientIp": "198.51.100.103",
+  "normalStatus": 200,
+  "deniedResourceStatus": 403,
+  "deniedPrivilegeStatus": 403,
+  "status": "PASS"
+}

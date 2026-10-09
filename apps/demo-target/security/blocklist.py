@@ -13,9 +13,16 @@ EXPECTED RESULTS / BEHAVIOR:
 ==============================================================================
 """
 
+import sys
 from typing import Set
 
 _blocked_ips: Set[str] = set()
+
+# Register aliases in sys.modules to prevent disjoint module instances
+_this_module = sys.modules.get(__name__)
+if _this_module:
+    sys.modules["security.blocklist"] = _this_module
+    sys.modules["apps.demo_target.security.blocklist"] = _this_module
 
 def block_ip(ip_address: str) -> None:
     _blocked_ips.add(ip_address)
@@ -25,3 +32,7 @@ def is_blocked(ip_address: str) -> bool:
 
 def clear_blocklist() -> None:
     _blocked_ips.clear()
+
+def get_blocked_ips() -> Set[str]:
+    return set(_blocked_ips)
+

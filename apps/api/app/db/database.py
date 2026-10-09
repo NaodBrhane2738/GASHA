@@ -34,8 +34,15 @@ def get_supabase_client():
     return _supabase_client
 
 async def init_db():
-    logger.info(f"Connecting to Supabase PostgreSQL database at {settings.DATABASE_URL.split('@')[-1]}")
+    logger.info("Initializing relational database persistence...")
+    from app.db.sql_engine import get_sql_engine
+    engine = get_sql_engine()
+    engine.init_schema()
+    logger.info(f"Database persistence active at {engine.db_path}")
 
 async def get_db_session() -> AsyncGenerator:
     """Dependency providing database session context."""
-    yield None
+    from app.db.sql_engine import get_sql_engine
+    engine = get_sql_engine()
+    with engine.get_connection() as conn:
+        yield conn

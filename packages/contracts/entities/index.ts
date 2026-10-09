@@ -12,10 +12,10 @@
  *   - AttackPath: High-probability traversal routes from entry points to critical assets.
  *   - Incident: Grouped security detections with status, timeline, and affected assets.
  *   - Evidence: Verified telemetry/detection items with cryptographic/temporal integrity.
- *   - InvestigationContext & Result: Grounded AI reasoning context and attack narratives.
+ *   - InvestigationContext & Result: Grounded deterministic investigation context and attack narratives.
  *   - EnvironmentState: Global platform containment mode (NORMAL, ACTIVE_DEFENSE, LOCKDOWN).
  * EXPECTED RESULTS / BEHAVIOR:
- *   - Single source of truth for frontend rendering, backend persistence, and AI reasoning.
+ *   - Single source of truth for frontend rendering, backend persistence, and deterministic analysis.
  * ==============================================================================
  */
 

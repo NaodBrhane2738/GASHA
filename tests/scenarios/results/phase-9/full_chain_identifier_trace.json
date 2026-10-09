@@ -1,0 +1,48 @@
+{
+  "title": "GASHA End-to-End Real Identifier Trace",
+  "timestamp": "2026-10-09T16:56:37.648677+00:00",
+  "status": "VERIFIED_END_TO_END",
+  "chain": {
+    "httpRequests": [
+      "req-login-attempt-1",
+      "req-login-attempt-2",
+      "req-login-attempt-3",
+      "req-login-attempt-4",
+      "req-login-attempt-5"
+    ],
+    "sourceIp": "198.51.100.230",
+    "telemetryEventIds": [
+      "telem-b8c42617943e",
+      "telem-19076c7825ae",
+      "telem-f45c6b0d6e51",
+      "telem-f7f28227b76a",
+      "telem-604320e26ff0"
+    ],
+    "detectionId": "det-f9ed030be1",
+    "detectionRuleId": "RULE-AUTH-001",
+    "incidentId": "inc-ac1dcf3a",
+    "incidentStatus": "ACTIVE",
+    "investigationId": "inv-inc-ac1dcf3a",
+    "responseProposalId": "resp-36d92229fa",
+    "operatorApproval": {
+      "decision": "APPROVE",
+      "approver": "lead-analyst-1",
+      "approvedAt": "2026-10-09T16:56:37.638247Z"
+    },
+    "enforcement": {
+      "status": "SUCCEEDED",
+      "verificationStatus": "VERIFIED",
+      "executedAt": "2026-10-09T16:56:37.642661Z"
+    },
+    "auditRecord": {
+      "auditId": "aud-dac8ed5bed3c",
+      "recordHash": "529c68ba2cd1fca788df7669a984471883cd52b244fcba7114ee94e3cb97efe7",
+      "previousHash": "f63a36ef1a09dbd7a83f0806684e49809052fb20e56487f7358e7660a7b0b573"
+    },
+    "recalculation": {
+      "triggerEvent": "ACTIVE_RESPONSE_VERIFIED",
+      "resultingRiskScore": 0.0,
+      "calculatedAt": "2026-10-09T16:56:37.648646+00:00"
+    }
+  }
+}

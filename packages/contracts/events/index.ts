@@ -27,6 +27,7 @@ export type TelemetryEventType =
 
 export interface TelemetryEventPayload {
   sourceIp?: string;
+  observedPeerIp?: string;
   userAgent?: string;
   userId?: string;
   sessionId?: string;
@@ -34,11 +35,16 @@ export interface TelemetryEventPayload {
   httpPath?: string;
   httpStatusCode?: number;
   resourceAccessed?: string;
+  action?: string;
+  outcome?: string;
+  latencyMs?: number;
+  correlationId?: string;
   metadata?: Record<string, unknown>;
 }
 
 export interface TelemetryEvent {
   id: string;
+  schemaVersion?: string;
   eventType: TelemetryEventType;
   timestamp: string;
   sourceService: string;

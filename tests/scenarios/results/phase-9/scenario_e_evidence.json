@@ -1,0 +1,21 @@
+{
+  "scenario": "Scenario E - Verified State Recalculation",
+  "timestamp": "2026-10-09T16:56:37.479380+00:00",
+  "status": "PASS",
+  "environmentId": "env-scenario-e",
+  "entryAssetId": "asset-b50b977adbdc",
+  "targetAssetId": "asset-fe8ab40a68e8",
+  "beforeResponse": {
+    "riskScore": 56.2,
+    "activeAttackPaths": 1,
+    "reachability": "REACHABLE"
+  },
+  "afterResponse": {
+    "riskScore": 39.0,
+    "activeAttackPaths": 0,
+    "containmentStatus": "ISOLATED",
+    "isTraversable": false,
+    "codeVulnerabilityStatus": "OPEN"
+  },
+  "recalculationDurationSeconds": 0.0002
+}

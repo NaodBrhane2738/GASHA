@@ -1,0 +1,123 @@
+{
+  "scenario": "Scenario D - Discovery-to-Assessment",
+  "timestamp": "2026-10-09T16:56:37.468967+00:00",
+  "status": "PASS",
+  "liveProviderIntegrationStatus": "BLOCKED",
+  "liveProviderBlockReason": "Live GitHub & Vercel API tokens not provided in runtime environment",
+  "localPipelineStatus": "PASS",
+  "recalculationDurationSeconds": 0.0004,
+  "discoveredAssetsCount": 3,
+  "openFindingsCount": 2,
+  "attackPathsCount": 2,
+  "overallRiskScore": 69.7,
+  "findings": [
+    {
+      "assetId": "asset-b2bd57a747fe",
+      "environmentId": "env-scenario-d",
+      "ruleId": "RULE-DEP-VULN-001",
+      "cveId": "CVE-2022-23529",
+      "title": "Insecure key validation in jsonwebtoken (jsonwebtoken)",
+      "description": "Package 'jsonwebtoken' in 'package.json' is subject to advisory CVE-2022-23529.",
+      "severity": "HIGH",
+      "cvssScore": 7.5,
+      "category": "VULNERABLE_DEPENDENCY",
+      "remediationGuidance": "Upgrade jsonwebtoken to version 9.0.0 or higher.",
+      "status": "OPEN",
+      "evidence": {
+        "sourceType": "OFFLINE_ADVISORY_MATCH",
+        "manifest": "package.json",
+        "packageName": "jsonwebtoken",
+        "detectedVersion": "8.5.1",
+        "cveId": "CVE-2022-23529",
+        "advisoryId": "GHSA-qwph-4952-7xr6"
+      },
+      "isStale": false,
+      "id": "vuln-asset-b2bd57a747fe-rule-dep-vuln-001",
+      "discoveredAt": "2026-10-09T16:56:37.468635+00:00",
+      "updatedAt": "2026-10-09T16:56:37.468635+00:00"
+    },
+    {
+      "assetId": "asset-50d1b60042d6",
+      "environmentId": "env-scenario-d",
+      "ruleId": "RULE-EXPOSURE-APP-001",
+      "cveId": null,
+      "title": "Public Web Application Exposure",
+      "description": "Asset 'gasha-web-portal' is verified as publicly accessible on the internet via portal.gasha-defense.internal.",
+      "severity": "LOW",
+      "cvssScore": 3.1,
+      "category": "PUBLIC_EXPOSURE",
+      "remediationGuidance": "Ensure public access is intentional and protected by WAF and authentication where appropriate.",
+      "status": "OPEN",
+      "evidence": {
+        "sourceType": "METADATA_OBSERVATION",
+        "isPubliclyExposed": true,
+        "publicUrl": "portal.gasha-defense.internal",
+        "assetName": "gasha-web-portal",
+        "environmentId": "env-scenario-d"
+      },
+      "isStale": false,
+      "id": "vuln-asset-50d1b60042d6-rule-exposure-app-001",
+      "discoveredAt": "2026-10-09T16:56:37.468683+00:00",
+      "updatedAt": "2026-10-09T16:56:37.468683+00:00"
+    }
+  ],
+  "attackPath": {
+    "id": "path-50d1b600-to-26eebb63",
+    "environmentId": "env-scenario-d",
+    "entryPointAssetId": "asset-50d1b60042d6",
+    "targetAssetId": "asset-26eebb63a1f8",
+    "severity": "HIGH",
+    "pathScore": 69.0,
+    "nodes": [
+      {
+        "assetId": "asset-50d1b60042d6",
+        "assetName": "gasha-web-portal",
+        "assetType": "VERCEL_DEPLOYMENT",
+        "stepOrder": 1,
+        "vulnerabilityIds": [
+          "vuln-asset-50d1b60042d6-rule-exposure-app-001"
+        ],
+        "description": "Step 1: Traversal through gasha-web-portal (VERCEL_DEPLOYMENT)"
+      },
+      {
+        "assetId": "asset-b2bd57a747fe",
+        "assetName": "gasha-org/gasha-auth-service",
+        "assetType": "GITHUB_REPOSITORY",
+        "stepOrder": 2,
+        "vulnerabilityIds": [
+          "vuln-asset-b2bd57a747fe-rule-dep-vuln-001"
+        ],
+        "description": "Step 2: Traversal through gasha-org/gasha-auth-service (GITHUB_REPOSITORY)"
+      },
+      {
+        "assetId": "asset-26eebb63a1f8",
+        "assetName": "customer-records-db",
+        "assetType": "DATABASE",
+        "stepOrder": 3,
+        "vulnerabilityIds": null,
+        "description": "Step 3: Traversal through customer-records-db (DATABASE)"
+      }
+    ],
+    "isActive": true,
+    "reachability": "REACHABLE",
+    "discoveredAt": "2026-10-09T16:56:37.468849+00:00",
+    "mitigatedAt": null,
+    "metadata": {
+      "hopCount": 3,
+      "weaknessCount": 2,
+      "targetCriticality": "TIER_0_CROWN_JEWEL",
+      "nodeSequence": [
+        "asset-50d1b60042d6",
+        "asset-b2bd57a747fe",
+        "asset-26eebb63a1f8"
+      ]
+    }
+  },
+  "riskExplanation": {
+    "rawScore": 69.7,
+    "totalContributorsCount": 5,
+    "findingsEvaluated": 2,
+    "assetsEvaluated": 3,
+    "activePathsEvaluated": 2
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "scenario": "Scenario F - Multi-Tenant Isolation & Deduplication",
+  "timestamp": "2026-10-09T16:56:37.507443+00:00",
+  "status": "PASS",
+  "tenantAlpha": {
+    "environmentId": "env-tenant-alpha",
+    "eventsIngested": 5,
+    "duplicateEventsDropped": 5,
+    "detectionsCount": 1,
+    "incidentsCount": 1
+  },
+  "tenantBeta": {
+    "environmentId": "env-tenant-beta",
+    "eventsIngested": 1,
+    "incidentsCount": 0
+  },
+  "crossTenantContamination": false,
+  "recalculationIdempotent": true
+}
