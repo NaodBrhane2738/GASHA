@@ -1,10 +1,10 @@
 {
   "scenario": "Scenario E - Verified State Recalculation",
-  "timestamp": "2026-10-09T16:56:37.479380+00:00",
+  "timestamp": "2026-10-09T23:31:54.313520+00:00",
   "status": "PASS",
   "environmentId": "env-scenario-e",
-  "entryAssetId": "asset-b50b977adbdc",
-  "targetAssetId": "asset-fe8ab40a68e8",
+  "entryAssetId": "asset-a72770d3dd39",
+  "targetAssetId": "asset-8bcc3b79192a",
   "beforeResponse": {
     "riskScore": 56.2,
     "activeAttackPaths": 1,

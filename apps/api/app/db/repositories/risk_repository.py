@@ -8,7 +8,7 @@ STRICT ISOLATION: Scoped strictly by environmentId.
 """
 
 import threading
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
 
 from app.schemas.risk import RiskScoreResponse, RiskHistoryEntryResponse
@@ -64,8 +64,13 @@ class RiskRepository:
 
 _risk_repo_instance: Optional[RiskRepository] = None
 
-def get_risk_repository() -> RiskRepository:
+def get_risk_repository(storage_backend: Optional[str] = None) -> Any:
     global _risk_repo_instance
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
+        from app.db.sql_engine import SQLRiskRepository
+        return SQLRiskRepository()
     if _risk_repo_instance is None:
         _risk_repo_instance = RiskRepository()
     return _risk_repo_instance

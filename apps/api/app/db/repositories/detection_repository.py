@@ -72,9 +72,9 @@ _default_detection_repo: Optional[DetectionRepository] = None
 
 def get_detection_repository(storage_backend: Optional[str] = None) -> Any:
     global _default_detection_repo
-    import os
-    backend = storage_backend or os.environ.get("GASHA_STORAGE_BACKEND", "memory")
-    if backend == "sql":
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
         from app.db.sql_engine import SQLDetectionRepository
         return SQLDetectionRepository()
     if _default_detection_repo is None:

@@ -5,6 +5,10 @@ ROLE / OWNERSHIP: Backend & Cybersecurity Engineers
 OBJECTIVE: Secure, environment-partitioned WebSocket streaming for live platform updates.
 SECURITY: Single-use authentication tickets, JWT fallback, strict environment isolation,
           and zero cross-tenant event broadcast leakage.
+DEPLOYMENT CONSTRAINT: WebSocket tickets and active connection pools are process-local.
+                       In the supported deployment architecture, Uvicorn must be run with
+                       a single worker process (workers = 1). Multi-worker real-time broadcasting
+                       is BLOCKED pending Redis/external pub-sub integration.
 ==============================================================================
 """
 

@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario A - Authentication-Failure Threshold",
-  "timestamp": "2026-10-09T16:56:36.845032+00:00",
+  "timestamp": "2026-10-09T23:31:53.838334+00:00",
   "attackerIp": "198.51.100.101",
   "requests": [
     {
@@ -30,7 +30,7 @@
     }
   ],
   "detection": {
-    "id": "det-b063b8c740",
+    "id": "det-30f80898ef",
     "rule": {
       "ruleId": "RULE-AUTH-001",
       "name": "Brute Force Authentication Attempt",
@@ -39,19 +39,19 @@
       "confidence": 0.95
     },
     "matchedEventIds": [
-      "telem-7343160c8b98",
-      "telem-c9bb67e2c259",
-      "telem-7257d9e34236",
-      "telem-5e0f32ca4fb4",
-      "telem-aaefdba8ecd3"
+      "telem-4bb05ac45928",
+      "telem-2ee88d16effd",
+      "telem-c93dcac98c9b",
+      "telem-03a1119b5f3a",
+      "telem-cedb0feb1b24"
     ],
     "primaryAssetId": "asset:auth-service:env-prod",
-    "timestamp": "2026-10-09T16:56:36.839591Z",
+    "timestamp": "2026-10-09T23:31:53.834564Z",
     "severity": "HIGH",
     "confidence": 0.95,
     "evidenceSummary": "Observed 5 failed authentication attempts for target account 'admin' originating from source IP '198.51.100.101' within 60s window.",
     "environmentId": "env-prod",
-    "incidentId": "inc-83d0b59a",
+    "incidentId": "inc-3fcc9c58",
     "metadata": {
       "environmentId": "env-prod",
       "sourceIp": "198.51.100.101",
@@ -61,31 +61,31 @@
     }
   },
   "incident": {
-    "id": "inc-83d0b59a",
+    "id": "inc-3fcc9c58",
     "title": "Brute Force Authentication Activity [198.51.100.101]",
     "severity": "HIGH",
     "status": "ACTIVE",
     "primaryAffectedAssetId": "asset:auth-service:env-prod",
     "relatedAssetIds": [],
     "detectionEventIds": [
-      "det-b063b8c740"
+      "det-30f80898ef"
     ],
     "attackPathId": null,
-    "createdAt": "2026-10-09T16:56:36.839627Z",
-    "updatedAt": "2026-10-09T16:56:36.839627Z",
+    "createdAt": "2026-10-09T23:31:53.834594Z",
+    "updatedAt": "2026-10-09T23:31:53.834594Z",
     "summary": "Deterministic correlation engine detected suspicious activity: Observed 5 failed authentication attempts for target account 'admin' originating from source IP '198.51.100.101' within 60s window. Mapped to MITRE ATT&CK technique T1110.001.",
     "environmentId": "env-prod",
     "correlationKey": "env-prod:AUTH:198.51.100.101:asset:auth-service:env-prod"
   },
   "investigation": {
-    "incidentId": "inc-83d0b59a",
-    "summary": "Deterministic forensic analysis for Incident 'inc-83d0b59a' in environment 'env-prod': Assessed 1 detection match(es) (RULE-AUTH-001) targeting asset 'asset:auth-service:env-prod'. Observed malicious indicators associated with source(s) [198.51.100.101]. Behavioral patterns map deterministically to ATT&CK techniques [T1110.001]. Analysis confirmed 0 ungrounded assumptions and verified all facts against authoritative event IDs.",
+    "incidentId": "inc-3fcc9c58",
+    "summary": "Deterministic forensic analysis for Incident 'inc-3fcc9c58' in environment 'env-prod': Assessed 1 detection match(es) (RULE-AUTH-001) targeting asset 'asset:auth-service:env-prod'. Observed malicious indicators associated with source(s) [198.51.100.101]. Behavioral patterns map deterministically to ATT&CK techniques [T1110.001]. Analysis confirmed 0 ungrounded assumptions and verified all facts against authoritative event IDs.",
     "severity": "HIGH",
     "confidenceScore": 0.95,
     "attackStory": {
       "observedFacts": [
-        "Incident 'inc-83d0b59a' on primary asset 'asset:auth-service:env-prod' with severity 'HIGH' in environment 'env-prod'.",
-        "Detection 'det-b063b8c740' triggered deterministic rule 'RULE-AUTH-001' (Brute Force Authentication Attempt) citing 5 verified event ID(s) [matched IDs: telem-7343160c8b98, telem-c9bb67e2c259, telem-7257d9e34236, telem-5e0f32ca4fb4, telem-aaefdba8ecd3].",
+        "Incident 'inc-3fcc9c58' on primary asset 'asset:auth-service:env-prod' with severity 'HIGH' in environment 'env-prod'.",
+        "Detection 'det-30f80898ef' triggered deterministic rule 'RULE-AUTH-001' (Brute Force Authentication Attempt) citing 5 verified event ID(s) [matched IDs: telem-4bb05ac45928, telem-2ee88d16effd, telem-c93dcac98c9b, telem-03a1119b5f3a, telem-cedb0feb1b24].",
         "Observed 5 failed authentication attempts targeting user 'admin' originating from source IP '198.51.100.101'."
       ],
       "reasonableInferences": [
@@ -95,14 +95,14 @@
         "Telemetry does not confirm whether any valid credentials for account 'admin' were successfully breached.",
         "Attacker true origin, infrastructure ownership, and geolocation cannot be authenticated without authoritative ISP/threat intelligence telemetry."
       ],
-      "narrativeSummary": "Deterministic forensic analysis for Incident 'inc-83d0b59a' in environment 'env-prod': Assessed 1 detection match(es) (RULE-AUTH-001) targeting asset 'asset:auth-service:env-prod'. Observed malicious indicators associated with source(s) [198.51.100.101]. Behavioral patterns map deterministically to ATT&CK techniques [T1110.001]. Analysis confirmed 0 ungrounded assumptions and verified all facts against authoritative event IDs."
+      "narrativeSummary": "Deterministic forensic analysis for Incident 'inc-3fcc9c58' in environment 'env-prod': Assessed 1 detection match(es) (RULE-AUTH-001) targeting asset 'asset:auth-service:env-prod'. Observed malicious indicators associated with source(s) [198.51.100.101]. Behavioral patterns map deterministically to ATT&CK techniques [T1110.001]. Analysis confirmed 0 ungrounded assumptions and verified all facts against authoritative event IDs."
     },
     "groundedEvidence": [
       {
-        "id": "det-b063b8c740",
+        "id": "det-30f80898ef",
         "type": "DETECTION_MATCH",
         "source": "asset:auth-service:env-prod",
-        "timestamp": "2026-10-09T16:56:36.839591Z",
+        "timestamp": "2026-10-09T23:31:53.834564Z",
         "content": {
           "ruleId": "RULE-AUTH-001",
           "ruleName": "Brute Force Authentication Attempt",
@@ -120,83 +120,83 @@
         "verified": true
       },
       {
-        "id": "telem-7343160c8b98",
+        "id": "telem-4bb05ac45928",
         "type": "TELEMETRY_EVENT",
         "source": "198.51.100.101",
-        "timestamp": "2026-10-09T16:56:36.839591Z",
+        "timestamp": "2026-10-09T23:31:53.834564Z",
         "content": {
-          "detectionId": "det-b063b8c740",
+          "detectionId": "det-30f80898ef",
           "ruleId": "RULE-AUTH-001",
           "outcome": "EVALUATED"
         },
-        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-b063b8c740'",
+        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-30f80898ef'",
         "verified": true
       },
       {
-        "id": "telem-c9bb67e2c259",
+        "id": "telem-2ee88d16effd",
         "type": "TELEMETRY_EVENT",
         "source": "198.51.100.101",
-        "timestamp": "2026-10-09T16:56:36.839591Z",
+        "timestamp": "2026-10-09T23:31:53.834564Z",
         "content": {
-          "detectionId": "det-b063b8c740",
+          "detectionId": "det-30f80898ef",
           "ruleId": "RULE-AUTH-001",
           "outcome": "EVALUATED"
         },
-        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-b063b8c740'",
+        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-30f80898ef'",
         "verified": true
       },
       {
-        "id": "telem-7257d9e34236",
+        "id": "telem-c93dcac98c9b",
         "type": "TELEMETRY_EVENT",
         "source": "198.51.100.101",
-        "timestamp": "2026-10-09T16:56:36.839591Z",
+        "timestamp": "2026-10-09T23:31:53.834564Z",
         "content": {
-          "detectionId": "det-b063b8c740",
+          "detectionId": "det-30f80898ef",
           "ruleId": "RULE-AUTH-001",
           "outcome": "EVALUATED"
         },
-        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-b063b8c740'",
+        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-30f80898ef'",
         "verified": true
       },
       {
-        "id": "telem-5e0f32ca4fb4",
+        "id": "telem-03a1119b5f3a",
         "type": "TELEMETRY_EVENT",
         "source": "198.51.100.101",
-        "timestamp": "2026-10-09T16:56:36.839591Z",
+        "timestamp": "2026-10-09T23:31:53.834564Z",
         "content": {
-          "detectionId": "det-b063b8c740",
+          "detectionId": "det-30f80898ef",
           "ruleId": "RULE-AUTH-001",
           "outcome": "EVALUATED"
         },
-        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-b063b8c740'",
+        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-30f80898ef'",
         "verified": true
       },
       {
-        "id": "telem-aaefdba8ecd3",
+        "id": "telem-cedb0feb1b24",
         "type": "TELEMETRY_EVENT",
         "source": "198.51.100.101",
-        "timestamp": "2026-10-09T16:56:36.839591Z",
+        "timestamp": "2026-10-09T23:31:53.834564Z",
         "content": {
-          "detectionId": "det-b063b8c740",
+          "detectionId": "det-30f80898ef",
           "ruleId": "RULE-AUTH-001",
           "outcome": "EVALUATED"
         },
-        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-b063b8c740'",
+        "relevanceExplanation": "Authoritative raw telemetry event contributing to detection 'det-30f80898ef'",
         "verified": true
       }
     ],
     "recommendations": [
       {
-        "id": "rec-92de4021",
+        "id": "rec-39f87f79",
         "actionType": "BLOCK_SOURCE",
         "targetIdentifier": "198.51.100.101",
         "targetType": "IP_ADDRESS",
-        "rationale": "Direct source IP '198.51.100.101' identified in deterministic detection 'det-b063b8c740' triggering rule 'RULE-AUTH-001' (Brute Force Authentication Attempt).",
+        "rationale": "Direct source IP '198.51.100.101' identified in deterministic detection 'det-30f80898ef' triggering rule 'RULE-AUTH-001' (Brute Force Authentication Attempt).",
         "confidence": 0.95,
         "expectedImpact": "Enforces perimeter block on '198.51.100.101', halting inbound attacker requests."
       }
     ],
-    "generatedAt": "2026-10-09T16:56:36.843580Z"
+    "generatedAt": "2026-10-09T23:31:53.836998Z"
   },
   "status": "PASS"
 }

@@ -1,6 +1,6 @@
 {
   "scenario": "Scenario G - Failure-Path Verification",
-  "timestamp": "2026-10-09T16:56:37.539409+00:00",
+  "timestamp": "2026-10-09T23:31:54.355730+00:00",
   "status": "PASS",
   "tests": {
     "telemetryAuthRejection": {

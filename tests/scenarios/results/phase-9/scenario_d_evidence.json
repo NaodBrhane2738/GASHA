@@ -1,18 +1,18 @@
 {
   "scenario": "Scenario D - Discovery-to-Assessment",
-  "timestamp": "2026-10-09T16:56:37.468967+00:00",
+  "timestamp": "2026-10-09T23:31:54.306662+00:00",
   "status": "PASS",
   "liveProviderIntegrationStatus": "BLOCKED",
   "liveProviderBlockReason": "Live GitHub & Vercel API tokens not provided in runtime environment",
   "localPipelineStatus": "PASS",
-  "recalculationDurationSeconds": 0.0004,
+  "recalculationDurationSeconds": 0.0003,
   "discoveredAssetsCount": 3,
   "openFindingsCount": 2,
   "attackPathsCount": 2,
   "overallRiskScore": 69.7,
   "findings": [
     {
-      "assetId": "asset-b2bd57a747fe",
+      "assetId": "asset-fa9ae43743b2",
       "environmentId": "env-scenario-d",
       "ruleId": "RULE-DEP-VULN-001",
       "cveId": "CVE-2022-23529",
@@ -32,12 +32,12 @@
         "advisoryId": "GHSA-qwph-4952-7xr6"
       },
       "isStale": false,
-      "id": "vuln-asset-b2bd57a747fe-rule-dep-vuln-001",
-      "discoveredAt": "2026-10-09T16:56:37.468635+00:00",
-      "updatedAt": "2026-10-09T16:56:37.468635+00:00"
+      "id": "vuln-asset-fa9ae43743b2-rule-dep-vuln-001",
+      "discoveredAt": "2026-10-09T23:31:54.306403+00:00",
+      "updatedAt": "2026-10-09T23:31:54.306403+00:00"
     },
     {
-      "assetId": "asset-50d1b60042d6",
+      "assetId": "asset-ee5422638ea7",
       "environmentId": "env-scenario-d",
       "ruleId": "RULE-EXPOSURE-APP-001",
       "cveId": null,
@@ -56,41 +56,41 @@
         "environmentId": "env-scenario-d"
       },
       "isStale": false,
-      "id": "vuln-asset-50d1b60042d6-rule-exposure-app-001",
-      "discoveredAt": "2026-10-09T16:56:37.468683+00:00",
-      "updatedAt": "2026-10-09T16:56:37.468683+00:00"
+      "id": "vuln-asset-ee5422638ea7-rule-exposure-app-001",
+      "discoveredAt": "2026-10-09T23:31:54.306435+00:00",
+      "updatedAt": "2026-10-09T23:31:54.306435+00:00"
     }
   ],
   "attackPath": {
-    "id": "path-50d1b600-to-26eebb63",
+    "id": "path-ee542263-to-e3f3faa3",
     "environmentId": "env-scenario-d",
-    "entryPointAssetId": "asset-50d1b60042d6",
-    "targetAssetId": "asset-26eebb63a1f8",
+    "entryPointAssetId": "asset-ee5422638ea7",
+    "targetAssetId": "asset-e3f3faa3d0dd",
     "severity": "HIGH",
     "pathScore": 69.0,
     "nodes": [
       {
-        "assetId": "asset-50d1b60042d6",
+        "assetId": "asset-ee5422638ea7",
         "assetName": "gasha-web-portal",
         "assetType": "VERCEL_DEPLOYMENT",
         "stepOrder": 1,
         "vulnerabilityIds": [
-          "vuln-asset-50d1b60042d6-rule-exposure-app-001"
+          "vuln-asset-ee5422638ea7-rule-exposure-app-001"
         ],
         "description": "Step 1: Traversal through gasha-web-portal (VERCEL_DEPLOYMENT)"
       },
       {
-        "assetId": "asset-b2bd57a747fe",
+        "assetId": "asset-fa9ae43743b2",
         "assetName": "gasha-org/gasha-auth-service",
         "assetType": "GITHUB_REPOSITORY",
         "stepOrder": 2,
         "vulnerabilityIds": [
-          "vuln-asset-b2bd57a747fe-rule-dep-vuln-001"
+          "vuln-asset-fa9ae43743b2-rule-dep-vuln-001"
         ],
         "description": "Step 2: Traversal through gasha-org/gasha-auth-service (GITHUB_REPOSITORY)"
       },
       {
-        "assetId": "asset-26eebb63a1f8",
+        "assetId": "asset-e3f3faa3d0dd",
         "assetName": "customer-records-db",
         "assetType": "DATABASE",
         "stepOrder": 3,
@@ -100,16 +100,16 @@
     ],
     "isActive": true,
     "reachability": "REACHABLE",
-    "discoveredAt": "2026-10-09T16:56:37.468849+00:00",
+    "discoveredAt": "2026-10-09T23:31:54.306554+00:00",
     "mitigatedAt": null,
     "metadata": {
       "hopCount": 3,
       "weaknessCount": 2,
       "targetCriticality": "TIER_0_CROWN_JEWEL",
       "nodeSequence": [
-        "asset-50d1b60042d6",
-        "asset-b2bd57a747fe",
-        "asset-26eebb63a1f8"
+        "asset-ee5422638ea7",
+        "asset-fa9ae43743b2",
+        "asset-e3f3faa3d0dd"
       ]
     }
   },

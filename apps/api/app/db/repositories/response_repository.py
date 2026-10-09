@@ -51,9 +51,9 @@ _default_response_repo: Optional[ResponseRepository] = None
 
 def get_response_repository(storage_backend: Optional[str] = None) -> Any:
     global _default_response_repo
-    import os
-    backend = storage_backend or os.environ.get("GASHA_STORAGE_BACKEND", "memory")
-    if backend == "sql":
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
         from app.db.sql_engine import SQLResponseRepository
         return SQLResponseRepository()
     if _default_response_repo is None:

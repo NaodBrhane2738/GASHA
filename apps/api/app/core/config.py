@@ -13,13 +13,13 @@ EXPECTED RESULTS / BEHAVIOR:
 """
 
 import os
-from typing import List
+from typing import List, Optional
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
     NODE_ENV: str = "development"
     API_PORT: int = 4000
-    API_HOST: str = "0.0.0.0"
+    API_HOST: str = "127.0.0.1"
     API_BASE_URL: str = "http://localhost:4000/api/v1"
     WEB_URL: str = "http://localhost:3000"
     LOG_LEVEL: str = "debug"
@@ -47,6 +47,7 @@ class Settings(BaseSettings):
 
     # Integration Credential Security
     CREDENTIAL_ENCRYPTION_KEY: str = ""
+    PROVISIONING_TOKEN: Optional[str] = None
 
     # Telemetry Pipeline Configuration
     GASHA_TELEMETRY_API_KEY: str = "gasha-telemetry-demo-key-2026"
@@ -57,7 +58,7 @@ class Settings(BaseSettings):
     GASHA_TELEMETRY_BUFFER_CAPACITY: int = 5000
 
     class Config:
-        env_file = ".env"
+        env_file = (".env", ".env.local", ".env.production")
         extra = "allow"
 
 settings = Settings()

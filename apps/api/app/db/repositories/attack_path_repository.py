@@ -8,7 +8,7 @@ STRICT ISOLATION: Partitioned strictly by environmentId.
 """
 
 import threading
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
 
 from app.schemas.attack_path import AttackPathResponse, ReachabilityStatus
@@ -95,8 +95,13 @@ class AttackPathRepository:
 
 _attack_path_repo_instance: Optional[AttackPathRepository] = None
 
-def get_attack_path_repository() -> AttackPathRepository:
+def get_attack_path_repository(storage_backend: Optional[str] = None) -> Any:
     global _attack_path_repo_instance
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
+        from app.db.sql_engine import SQLAttackPathRepository
+        return SQLAttackPathRepository()
     if _attack_path_repo_instance is None:
         _attack_path_repo_instance = AttackPathRepository()
     return _attack_path_repo_instance

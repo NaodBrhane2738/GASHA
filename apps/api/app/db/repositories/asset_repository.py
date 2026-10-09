@@ -10,7 +10,7 @@ STRICT ISOLATION: All asset and relationship queries are scoped by environmentId
 
 import uuid
 import threading
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
 
 from app.schemas.asset import (
@@ -186,8 +186,13 @@ class AssetRepository:
 
 _asset_repo_instance: Optional[AssetRepository] = None
 
-def get_asset_repository() -> AssetRepository:
+def get_asset_repository(storage_backend: Optional[str] = None) -> Any:
     global _asset_repo_instance
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
+        from app.db.sql_engine import SQLAssetRepository
+        return SQLAssetRepository()
     if _asset_repo_instance is None:
         _asset_repo_instance = AssetRepository()
     return _asset_repo_instance

@@ -8,7 +8,7 @@ STRICT ISOLATION: Connections and sync logs are strictly partitioned by environm
 """
 
 import threading
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from datetime import datetime, timezone
 
 from app.schemas.connection import ConnectionRecord, DiscoveryRunStatus
@@ -107,8 +107,13 @@ class ConnectionRepository:
 
 _connection_repo_instance: Optional[ConnectionRepository] = None
 
-def get_connection_repository() -> ConnectionRepository:
+def get_connection_repository(storage_backend: Optional[str] = None) -> Any:
     global _connection_repo_instance
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
+        from app.db.sql_engine import SQLConnectionRepository
+        return SQLConnectionRepository()
     if _connection_repo_instance is None:
         _connection_repo_instance = ConnectionRepository()
     return _connection_repo_instance

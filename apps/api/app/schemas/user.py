@@ -48,3 +48,22 @@ class TokenResponse(BaseModel):
 
 class RefreshTokenRequest(BaseModel):
     refreshToken: str
+
+
+class ProvisionAdminRequest(BaseModel):
+    provisioningToken: str
+    username: str = "admin"
+    password: str
+    environmentId: str = "env-prod"
+
+
+class CreateUserRequest(BaseModel):
+    username: str
+    password: str
+    role: UserRole
+    environmentId: str = "env-prod"
+
+
+class ChangePasswordRequest(BaseModel):
+    oldPassword: str
+    newPassword: str

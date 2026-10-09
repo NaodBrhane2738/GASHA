@@ -1,6 +1,6 @@
 {
   "title": "GASHA End-to-End Real Identifier Trace",
-  "timestamp": "2026-10-09T16:56:37.648677+00:00",
+  "timestamp": "2026-10-09T23:31:54.451095+00:00",
   "status": "VERIFIED_END_TO_END",
   "chain": {
     "httpRequests": [
@@ -12,37 +12,37 @@
     ],
     "sourceIp": "198.51.100.230",
     "telemetryEventIds": [
-      "telem-b8c42617943e",
-      "telem-19076c7825ae",
-      "telem-f45c6b0d6e51",
-      "telem-f7f28227b76a",
-      "telem-604320e26ff0"
+      "telem-4f065e938c60",
+      "telem-bb1c158afe06",
+      "telem-08bef87a2e72",
+      "telem-9de7426f27a0",
+      "telem-a1fa1420d3cc"
     ],
-    "detectionId": "det-f9ed030be1",
+    "detectionId": "det-f09d98135a",
     "detectionRuleId": "RULE-AUTH-001",
-    "incidentId": "inc-ac1dcf3a",
+    "incidentId": "inc-5f333d50",
     "incidentStatus": "ACTIVE",
-    "investigationId": "inv-inc-ac1dcf3a",
-    "responseProposalId": "resp-36d92229fa",
+    "investigationId": "inv-inc-5f333d50",
+    "responseProposalId": "resp-86c5c91ed7",
     "operatorApproval": {
       "decision": "APPROVE",
       "approver": "lead-analyst-1",
-      "approvedAt": "2026-10-09T16:56:37.638247Z"
+      "approvedAt": "2026-10-09T23:31:54.443961Z"
     },
     "enforcement": {
       "status": "SUCCEEDED",
       "verificationStatus": "VERIFIED",
-      "executedAt": "2026-10-09T16:56:37.642661Z"
+      "executedAt": "2026-10-09T23:31:54.446879Z"
     },
     "auditRecord": {
-      "auditId": "aud-dac8ed5bed3c",
-      "recordHash": "529c68ba2cd1fca788df7669a984471883cd52b244fcba7114ee94e3cb97efe7",
-      "previousHash": "f63a36ef1a09dbd7a83f0806684e49809052fb20e56487f7358e7660a7b0b573"
+      "auditId": "aud-26158b123032",
+      "recordHash": "26c9938aebc7ef53ab427f07a0d2d78d1c4110dda32830e9b0f7c3e88945bc8d",
+      "previousHash": "8c5697a320b2213df0994ca915ca7f325683de34535d90e94aab7c8c9f880bce"
     },
     "recalculation": {
       "triggerEvent": "ACTIVE_RESPONSE_VERIFIED",
       "resultingRiskScore": 0.0,
-      "calculatedAt": "2026-10-09T16:56:37.648646+00:00"
+      "calculatedAt": "2026-10-09T23:31:54.451071+00:00"
     }
   }
 }

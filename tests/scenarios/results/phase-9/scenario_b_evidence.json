@@ -1,12 +1,12 @@
 {
   "scenario": "Scenario B - Human-Approved Session Containment",
-  "timestamp": "2026-10-09T16:56:37.416630+00:00",
+  "timestamp": "2026-10-09T23:31:54.274339+00:00",
   "status": "PASS",
   "compromisedSession": "sess-phase9-compromised-42",
   "benignSession": "sess-phase9-benign-99",
-  "executionDurationSeconds": 0.0048,
-  "responseId": "resp-453a7248d8",
-  "incidentId": "inc-9dc8943b",
+  "executionDurationSeconds": 0.0027,
+  "responseId": "resp-1f99161eea",
+  "incidentId": "inc-666c95ab",
   "approvalStatus": "APPROVED",
   "executionStatus": "SUCCEEDED",
   "verificationStatus": "VERIFIED",
@@ -16,7 +16,7 @@
     "verified": true,
     "totalRecords": 4,
     "environmentId": "env-prod",
-    "latestHash": "d9a715c84f82e53fdeb11cd1886a14e9d4e402a945b19d01698dab4ff8a65c22",
+    "latestHash": "2c2224283f48a4b2456cf25b9661d10a57ef38bbe57b008ab0d426029ffcad85",
     "error": null
   }
 }

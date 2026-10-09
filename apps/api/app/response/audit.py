@@ -207,8 +207,13 @@ class AuditTrail:
 _default_audit_trail: Optional[AuditTrail] = None
 
 
-def get_audit_trail() -> AuditTrail:
+def get_audit_trail(storage_backend: Optional[str] = None) -> Any:
     global _default_audit_trail
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
+        from app.db.sql_engine import SQLAuditTrail
+        return SQLAuditTrail()
     if _default_audit_trail is None:
         _default_audit_trail = AuditTrail()
     return _default_audit_trail

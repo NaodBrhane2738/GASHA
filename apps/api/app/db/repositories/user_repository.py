@@ -26,10 +26,15 @@ class UserRepository:
         self._users_by_username: Dict[str, str] = {}  # username.lower() -> id
         # user_id -> Dict[token_hash, expires_at]
         self._refresh_tokens: Dict[str, Dict[str, float]] = {}
+        self._bootstrap_completed: bool = False
         self._seed_default_accounts()
 
     def _seed_default_accounts(self):
         """Seeds standard role accounts with strong hashed passwords for demonstration & testing."""
+        from app.core.production_guard import is_production_mode
+        if is_production_mode():
+            return
+
         now = datetime.now(timezone.utc).isoformat()
         seeds = [
             ("usr-analyst-1", "analyst", "AnalystSecure2026!", "security_analyst", "env-prod"),
@@ -51,6 +56,32 @@ class UserRepository:
             )
             self._users_by_id[uid] = u
             self._users_by_username[uname.lower()] = uid
+
+    def is_system_provisioned(self) -> bool:
+        with self._lock:
+            if self._bootstrap_completed:
+                return True
+            return any(u.role in ("admin", "emergency_admin") for u in self._users_by_id.values())
+
+    def provision_initial_admin(self, token_hash: str, user: UserRecord) -> UserRecord:
+        with self._lock:
+            if self.is_system_provisioned():
+                raise ValueError("System is already provisioned. Initial provisioning token cannot be reused.")
+            self._users_by_id[user.id] = user
+            self._users_by_username[user.username.strip().lower()] = user.id
+            self._bootstrap_completed = True
+            return user
+
+    def change_password(self, user_id: str, new_password_hash: str) -> bool:
+        with self._lock:
+            u = self._users_by_id.get(user_id)
+            if not u:
+                return False
+            now = datetime.now(timezone.utc).isoformat()
+            updated_u = u.model_copy(update={"passwordHash": new_password_hash, "updatedAt": now})
+            self._users_by_id[user_id] = updated_u
+            self.revoke_all_refresh_tokens(user_id)
+            return True
 
     def get_by_username(self, username: str) -> Optional[UserRecord]:
         with self._lock:
@@ -120,8 +151,20 @@ class UserRepository:
 _default_user_repo: Optional[UserRepository] = None
 
 
-def get_user_repository() -> UserRepository:
+def get_user_repository(storage_backend: Optional[str] = None) -> Any:
     global _default_user_repo
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
+        from app.db.sql_engine import SQLUserRepository
+        return SQLUserRepository()
     if _default_user_repo is None:
         _default_user_repo = UserRepository()
     return _default_user_repo
+
+
+def reset_user_repository() -> None:
+    """Resets global in-memory user repository instance for isolated test runs."""
+    global _default_user_repo
+    _default_user_repo = None
+

@@ -41,6 +41,9 @@ setup_logging()
 logger = logging.getLogger("gasha.main")
 
 def create_app() -> FastAPI:
+    from app.core.production_guard import validate_production_configuration
+    validate_production_configuration()
+
     app = FastAPI(
         title="GASHA Core API",
         description="Graph-Adaptive Security & Hardening Architecture Backend API",
@@ -98,9 +101,18 @@ def create_app() -> FastAPI:
     app.include_router(environment.router, prefix=f"{api_v1_prefix}/environment", tags=["Environment State"])
     app.include_router(realtime.router, prefix=f"{api_v1_prefix}/realtime", tags=["Realtime Stream"])
 
+    from app.db.storage_mode import get_storage_backend
+    effective_mode = get_storage_backend()
+    logger.info(f"GASHA Core API initialized with storage mode: {effective_mode}")
+
     @app.get("/health", tags=["Health"])
     async def health_check():
-        return {"status": "ok", "service": "gasha-api", "version": "0.1.0"}
+        return {
+            "status": "ok",
+            "service": "gasha-api",
+            "version": "0.1.0",
+            "storage_mode": get_storage_backend()
+        }
 
     return app
 

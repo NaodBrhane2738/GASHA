@@ -7,7 +7,7 @@ OBJECTIVE: Thread-safe repository for persisting and querying Investigation resu
 """
 
 import threading
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from app.schemas.investigation import InvestigationResultResponse, InvestigationTimelineResponse
 
 
@@ -52,8 +52,13 @@ class InvestigationRepository:
 _default_repo: Optional[InvestigationRepository] = None
 
 
-def get_investigation_repository() -> InvestigationRepository:
+def get_investigation_repository(storage_backend: Optional[str] = None) -> Any:
     global _default_repo
+    from app.db.storage_mode import resolve_storage_backend, StorageMode
+    backend = resolve_storage_backend(storage_backend)
+    if backend == StorageMode.SQL:
+        from app.db.sql_engine import SQLInvestigationRepository
+        return SQLInvestigationRepository()
     if _default_repo is None:
         _default_repo = InvestigationRepository()
     return _default_repo
