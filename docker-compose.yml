@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:16-alpine
@@ -23,6 +21,21 @@ services:
     volumes:
       - redis_data:/data
 
+  api:
+    build: ./apps/api
+    container_name: gasha-api
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    environment:
+      GASHA_DATABASE_PATH: /data/gasha_storage.db
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+      JWT_SECRET: ${JWT_SECRET:-dev-only-change-me-min-32-characters!!}
+    volumes:
+      - api_data:/data
+
 volumes:
   postgres_data:
   redis_data:
+  api_data:

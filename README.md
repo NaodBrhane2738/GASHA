@@ -133,14 +133,14 @@ gasha/
 
 ### Prerequisites
 - **Node.js**: `v20.x+` & **pnpm**: `v9.x+` (or `npm`)
-- **Python**: `3.11+` & `poetry` / `pip`
+- **Python**: `3.13` & `pip`. On Windows create the environment with `py -3.13 -m venv .venv`.
 - **Docker**: For PostgreSQL & Redis
 
 ### Quickstart
 ```bash
 # 1. Clone repository
-git clone https://github.com/YordanosBisrat/Gasha.git
-cd Gasha
+git clone https://github.com/NaodBrhane2738/GASHA.git
+cd GASHA
 
 # 2. Copy environment template
 cp .env.example .env
