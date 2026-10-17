@@ -18,6 +18,8 @@ EXPECTED_TABLES = [
     "investigations",
     "response_actions",
     "response_audit_log",
+    "users",
+    "refresh_tokens",
 ]
 
 url = os.environ.get("SUPABASE_URL", "")
