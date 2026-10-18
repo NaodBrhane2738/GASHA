@@ -22,6 +22,7 @@ EXPECTED_TABLES = [
     "refresh_tokens",
 ]
 
+
 url = os.environ.get("SUPABASE_URL", "")
 key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 

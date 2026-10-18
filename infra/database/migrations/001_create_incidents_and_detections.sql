@@ -52,5 +52,7 @@ ALTER TABLE detections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE incidents ENABLE ROW LEVEL SECURITY;
 
 -- Service Role Full Access Policies
+DROP POLICY IF EXISTS service_role_detections_all ON detections;
 CREATE POLICY service_role_detections_all ON detections FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS service_role_incidents_all ON incidents;
 CREATE POLICY service_role_incidents_all ON incidents FOR ALL TO service_role USING (true) WITH CHECK (true);
