@@ -20,6 +20,7 @@ logger = logging.getLogger("gasha.api.graph")
 router = APIRouter()
 
 
+@router.get("", summary="Get Full Digital Twin Graph")
 @router.get("/graph", summary="Get Full Digital Twin Graph")
 async def get_digital_twin_graph(
     environment_id: Optional[str] = Query(None, alias="environmentId"),
@@ -32,24 +33,77 @@ async def get_digital_twin_graph(
     builder = get_digital_twin_builder()
     graph = builder.build_graph_for_environment(auth_env)
 
-    nodes = graph.list_nodes()
+    raw_nodes = graph.list_nodes()
+    nodes = []
+    for n in raw_nodes:
+        crit_raw = n.get("criticality")
+        crit_num = (
+            5 if crit_raw in (5, "TIER_0_CROWN_JEWEL")
+            else (4 if crit_raw in (4, "TIER_1_HIGH")
+            else (3 if crit_raw in (3, "TIER_2_MEDIUM")
+            else 2))
+        )
+        type_str = str(n.get("type", "")).lower()
+        if "data" in type_str or "sql" in type_str or "pg" in type_str:
+            kind = "database"
+        elif "s3" in type_str or "store" in type_str or "bucket" in type_str:
+            kind = "storage"
+        elif "iam" in type_str or "auth" in type_str or "secret" in type_str or "ident" in type_str:
+            kind = "identity"
+        elif "net" in type_str or "lb" in type_str or "cdn" in type_str or "route" in type_str:
+            kind = "network"
+        elif "laptop" in type_str or "host" in type_str or "endpoint" in type_str:
+            kind = "endpoint"
+        elif "external" in type_str or "third" in type_str:
+            kind = "external"
+        else:
+            kind = "compute"
+
+        provider_str = str(n.get("source", "vercel")).lower()
+        if provider_str not in ("vercel", "aws", "azure", "gcp", "onprem"):
+            provider_str = "vercel"
+
+        is_crown = crit_num == 5 or crit_raw == "TIER_0_CROWN_JEWEL"
+        exposure = "public" if n.get("isPubliclyExposed") else "internal"
+        if "private" in type_str or "db" in type_str or "secret" in type_str:
+            exposure = "private"
+
+        nodes.append({
+            **n,
+            "id": n["id"],
+            "label": n.get("label") or n.get("name") or n["id"],
+            "kind": n.get("kind") or kind,
+            "provider": n.get("provider") or provider_str,
+            "criticality": crit_num,
+            "exposure": n.get("exposure") or exposure,
+            "riskScore": n.get("riskScore", 84 if is_crown else (71 if crit_num >= 4 else 42)),
+            "isCrownJewel": is_crown,
+        })
+
     edges = []
+    edge_idx = 1
     for nid, node_data in graph._nodes.items():
         for target in graph.get_neighbors(nid, include_severed=True):
             is_severed = (nid, target) in graph._severed_edges
             edges.append({
+                "id": f"e{edge_idx}",
                 "source": nid,
                 "target": target,
+                "relation": "data" if "db" in target or "s3" in target else ("iam" if "secret" in target else "network"),
+                "exploitable": not is_severed,
                 "isSevered": is_severed
             })
+            edge_idx += 1
 
+    now_iso = datetime.now(timezone.utc).isoformat()
     return {
         "nodes": nodes,
         "edges": edges,
         "environmentId": auth_env,
         "entryPoints": graph.get_entry_points(),
         "crownJewels": graph.get_crown_jewels(),
-        "syncedAt": datetime.now(timezone.utc).isoformat()
+        "syncedAt": now_iso,
+        "updatedAt": now_iso
     }
 
 

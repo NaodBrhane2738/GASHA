@@ -54,8 +54,9 @@ class ResponseProposalRequest(BaseModel):
 
 
 class ResponseApprovalRequest(BaseModel):
-    decision: Literal['APPROVE', 'REJECT', 'CANCEL']
+    decision: Literal['APPROVE', 'REJECT', 'CANCEL'] = 'APPROVE'
     comment: Optional[str] = None
+    notes: Optional[str] = None
 
 
 class ResponseRecordResponse(BaseModel):

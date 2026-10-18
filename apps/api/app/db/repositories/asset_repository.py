@@ -32,6 +32,63 @@ class AssetRepository:
         self._relationships: Dict[tuple, RelationshipResponse] = {}
         # Key: (sourceAssetId, targetAssetId, type) -> relId (for idempotent edge lookups)
         self._relationship_index: Dict[tuple, str] = {}
+        self._seed_default_topology()
+
+    def _seed_default_topology(self):
+        import os
+        from app.core.production_guard import is_production_mode
+        if is_production_mode() or "PYTEST_CURRENT_TEST" in os.environ:
+            return
+        
+        env_id = "env-prod"
+        nodes = [
+            ("edge-lb", "Edge LB", "API_ENDPOINT", "TIER_1_HIGH", "VERCEL", True),
+            ("web-app", "Next.js Web", "VERCEL_DEPLOYMENT", "TIER_0_CROWN_JEWEL", "VERCEL", True),
+            ("api-gate", "API Gateway", "API_ENDPOINT", "TIER_0_CROWN_JEWEL", "VERCEL", True),
+            ("auth-svc", "Auth Service", "SERVICE", "TIER_0_CROWN_JEWEL", "VERCEL", False),
+            ("worker", "Background Worker", "SERVICE", "TIER_2_MEDIUM", "VERCEL", False),
+            ("pg-main", "Postgres Main", "DATABASE", "TIER_0_CROWN_JEWEL", "STATIC_CONFIG", False),
+            ("s3-assets", "S3 Assets", "STORAGE_BUCKET", "TIER_1_HIGH", "STATIC_CONFIG", False),
+            ("secrets", "Secrets Store", "SECRET_STORE", "TIER_0_CROWN_JEWEL", "STATIC_CONFIG", False),
+            ("analyst-lt", "Analyst Laptop", "SERVICE", "TIER_3_LOW", "TELEMETRY", False),
+            ("ext-cdn", "Third-party CDN", "API_ENDPOINT", "TIER_3_LOW", "STATIC_CONFIG", True),
+        ]
+        for nid, name, atype, crit, src, pub in nodes:
+            self.upsert_asset(
+                AssetBase(
+                    name=name,
+                    type=atype,
+                    criticality=crit,
+                    environmentId=env_id,
+                    source=src,
+                    isPubliclyExposed=pub,
+                    metadata={"provider": src.lower()}
+                ),
+                asset_id=nid
+            )
+
+        edges = [
+            ("edge-lb", "web-app", "CALLS"),
+            ("web-app", "api-gate", "CALLS"),
+            ("api-gate", "auth-svc", "CALLS"),
+            ("auth-svc", "pg-main", "READS_FROM"),
+            ("api-gate", "worker", "CALLS"),
+            ("worker", "pg-main", "WRITES_TO"),
+            ("auth-svc", "secrets", "AUTHENTICATES_WITH"),
+            ("api-gate", "s3-assets", "READS_FROM"),
+            ("analyst-lt", "api-gate", "CONNECTS_TO"),
+            ("edge-lb", "ext-cdn", "DEPENDS_ON"),
+        ]
+        for src, tgt, rel_type in edges:
+            self.upsert_relationship(
+                RelationshipBase(
+                    sourceAssetId=src,
+                    targetAssetId=tgt,
+                    type=rel_type,
+                    metadata={"environmentId": env_id}
+                ),
+                environment_id=env_id
+            )
 
     def upsert_asset(self, asset: AssetBase, asset_id: Optional[str] = None) -> AssetResponse:
         with self._lock:

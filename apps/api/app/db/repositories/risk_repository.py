@@ -21,6 +21,25 @@ class RiskRepository:
         self._current_scores: Dict[str, RiskScoreResponse] = {}
         # Key: environmentId -> List[RiskHistoryEntryResponse]
         self._history: Dict[str, List[RiskHistoryEntryResponse]] = {}
+        self._seed_default_risk()
+
+    def _seed_default_risk(self):
+        import os
+        from app.core.production_guard import is_production_mode
+        if is_production_mode() or "PYTEST_CURRENT_TEST" in os.environ:
+            return
+        from datetime import datetime, timezone, timedelta
+        now = datetime.now(timezone.utc)
+        env_id = "env-prod"
+        self._history[env_id] = [
+            RiskHistoryEntryResponse(
+                timestamp=(now - timedelta(hours=i * 4)).isoformat(),
+                score=score,
+                triggerEvent="Baseline Recalculation",
+                environmentId=env_id
+            )
+            for i, score in enumerate([82, 78, 75, 70, 68, 64][::-1])
+        ]
 
     def save_current_risk(self, risk: RiskScoreResponse) -> RiskScoreResponse:
         with self._lock:

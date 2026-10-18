@@ -25,8 +25,13 @@ def test_python_catalog_completeness():
 
 
 def test_typescript_contract_file_parity():
-    ts_file = Path("packages/detection-rules/web/index.ts")
-    assert ts_file.exists(), "TypeScript detection rules specification file must exist"
+    candidates = [
+        Path("packages/detection-rules/web/index.ts"),
+        Path(__file__).resolve().parents[4] / "packages" / "detection-rules" / "web" / "index.ts",
+        Path(__file__).resolve().parents[3] / "packages" / "detection-rules" / "web" / "index.ts",
+    ]
+    ts_file = next((p for p in candidates if p.exists()), None)
+    assert ts_file is not None and ts_file.exists(), "TypeScript detection rules specification file must exist"
     content = ts_file.read_text(encoding="utf-8")
 
     # Verify each rule ID and its properties exist in the TypeScript source

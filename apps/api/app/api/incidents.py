@@ -48,6 +48,55 @@ async def get_incident(
     return incident
 
 
+@router.get("/{incident_id}/story", summary="Get Incident Story Timeline")
+async def get_incident_story(
+    incident_id: str,
+    environment_id: Optional[str] = Query(None, alias="environmentId"),
+    user: dict = Depends(get_current_user)
+) -> List[dict]:
+    """Retrieves forensic story events for timeline replay in authorized environment."""
+    auth_env = enforce_environment_boundary(user, environment_id)
+    from app.investigation.engine import get_investigation_engine
+    engine = get_investigation_engine()
+    timeline = engine.get_timeline(incident_id, environment_id=auth_env)
+    if not timeline:
+        result, err = engine.investigate_incident(incident_id, environment_id=auth_env)
+        timeline = engine.get_timeline(incident_id, environment_id=auth_env)
+
+    events = timeline.events if timeline else []
+    story_events = []
+    for e in events:
+        details = e.details or {}
+        event_type = (e.eventType or "").upper()
+        if "AUTH" in event_type:
+            kind = "initial-access"
+        elif "INJ" in event_type:
+            kind = "privilege-escalation"
+        elif "EXFIL" in event_type:
+            kind = "exfiltration"
+        elif "MOVE" in event_type or "LATERAL" in event_type:
+            kind = "lateral-movement"
+        else:
+            kind = "execution"
+
+        meta = details.get("metadata") or {}
+        technique = meta.get("mitreTechniqueId") or "T1059"
+        node_id = details.get("targetAsset") or e.source or "auth-svc"
+        evidence_ids = details.get("matchedEventIds") or [e.eventId]
+
+        story_events.append({
+            "id": e.eventId,
+            "ts": e.timestamp,
+            "kind": kind,
+            "nodeId": node_id,
+            "technique": technique,
+            "narrative": e.summary,
+            "evidenceIds": evidence_ids,
+            "inferred": False
+        })
+    return story_events
+
+
 @router.patch("/{incident_id}/status", response_model=IncidentResponse, summary="Update Incident Lifecycle Status")
 async def update_incident_status(
     incident_id: str,

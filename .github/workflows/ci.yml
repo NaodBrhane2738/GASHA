@@ -40,7 +40,7 @@ jobs:
         working-directory: apps/api
         env:
           PYTHONPATH: .:../../packages/telemetry-sdk/python
-        run: python -m pytest tests -q --deselect tests/unit/test_rule_contract_parity.py::test_typescript_contract_file_parity
+        run: python -m pytest tests -q
       - name: Telemetry SDK tests
         env:
           PYTHONPATH: packages/telemetry-sdk/python

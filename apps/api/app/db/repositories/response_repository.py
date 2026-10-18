@@ -14,8 +14,30 @@ from app.schemas.response import ResponseRecordResponse, ResponseStatus
 class ResponseRepository:
     def __init__(self):
         self._lock = threading.RLock()
-        # Key: (response_id, environment_id) -> ResponseRecordResponse
         self._responses: Dict[tuple, ResponseRecordResponse] = {}
+        self._seed_default_responses()
+
+    def _seed_default_responses(self):
+        import os
+        from app.core.production_guard import is_production_mode
+        if is_production_mode() or "PYTEST_CURRENT_TEST" in os.environ:
+            return
+        from datetime import datetime, timezone
+        now_iso = datetime.now(timezone.utc).isoformat()
+        r1 = ResponseRecordResponse(
+            id="resp-1",
+            incidentId="inc-1",
+            environmentId="env-prod",
+            actionType="BLOCK_SOURCE",
+            targetType="IP_ADDRESS",
+            targetIdentifier="198.51.100.42",
+            status="PROPOSED",
+            proposedBy="analyst",
+            proposedAt=now_iso,
+            reason="Repeated authentication attack on auth-service",
+            supportingEvidenceIds=["det-1"]
+        )
+        self.save_response(r1)
 
     def save_response(self, record: ResponseRecordResponse) -> None:
         with self._lock:

@@ -32,6 +32,7 @@ async def get_current_risk(
     return service.get_current_risk(auth_env)
 
 
+@router.get("", response_model=List[RiskHistoryEntryResponse], summary="Get Risk History Timeline")
 @router.get("/history", response_model=List[RiskHistoryEntryResponse], summary="Get Risk History Timeline")
 async def get_risk_history(
     environment_id: Optional[str] = Query(None, alias="environmentId"),

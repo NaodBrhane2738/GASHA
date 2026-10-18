@@ -21,6 +21,29 @@ class IncidentRepository:
     def __init__(self):
         self._lock = threading.Lock()
         self._incidents: Dict[str, IncidentResponse] = {}
+        self._seed_default_incidents()
+
+    def _seed_default_incidents(self):
+        import os
+        from app.core.production_guard import is_production_mode
+        if is_production_mode() or "PYTEST_CURRENT_TEST" in os.environ:
+            return
+        now_iso = datetime.now(timezone.utc).isoformat()
+        inc1 = IncidentResponse(
+            id="inc-1",
+            title="Credential stuffing targeting auth-service with subsequent database query anomaly",
+            severity="HIGH",
+            status="ACTIVE",
+            primaryAffectedAssetId="auth-svc",
+            relatedAssetIds=["auth-svc", "pg-main"],
+            detectionEventIds=["det-1", "det-2"],
+            attackPathId="path-1",
+            createdAt=now_iso,
+            updatedAt=now_iso,
+            summary="Multiple failed logins followed by abnormal database query volume on Postgres Main.",
+            environmentId="env-prod"
+        )
+        self._incidents[inc1.id] = inc1
 
     def create_incident(self, incident: IncidentResponse) -> IncidentResponse:
         with self._lock:

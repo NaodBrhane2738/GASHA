@@ -126,15 +126,41 @@ async def get_response(
 )
 async def review_proposal(
     response_id: str,
-    approval_req: ResponseApprovalRequest,
+    approval_req: Optional[ResponseApprovalRequest] = None,
     user: dict = Depends(get_current_user)
 ) -> ResponseRecordResponse:
     """
     Server-side human approval gate.
     Records authenticated operator identity and transitions proposal state.
     """
+    if approval_req is None:
+        approval_req = ResponseApprovalRequest(decision="APPROVE", comment="Approved from web console")
     svc = get_response_service()
     record, err = svc.review_proposal(response_id, approval_req, user=user)
+    if err:
+        status_code = status.HTTP_409_CONFLICT if "Cannot review" in err else status.HTTP_400_BAD_REQUEST
+        if "not found" in err.lower():
+            status_code = status.HTTP_404_NOT_FOUND
+        raise HTTPException(status_code=status_code, detail=err)
+    return record
+
+
+@router.post(
+    "/{response_id}/reject",
+    response_model=ResponseRecordResponse,
+    summary="Reject Response Proposal"
+)
+async def reject_proposal(
+    response_id: str,
+    approval_req: Optional[ResponseApprovalRequest] = None,
+    user: dict = Depends(get_current_user)
+) -> ResponseRecordResponse:
+    """Rejects a proposed response action from operator review."""
+    svc = get_response_service()
+    req = approval_req or ResponseApprovalRequest(decision="REJECT", comment="Rejected by operator from web UI")
+    if req.decision != "REJECT":
+        req.decision = "REJECT"
+    record, err = svc.review_proposal(response_id, req, user=user)
     if err:
         status_code = status.HTTP_409_CONFLICT if "Cannot review" in err else status.HTTP_400_BAD_REQUEST
         if "not found" in err.lower():
