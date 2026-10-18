@@ -14,9 +14,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
       }),
   );
 
-  // Start MSW only in the browser during dev
+  // Start MSW only if explicitly enabled via NEXT_PUBLIC_USE_MOCK=true
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') return;
+    if (process.env.NEXT_PUBLIC_USE_MOCK !== 'true') return;
     if (typeof window === 'undefined') return;
     let cancelled = false;
     (async () => {
