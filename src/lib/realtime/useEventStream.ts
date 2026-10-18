@@ -5,7 +5,9 @@ import type { Detection } from '@/types/domain';
 
 export function useEventStream(onEvent: (d: Detection) => void) {
   const cb = useRef(onEvent);
-  cb.current = onEvent;
+  useEffect(() => {
+    cb.current = onEvent;
+  }, [onEvent]);
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {

@@ -6,7 +6,6 @@ import { StoryTimeline } from '@/components/story/StoryTimeline';
 import { KillChainStrip } from '@/components/story/KillChainStrip';
 import { TwinGraph } from '@/components/twin/TwinGraph';
 import { GraphToolbar } from '@/components/twin/GraphToolbar';
-import { Card } from '@/components/ui/card';
 import { useUI } from '@/store/ui';
 import { useReplay } from '@/hooks/useReplay';
 import { RiskDelta } from '@/components/risk/RiskDelta';

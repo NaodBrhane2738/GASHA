@@ -22,7 +22,10 @@ export function useReplay(totalEvents: number, intervalMs = 900) {
   return {
     index,
     playing: replaying,
-    play: () => setReplayIndex(0) || setReplaying(true),
+    play: () => {
+      setReplayIndex(0);
+      setReplaying(true);
+    },
     pause: () => setReplaying(false),
     seek: (i: number) => setReplayIndex(i),
   };

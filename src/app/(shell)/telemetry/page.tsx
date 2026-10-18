@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useDetections } from '@/lib/api/queries';
 import { useEventStream } from '@/lib/realtime/useEventStream';
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { SEVERITY_TOKEN } from '@/lib/graph/nodeMeta';
 import type { Detection } from '@/types/domain';
 
