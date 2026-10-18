@@ -44,7 +44,7 @@ class DetectionRepository:
                 evidenceSummary="5 failed logins in 12s from 198.51.100.42",
                 environmentId="env-prod",
                 incidentId="inc-1",
-                metadata={"mitreTechniqueId": "T1110"}
+                metadata={"mitreTechniqueId": "T1110", "sourceIp": "198.51.100.42"}
             ),
             DetectionEventResponse(
                 id="det-2",
