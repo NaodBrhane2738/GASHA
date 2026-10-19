@@ -21,9 +21,10 @@ RUN useradd --create-home appuser && mkdir /data && chown appuser /data
 USER appuser
 ENV GASHA_DATABASE_PATH=/data/gasha_storage.db
 
+ENV PORT=4000
 EXPOSE 4000
 
 HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:4000/health')"
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:' + __import__('os').environ.get('PORT', '4000') + '/health')"
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "4000"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-4000}"]
