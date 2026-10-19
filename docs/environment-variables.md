@@ -39,7 +39,7 @@ Source of truth for the names: `.env.example`, `apps/api/app/core/config.py`, `a
 | `VERCEL_WEBHOOK_SECRET`, `GITHUB_WEBHOOK_SECRET` | For future webhooks. Not used by the MVP | empty | **yes** | leave empty |
 | `GASHA_TELEMETRY_API_KEY` | Key the demo app must send when posting telemetry | dev placeholder | **yes** | unique strong value, same on both sides |
 | `GASHA_TELEMETRY_ENVIRONMENT` | Environment id telemetry is filed under | `env-prod` | no | `env-prod` |
-| `GASHA_TELEMETRY_MAX_BATCH_SIZE`, `GASHA_TELEMETRY_MAX_PAYLOAD_BYTES`, `GASHA_TELEMETRY_BUFFER_CAPACITY` | Telemetry limits | `100`, `1048576`, `5000` | no | defaults |
+| `MAX_BATCH_SIZE`, `BUFFER_CAPACITY` | Telemetry limits. The code reads these **unprefixed** names. They only take effect from a `.env` file, not as real environment variables on a host | `100`, `5000` | no | leave the defaults |
 | `GASHA_TELEMETRY_TRUSTED_PROXIES` | Proxy addresses whose forwarded IP is trusted | `127.0.0.1`, `::1` | no | add the host's proxy range if source IPs look wrong |
 
 ## Frontend (`apps/web`)
@@ -72,6 +72,6 @@ Source of truth for the names: `.env.example`, `apps/api/app/core/config.py`, `a
 
 ## Known gaps in `.env.example` (to fix)
 
-1. `MAX_BATCH_SIZE`, `MAX_PAYLOAD_BYTES`, `BUFFER_CAPACITY`, `GASHA_TELEMETRY_FLUSH_INTERVAL_MS`, `GASHA_TELEMETRY_BATCH_SIZE` do not match the names the backend reads (`GASHA_TELEMETRY_MAX_BATCH_SIZE`, etc.), so setting them has no effect.
+1. Telemetry limits are inconsistent. The code reads `MAX_BATCH_SIZE` and `BUFFER_CAPACITY` (unprefixed) via `getattr(settings, ...)`, which works from a `.env` file because the settings class allows extra keys, but NOT from real environment variables on a host. The prefixed fields `GASHA_TELEMETRY_MAX_BATCH_SIZE`, `GASHA_TELEMETRY_MAX_PAYLOAD_BYTES` and `GASHA_TELEMETRY_BUFFER_CAPACITY` are defined in `config.py` but no code uses them. `MAX_PAYLOAD_BYTES`, `GASHA_TELEMETRY_FLUSH_INTERVAL_MS` and `GASHA_TELEMETRY_BATCH_SIZE` appear in `.env.example` but nothing reads them. Ask the backend owners to read the prefixed names, or drop the unused ones.
 2. `GASHA_STORAGE_BACKEND`, `GASHA_DB_DIALECT` and `GASHA_PROVISIONING_TOKEN` are read by the code but not listed.
 3. `DATABASE_URL` in the example uses Supabase's direct host, which is IPv6-only on the free plan. Use the Session pooler URI.
