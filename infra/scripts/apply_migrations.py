@@ -11,7 +11,8 @@ Usage (from the repo root, virtual environment active):
     python infra/scripts/apply_migrations.py              # apply pending (asks first)
     python infra/scripts/apply_migrations.py --yes        # apply without asking (CI)
 
-
+DATABASE_URL comes from your .env (Supabase: Connect -> Session pooler URI).
+The password is never printed.
 """
 import argparse
 import os
@@ -63,6 +64,9 @@ def main() -> int:
             "CREATE TABLE IF NOT EXISTS schema_migrations ("
             "filename TEXT PRIMARY KEY, applied_at TIMESTAMPTZ NOT NULL DEFAULT now())"
         )
+        # Supabase exposes every public table through its public API. With row level
+        # security on and no policies, only the database owner (this script) can use it.
+        conn.execute("ALTER TABLE schema_migrations ENABLE ROW LEVEL SECURITY")
         applied = {row[0] for row in conn.execute("SELECT filename FROM schema_migrations")}
         pending = [f for f in files if f.name not in applied]
 
