@@ -76,6 +76,9 @@ ALTER TABLE response_actions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE response_audit_log ENABLE ROW LEVEL SECURITY;
 
 -- Service Role Full Access Policies
+DROP POLICY IF EXISTS service_role_investigations_all ON investigations;
 CREATE POLICY service_role_investigations_all ON investigations FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS service_role_response_actions_all ON response_actions;
 CREATE POLICY service_role_response_actions_all ON response_actions FOR ALL TO service_role USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS service_role_audit_log_all ON response_audit_log;
 CREATE POLICY service_role_audit_log_all ON response_audit_log FOR ALL TO service_role USING (true) WITH CHECK (true);

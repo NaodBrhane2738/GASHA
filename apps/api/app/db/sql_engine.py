@@ -208,14 +208,19 @@ class SQLDatabaseEngine:
 _shared_engine: Optional[SQLDatabaseEngine] = None
 
 
-def get_sql_engine(db_path: Optional[str] = None) -> SQLDatabaseEngine:
+def get_sql_engine(db_path: Optional[str] = None):
+    """SQLite by default. Set GASHA_DB_DIALECT=postgres (and DATABASE_URL) for Supabase/Postgres."""
     global _shared_engine
     if db_path:
         return SQLDatabaseEngine(db_path)
     if _shared_engine is None:
-        _shared_engine = SQLDatabaseEngine()
+        if os.environ.get("GASHA_DB_DIALECT", "sqlite").strip().lower() == "postgres":
+            from app.db.postgres_engine import PostgresDatabaseEngine
+            _shared_engine = PostgresDatabaseEngine()
+        else:
+            _shared_engine = SQLDatabaseEngine()
     return _shared_engine
-
+    
 
 class SQLIncidentRepository:
     """Durable SQLite-backed Incident Repository."""
