@@ -7,7 +7,8 @@ import { SEVERITY_TOKEN } from '@/lib/graph/nodeMeta';
 export default function DetectionsPage() {
   const { data } = useDetections();
   const counts = (data ?? []).reduce<Record<string, number>>((a, d) => {
-    a[d.severity] = (a[d.severity] ?? 0) + 1;
+    const sev = (d.severity ?? 'low').toLowerCase();
+    a[sev] = (a[sev] ?? 0) + 1;
     return a;
   }, {});
 
@@ -38,22 +39,32 @@ export default function DetectionsPage() {
             </tr>
           </thead>
           <tbody>
-            {data?.map((d) => (
-              <tr key={d.id} className="border-b border-border last:border-0 hover:bg-secondary/30">
-                <td className="px-3 py-2 font-mono text-[10.5px] text-muted-foreground">
-                  {new Date(d.ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </td>
-                <td className="px-3 py-2">{d.rule}</td>
-                <td className="px-3 py-2 font-mono text-[11px]">{d.nodeId}</td>
-                <td className="px-3 py-2 font-mono text-[11px] text-muted-foreground">
-                  {d.technique}
-                </td>
-                <td className="px-3 py-2 text-muted-foreground">{d.summary}</td>
-                <td className="px-3 py-2 font-mono text-[11px]">
-                  {(d.confidence * 100).toFixed(0)}%
-                </td>
-              </tr>
-            ))}
+            {data?.map((d) => {
+              const ruleName = typeof d.rule === 'object' && d.rule !== null
+                ? (d.rule.name || d.rule.ruleId)
+                : String(d.rule ?? '');
+              const timeVal = d.ts || (d as any).timestamp || new Date().toISOString();
+              const nodeVal = d.nodeId || (d as any).primaryAssetId || 'unknown';
+              const techVal = d.technique || ((d as any).metadata?.mitreTechniqueId) || 'T1059';
+              const summaryVal = d.summary || (d as any).evidenceSummary || '';
+
+              return (
+                <tr key={d.id} className="border-b border-border last:border-0 hover:bg-secondary/30">
+                  <td className="px-3 py-2 font-mono text-[10.5px] text-muted-foreground">
+                    {new Date(timeVal).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                  </td>
+                  <td className="px-3 py-2 font-medium">{ruleName}</td>
+                  <td className="px-3 py-2 font-mono text-[11px]">{nodeVal}</td>
+                  <td className="px-3 py-2 font-mono text-[11px] text-muted-foreground">
+                    {techVal}
+                  </td>
+                  <td className="px-3 py-2 text-muted-foreground">{summaryVal}</td>
+                  <td className="px-3 py-2 font-mono text-[11px]">
+                    {(d.confidence * 100).toFixed(0)}%
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
       </Card>

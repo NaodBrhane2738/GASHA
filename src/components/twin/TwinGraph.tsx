@@ -117,7 +117,6 @@ function Inner({ twin, activePath, highlightNodeIds }: Props) {
         onPaneClick={() => setSelectedNode(null)}
         fitView
         fitViewOptions={{ padding: 0.25 }}
-        proOptions={{ hideAttribution: true }}
         minZoom={0.2}
         maxZoom={2}
         onlyRenderVisibleElements

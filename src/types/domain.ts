@@ -59,11 +59,19 @@ export interface TelemetryEvent {
   raw: Record<string, unknown>;
 }
 
+export interface DetectionRule {
+  ruleId: string;
+  name: string;
+  description?: string;
+  severity?: string;
+  confidence?: number;
+}
+
 export interface Detection {
   id: string;
   ts: string;
   nodeId: string;
-  rule: string;
+  rule: string | DetectionRule;
   severity: Severity;
   technique: string;
   confidence: number;

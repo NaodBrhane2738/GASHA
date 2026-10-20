@@ -104,7 +104,6 @@ body { font-size: 13.5px; }
 
 /* React Flow dark overrides */
 .react-flow__background { background: hsl(var(--background)); }
-.react-flow__attribution { display: none; }
 .react-flow__controls-button {
   background: hsl(var(--card));
   border-bottom: 1px solid hsl(var(--border));
