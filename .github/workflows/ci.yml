@@ -17,9 +17,28 @@ jobs:
           version: 9
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - run: pnpm install --no-frozen-lockfile
+          node-version: '22'
+      - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @gasha/contracts run typecheck
+
+  web:
+    name: Frontend build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: pnpm install --frozen-lockfile
+      # Lint is reported but does not block yet (the frontend has ~10 'no-explicit-any' errors to clean up).
+      - name: Lint (non-blocking for now)
+        run: pnpm --filter @gasha/web lint
+        continue-on-error: true
+      - name: Build
+        run: pnpm --filter @gasha/web build
 
   python-backend:
     name: Backend lint + tests
