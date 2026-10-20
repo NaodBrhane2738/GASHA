@@ -44,3 +44,13 @@ export interface EnvironmentFilterParams extends PaginationParams {
   severity?: string;
   status?: string;
 }
+
+export interface WebSocketTicketRequest {
+  environmentId?: string;
+}
+
+export interface WebSocketTicketResponse {
+  ticket: string;
+  expiresIn: number;
+  environmentId: string;
+}

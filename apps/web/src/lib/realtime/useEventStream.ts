@@ -11,34 +11,98 @@ export function useEventStream(onEvent: (d: Detection) => void) {
   const [connected, setConnected] = useState(false);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      // In dev, we poll the mock endpoint instead of opening SSE
-      const t = setInterval(async () => {
+    let ws: WebSocket | null = null;
+    let timer: any = null;
+    let destroyed = false;
+
+    async function connect() {
+      if (destroyed) return;
+      try {
+        const token = typeof window !== 'undefined' ? localStorage.getItem('gasha_token') : null;
+        let ticket: string | null = null;
+
+        // Try getting a short-lived ticket
         try {
-          const res = await fetch('/api/detections/stream');
-          if (!res.ok) return;
-          const item = (await res.json()) as Detection;
-          cb.current(item);
-          setConnected(true);
+          const ticketUrl = process.env.NEXT_PUBLIC_API_URL 
+            ? `${process.env.NEXT_PUBLIC_API_URL}/realtime/ticket`
+            : 'http://127.0.0.1:4000/api/v1/realtime/ticket';
+          const res = await fetch(ticketUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { Authorization: `Bearer ${token}` } : {})
+            }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            ticket = data.ticket;
+          }
         } catch {
-          setConnected(false);
+          // Proceed with token query param if ticket issue fails
         }
-      }, 4000);
-      return () => clearInterval(t);
+
+        const backendBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:4000/api/v1';
+        const wsUrlStr = backendBase.replace(/^http/, 'ws');
+        const wsEndpoint = `${wsUrlStr}/realtime/ws?${ticket ? `ticket=${ticket}` : (token ? `token=${token}` : '')}`;
+
+        ws = new WebSocket(wsEndpoint);
+
+        ws.onopen = () => {
+          if (destroyed) {
+            ws?.close();
+            return;
+          }
+          setConnected(true);
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            const raw = msg.data || msg.payload || msg;
+            const ruleObj = typeof raw.rule === 'object' && raw.rule ? raw.rule : null;
+            const ruleName = ruleObj ? (ruleObj.name || ruleObj.ruleId) : (raw.rule || 'Behavioral Detection');
+            const item: Detection = {
+              id: raw.id || `det-${Date.now()}`,
+              ts: raw.timestamp || raw.ts || new Date().toISOString(),
+              nodeId: raw.primaryAssetId || raw.nodeId || 'unknown',
+              rule: ruleName,
+              severity: (raw.severity || 'medium').toLowerCase() as any,
+              technique: raw.metadata?.mitreTechniqueId || raw.technique || 'T1059',
+              confidence: raw.confidence ?? 0.92,
+              summary: raw.evidenceSummary || raw.summary || 'Live threat event observed'
+            };
+            cb.current(item);
+          } catch {
+            /* ignore non-json messages */
+          }
+        };
+
+        ws.onclose = () => {
+          setConnected(false);
+          if (!destroyed) {
+            timer = setTimeout(connect, 4000);
+          }
+        };
+
+        ws.onerror = () => {
+          setConnected(false);
+          ws?.close();
+        };
+      } catch {
+        setConnected(false);
+        if (!destroyed) {
+          timer = setTimeout(connect, 5000);
+        }
+      }
     }
 
-    const base = process.env.NEXT_PUBLIC_API_URL ?? '';
-    const es = new EventSource(`${base}/stream`, { withCredentials: true });
-    es.onopen = () => setConnected(true);
-    es.onerror = () => setConnected(false);
-    es.onmessage = (m) => {
-      try {
-        cb.current(JSON.parse(m.data));
-      } catch {
-        /* ignore malformed */
-      }
+    connect();
+
+    return () => {
+      destroyed = true;
+      if (timer) clearTimeout(timer);
+      if (ws) ws.close();
     };
-    return () => es.close();
   }, []);
 
   return { connected };

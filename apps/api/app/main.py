@@ -99,6 +99,8 @@ def create_app() -> FastAPI:
     app.include_router(responses.router, prefix=f"{api_v1_prefix}/responses", tags=["Controlled Response"])
     app.include_router(environment.router, prefix=f"{api_v1_prefix}/environment", tags=["Environment State"])
     app.include_router(realtime.router, prefix=f"{api_v1_prefix}/realtime", tags=["Realtime Stream"])
+    app.include_router(realtime.router, prefix=f"{api_v1_prefix}", tags=["Realtime Stream"])
+    app.include_router(realtime.router, tags=["Realtime Stream"])
 
     @app.get("/health", tags=["Health"])
     async def health_check():

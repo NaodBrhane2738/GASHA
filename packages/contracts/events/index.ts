@@ -62,7 +62,7 @@ export interface DetectionRuleSummary {
 
 export interface DetectionEvent {
   id: string;
-  rule: DetectionRuleSummary;
+  rule: DetectionRuleSummary | string;
   matchedEventIds: string[];
   primaryAssetId: string;
   timestamp: string;
@@ -70,6 +70,26 @@ export interface DetectionEvent {
   confidence: number; // 0.0 - 1.0
   evidenceSummary: string;
   metadata?: Record<string, unknown>;
+  // Parity & convenience fields
+  ts?: string;
+  nodeId?: string;
+  technique?: string;
+  summary?: string;
+}
+
+export type RealtimeEventType =
+  | 'detection.created'
+  | 'incident.created'
+  | 'incident.updated'
+  | 'risk.recalculated'
+  | 'response.proposed'
+  | 'response.executed';
+
+export interface RealtimeMessage<T = unknown> {
+  type: string;
+  environmentId: string;
+  data: T;
+  timestamp?: string;
 }
 
 export type SystemEventType =

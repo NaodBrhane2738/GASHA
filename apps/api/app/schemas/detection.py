@@ -33,3 +33,18 @@ class DetectionEventResponse(BaseModel):
     environmentId: Optional[str] = "env-prod"
     incidentId: Optional[str] = None
     metadata: Dict[str, Any] = {}
+    # Contract parity & convenience fields
+    ts: Optional[str] = None
+    nodeId: Optional[str] = None
+    technique: Optional[str] = None
+    summary: Optional[str] = None
+
+    def model_post_init(self, __context: Any) -> None:
+        if not self.ts:
+            self.ts = self.timestamp
+        if not self.nodeId:
+            self.nodeId = self.primaryAssetId
+        if not self.technique:
+            self.technique = (self.metadata or {}).get("mitreTechniqueId") or "T1059"
+        if not self.summary:
+            self.summary = self.evidenceSummary

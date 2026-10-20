@@ -128,6 +128,16 @@ export interface AttackPath {
   isActive: boolean;
   discoveredAt: string;
   mitigatedAt?: string;
+  // Parity & cross-platform execution fields
+  techniques: string[];
+  entryNodeId?: string;
+  crownJewelNodeId?: string;
+  nodeIds?: string[];
+  edgeIds?: string[];
+  likelihood?: number;
+  impact?: number;
+  riskScore?: number;
+  status?: 'open' | 'mitigated' | 'accepted';
 }
 
 export type IncidentStatus = 'ACTIVE' | 'INVESTIGATING' | 'CONTAINED' | 'RESOLVED';

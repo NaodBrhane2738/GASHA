@@ -188,6 +188,24 @@ class AttackPathEngine:
         clean_target = target_id.replace("asset-", "").replace(":", "-")[:8]
         path_id = f"path-{clean_entry}-to-{clean_target}"
 
+        # Derive MITRE techniques from nodes and vulnerabilities
+        techniques = []
+        for n in nodes_schema:
+            if n.vulnerabilityIds:
+                techniques.append("T1190")  # Exploit Public-Facing Application
+            if "auth" in n.assetName.lower() or "secrets" in n.assetName.lower():
+                techniques.append("T1078")  # Valid Accounts
+            if "database" in n.assetType.lower() or "pg" in n.assetName.lower() or "s3" in n.assetName.lower():
+                techniques.append("T1552")  # Unsecured Credentials / Data Exposure
+        if not techniques:
+            techniques = ["T1190", "T1078"]
+        techniques = list(dict.fromkeys(techniques))
+
+        edge_ids = [f"e{i+1}" for i in range(len(node_ids) - 1)]
+        status_val = "mitigated" if is_blocked else "open"
+        likelihood_val = round(max(0.2, min(0.95, final_path_score / 100.0)), 2)
+        impact_val = 0.95 if target_crit == "TIER_0_CROWN_JEWEL" else (0.85 if target_crit == "TIER_1_HIGH" else 0.6)
+
         return AttackPathResponse(
             id=path_id,
             environmentId=graph.environment_id,
@@ -205,5 +223,14 @@ class AttackPathEngine:
                 "weaknessCount": len(all_vuln_ids),
                 "targetCriticality": target_crit,
                 "nodeSequence": node_ids
-            }
+            },
+            techniques=techniques,
+            entryNodeId=entry_id,
+            crownJewelNodeId=target_id,
+            nodeIds=node_ids,
+            edgeIds=edge_ids,
+            likelihood=likelihood_val,
+            impact=impact_val,
+            riskScore=round(final_path_score),
+            status=status_val
         )

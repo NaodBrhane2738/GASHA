@@ -38,3 +38,13 @@ class AttackPathResponse(BaseModel):
     discoveredAt: str
     mitigatedAt: Optional[str] = None
     metadata: Dict[str, Any] = Field(default_factory=dict)
+    # Parity & cross-platform fields
+    techniques: List[str] = Field(default_factory=list)
+    entryNodeId: Optional[str] = None
+    crownJewelNodeId: Optional[str] = None
+    nodeIds: List[str] = Field(default_factory=list)
+    edgeIds: List[str] = Field(default_factory=list)
+    likelihood: float = 0.75
+    impact: float = 0.90
+    riskScore: float = 0.0
+    status: Literal['open', 'mitigated', 'accepted'] = 'open'

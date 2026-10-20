@@ -31,22 +31,22 @@ export default function PathsPage() {
             >
               <div className="mb-1.5 flex items-center justify-between">
                 <span className="font-mono text-[11px] text-muted-foreground">
-                  {p.entryNodeId} → {p.crownJewelNodeId}
+                  {p.entryNodeId || (p as any).entryPointAssetId} → {p.crownJewelNodeId || (p as any).targetAssetId}
                 </span>
-                <span className="font-mono text-[12px]" style={{ color: riskColor(p.riskScore) }}>
-                  {p.riskScore}
+                <span className="font-mono text-[12px]" style={{ color: riskColor(p.riskScore || (p as any).pathScore || 0) }}>
+                  {p.riskScore || (p as any).pathScore || 0}
                 </span>
               </div>
               <div className="mb-2 flex flex-wrap gap-1">
-                {p.techniques.map((t) => (
+                {(p.techniques ?? []).map((t) => (
                   <Badge key={t} variant="outline" className="font-mono text-[10px]">
                     {t}
                   </Badge>
                 ))}
               </div>
               <div className="flex items-center justify-between text-[10.5px] text-muted-foreground">
-                <span>likelihood {(p.likelihood * 100).toFixed(0)}%</span>
-                <span>impact {(p.impact * 100).toFixed(0)}%</span>
+                <span>likelihood {((p.likelihood ?? 0.75) * 100).toFixed(0)}%</span>
+                <span>impact {((p.impact ?? 0.9) * 100).toFixed(0)}%</span>
               </div>
             </Card>
           ))}
@@ -61,7 +61,7 @@ export default function PathsPage() {
               <div className="text-[12.5px]">
                 <span className="font-medium">Path {active.id}</span>
                 <span className="ml-2 text-muted-foreground">
-                  {active.nodeIds.length} nodes · {active.edgeIds.length} edges
+                  {(active.nodeIds ?? []).length} nodes · {(active.edgeIds ?? []).length} edges
                 </span>
               </div>
               <Button size="sm" variant="destructive">
