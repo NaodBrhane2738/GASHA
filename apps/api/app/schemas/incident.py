@@ -38,6 +38,21 @@ class IncidentResponse(BaseModel):
     summary: Optional[str] = None
     environmentId: Optional[str] = "env-prod"
     correlationKey: Optional[str] = None
+    # Parity fields for frontend (@gasha/contracts Incident)
+    openedAt: Optional[str] = None
+    detectionIds: Optional[List[str]] = None
+    pathId: Optional[str] = None
+    confidence: float = 0.90
+    riskBefore: float = 75.0
+    riskAfter: Optional[float] = None
+
+    def model_post_init(self, __context: Any) -> None:
+        if not self.openedAt:
+            self.openedAt = self.createdAt
+        if self.detectionIds is None:
+            self.detectionIds = self.detectionEventIds
+        if not self.pathId:
+            self.pathId = self.attackPathId
 
 
 class IncidentCreate(BaseModel):

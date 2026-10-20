@@ -107,6 +107,10 @@ export interface RiskHistoryEntry {
   timestamp: string;
   score: number;
   triggerEvent: string;
+  // Parity aliases for frontend & charts
+  ts?: string;
+  openPaths?: number;
+  openIncidents?: number;
 }
 
 export interface AttackPathNode {
@@ -154,6 +158,13 @@ export interface Incident {
   createdAt: string;
   updatedAt: string;
   summary?: string;
+  // Parity aliases for frontend & investigation views
+  openedAt?: string;
+  detectionIds?: string[];
+  pathId?: string;
+  confidence?: number;
+  riskBefore?: number;
+  riskAfter?: number;
 }
 
 export type EvidenceType = 

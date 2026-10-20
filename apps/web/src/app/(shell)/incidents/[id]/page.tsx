@@ -22,7 +22,7 @@ export default function IncidentDetailPage({ params }: { params: Promise<{ id: s
     setSelectedIncident(incident.id);
   }
 
-  const path = paths?.find((p) => p.id === incident?.pathId) ?? null;
+  const path = paths?.find((p) => p.id === (incident?.pathId ?? (incident as any)?.attackPathId)) ?? null;
   const events = story ?? [];
   const replay = useReplay(events.length);
   const visible = events.slice(0, replay.index + 1);

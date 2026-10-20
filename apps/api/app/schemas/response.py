@@ -79,6 +79,45 @@ class ResponseRecordResponse(BaseModel):
     verificationMessage: Optional[str] = None
     auditId: Optional[str] = None
     metadata: Dict[str, Any] = {}
+    # Parity fields for frontend (@gasha/contracts ResponseAction)
+    kind: Optional[str] = None
+    target: Optional[str] = None
+    state: Optional[str] = None
+    requiresApproval: bool = True
+    blastRadius: Optional[Dict[str, Any]] = None
+    riskReduction: Optional[int] = 15
+
+    def model_post_init(self, __context: Any) -> None:
+        if not self.kind:
+            mapping = {
+                "BLOCK_SOURCE": "block-ip",
+                "DISABLE_SESSION": "revoke-session",
+                "ISOLATE_RESOURCE": "isolate-host"
+            }
+            self.kind = mapping.get(str(self.actionType), str(self.actionType).lower().replace("_", "-"))
+        if not self.target:
+            self.target = self.targetIdentifier
+        if not self.state:
+            state_map = {
+                "PROPOSED": "proposed",
+                "PENDING_APPROVAL": "proposed",
+                "APPROVED": "approved",
+                "EXECUTING": "executing",
+                "COMPLETED": "done",
+                "SUCCEEDED": "done",
+                "SUCCESS": "done",
+                "FAILED": "failed",
+                "VERIFICATION_FAILED": "failed",
+                "REJECTED": "rejected",
+                "CANCELLED": "rejected",
+                "REVERTED": "rejected",
+            }
+            self.state = state_map.get(str(self.status), str(self.status).lower())
+        if self.blastRadius is None:
+            self.blastRadius = {
+                "nodeIds": [self.targetIdentifier],
+                "servicesAffected": [f"svc-{self.incidentId}"] if self.incidentId else []
+            }
 
 
 class ResponseExecutionResult(BaseModel):
@@ -115,4 +154,3 @@ class AuditVerificationResult(BaseModel):
     environmentId: str
     latestHash: Optional[str] = None
     error: Optional[str] = None
-

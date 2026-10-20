@@ -135,6 +135,7 @@ def calculate_environment_risk(
         criticalAssetsAtRiskCount=len(critical_assets_at_risk),
         highRiskVulnerabilitiesCount=high_risk_vuln_count,
         activeAttackPathsCount=active_reachable_paths_count,
+        activeIncidentsCount=active_incidents_count,
         contributors=contributors[:10],  # Top 10 primary contributors
         calculatedAt=datetime.now(timezone.utc).isoformat(),
         environmentId=environment_id,

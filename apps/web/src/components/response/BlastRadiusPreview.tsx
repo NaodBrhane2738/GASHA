@@ -17,7 +17,7 @@ export function BlastRadiusPreview({ blastRadius }: { blastRadius: BlastRadius }
             <Server className="size-3" /> Nodes affected
           </div>
           <div className="flex flex-wrap gap-1">
-            {blastRadius.nodeIds.map((n) => (
+            {(blastRadius?.nodeIds ?? []).map((n) => (
               <span
                 key={n}
                 className="rounded bg-background px-1.5 py-0.5 font-mono text-[10.5px]"
@@ -32,7 +32,7 @@ export function BlastRadiusPreview({ blastRadius }: { blastRadius: BlastRadius }
             <Wrench className="size-3" /> Services
           </div>
           <div className="flex flex-wrap gap-1">
-            {blastRadius.servicesAffected.length === 0 ? (
+            {(blastRadius?.servicesAffected ?? []).length === 0 ? (
               <span className="text-muted-foreground">None</span>
             ) : (
               blastRadius.servicesAffected.map((s) => (

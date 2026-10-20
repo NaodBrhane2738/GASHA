@@ -35,12 +35,21 @@ export function LoopRail() {
 
   const metrics: Record<string, number> = {
     nodes: 10,
-    paths: paths?.filter((p) => p.status === 'open').length ?? 0,
+    paths: paths?.filter((p) => String(p.status).toLowerCase() === 'open').length ?? 0,
     events: dets?.length ?? 0,
-    dets: dets?.filter((d) => d.severity === 'high' || d.severity === 'critical').length ?? 0,
-    incs: incs?.filter((i) => i.status === 'open').length ?? 0,
+    dets: dets?.filter((d) => {
+      const s = String(d.severity).toLowerCase();
+      return s === 'high' || s === 'critical';
+    }).length ?? 0,
+    incs: incs?.filter((i) => {
+      const s = String(i.status).toLowerCase();
+      return s === 'open' || s === 'active';
+    }).length ?? 0,
     risk: 82,
-    acts: resps?.filter((r) => r.state === 'proposed').length ?? 0,
+    acts: resps?.filter((r) => {
+      const s = String(r.state ?? (r as any).status ?? '').toLowerCase();
+      return s === 'proposed';
+    }).length ?? 0,
   };
 
   return (

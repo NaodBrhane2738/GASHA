@@ -23,10 +23,17 @@ class RiskScoreResponse(BaseModel):
     criticalAssetsAtRiskCount: int = 0
     highRiskVulnerabilitiesCount: int = 0
     activeAttackPathsCount: int = 0
+    activeIncidentsCount: int = 0
     contributors: List[RiskContributorSchema] = Field(default_factory=list)
     calculatedAt: str
     environmentId: str = "env-prod"
     explanation: Optional[Dict[str, Any]] = None
+    # Parity alias
+    score: Optional[float] = None
+
+    def model_post_init(self, __context: Any) -> None:
+        if self.score is None:
+            self.score = self.overallScore
 
 
 class RiskHistoryEntryResponse(BaseModel):
@@ -34,3 +41,11 @@ class RiskHistoryEntryResponse(BaseModel):
     score: float
     triggerEvent: str
     environmentId: str = "env-prod"
+    # Parity fields for frontend (@gasha/contracts RiskSnapshot)
+    ts: Optional[str] = None
+    openPaths: int = 0
+    openIncidents: int = 0
+
+    def model_post_init(self, __context: Any) -> None:
+        if not self.ts:
+            self.ts = self.timestamp

@@ -20,11 +20,15 @@ export const KIND_ICON: Record<NodeKind, LucideIcon> = {
   external: Cloud,
 };
 
-export const SEVERITY_TOKEN: Record<Severity, string> = {
+export const SEVERITY_TOKEN: Record<string, string> = {
   critical: 'hsl(var(--critical))',
   high: 'hsl(var(--high))',
   medium: 'hsl(var(--medium))',
   low: 'hsl(var(--low))',
+  CRITICAL: 'hsl(var(--critical))',
+  HIGH: 'hsl(var(--high))',
+  MEDIUM: 'hsl(var(--medium))',
+  LOW: 'hsl(var(--low))',
 };
 
 export function riskColor(score: number): string {

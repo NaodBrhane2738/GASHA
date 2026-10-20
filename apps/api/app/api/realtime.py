@@ -159,7 +159,7 @@ async def websocket_endpoint(
         while True:
             # Client heartbeats / keep-alives
             data = await websocket.receive_text()
-            if data == "ping":
+            if data == "ping" or "ping" in data:
                 await websocket.send_text("pong")
     except WebSocketDisconnect:
         manager.disconnect(websocket, environment_id=authorized_env)

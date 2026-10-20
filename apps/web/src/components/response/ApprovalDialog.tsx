@@ -65,12 +65,12 @@ export function ApprovalDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <BlastRadiusPreview blastRadius={action.blastRadius} />
+        <BlastRadiusPreview blastRadius={action.blastRadius ?? { nodeIds: [action.target], servicesAffected: [] }} />
 
         <div className="rounded-md border border-[hsl(var(--medium))]/40 bg-[hsl(var(--medium))]/10 p-3 text-[12.5px]">
           Projected risk reduction:{' '}
           <strong className="text-[hsl(var(--low))]">−{action.riskReduction ?? 0} pts</strong>
-          {' '}· {action.blastRadius.servicesAffected.length} service(s) affected
+          {' '}· {(action.blastRadius?.servicesAffected ?? []).length} service(s) affected
         </div>
 
         <Input

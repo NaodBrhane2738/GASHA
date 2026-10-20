@@ -31,6 +31,7 @@ GASHA/
 │   │   ├── responses/         # ResponseActionRequest, ResponseAuditRecord
 │   │   └── api/               # ApiResponse, Pagination, WebSocketTicketRequest/Response
 │   └── telemetry-sdk/         # Runtime telemetry collector for Python & Node.js
+├── test_full_stack.py         # 65-test complete full-stack integration verification runner
 └── test_e2e_integration.py    # 20-step end-to-end integration test runner
 ```
 
@@ -73,6 +74,26 @@ All entity and event schemas **MUST** remain identical across `packages/contract
   ```
 - **Contract Parity Fields**: The backend `DetectionEventResponse` auto-populates `ts`, `nodeId`, `technique`, and `summary` via Pydantic `model_post_init` so frontend consumers get both high-level and detailed structures.
 
+### 2.3 Incidents (`Incident`)
+- **Parity Fields**: The backend `IncidentResponse` auto-populates `openedAt` (from `createdAt`), `detectionIds` (from `detectionEventIds`), `pathId` (from `attackPathId`), `confidence` (0.90), and `riskBefore` (75.0) via `model_post_init`.
+- **Status Machine**: Valid transitions are strictly enforced:
+  - `ACTIVE` &rarr; `INVESTIGATING` | `CONTAINED` | `RESOLVED`
+  - `INVESTIGATING` &rarr; `CONTAINED` | `RESOLVED` | `ACTIVE`
+  - `CONTAINED` &rarr; `RESOLVED` | `INVESTIGATING`
+  - `RESOLVED` &rarr; `ACTIVE` | `INVESTIGATING`
+
+### 2.4 Controlled Responses (`ResponseRecordResponse` / `ResponseAction`)
+- **Parity Fields**:
+  - `kind`: maps `BLOCK_SOURCE` &rarr; `"block-ip"`, `DISABLE_SESSION` &rarr; `"revoke-session"`, `ISOLATE_RESOURCE` &rarr; `"isolate-host"`
+  - `target`: from `targetIdentifier`
+  - `state`: maps `PROPOSED`/`PENDING_APPROVAL` &rarr; `"proposed"`, `APPROVED` &rarr; `"approved"`, `SUCCEEDED`/`COMPLETED` &rarr; `"done"`, `FAILED` &rarr; `"failed"`, `REJECTED` &rarr; `"rejected"`
+  - `blastRadius`: `{ nodeIds: [targetIdentifier], servicesAffected: [...] }`
+  - `riskReduction`: projected points (15)
+
+### 2.5 Risk Engine (`RiskScoreResponse` / `RiskHistoryEntryResponse`)
+- **History Parity**: `RiskHistoryEntryResponse` populates `ts` (from `timestamp`), `openPaths` (from `activeAttackPathsCount`), and `openIncidents` (from `activeIncidentsCount`) via `model_post_init`.
+- **UI Charting**: Safe navigation `payload?.[0]?.payload?.ts` and `score` mapping.
+
 ---
 
 ## 3. Realtime Live Feed & WebSockets
@@ -85,11 +106,11 @@ The platform streams live threat events and platform mutations over partitioned 
   - Route aliases: `/api/v1/ticket`, `/ticket`
   - Issues single-use high-entropy tickets with a 60-second TTL bound to the user's `environmentId`.
 - **JWT Fallback**: In direct agent connections, `?token=<JWT>` is also accepted.
+- **Keep-Alives**: Ping message strings or `{"type": "ping"}` receive immediate `"pong"` responses.
 
 ### 3.2 Frontend Hook (`useEventStream`)
 - Located in `apps/web/src/lib/realtime/useEventStream.ts`.
 - Automatically fetches a ticket, connects via WebSocket, deserializes JSON broadcasts, maps them to `Detection`, and handles exponential backoff reconnects.
-- **Anti-Pattern**: Do NOT revert to polling mock endpoints like `/api/detections/stream`. That endpoint does not exist on the live backend and will trigger a 404 spam loop.
 
 ---
 
@@ -147,7 +168,10 @@ pytest packages/telemetry-sdk/python/tests
 # 4. Verify Frontend Production Build (Turbopack)
 npm --prefix d:\CODING\GASHA-abdu run build
 
-# 5. Run Full End-to-End Stack Verification
+# 5. Run Full-Stack 65-Endpoint Test Suite
+python -u test_full_stack.py
+
+# 6. Run Full End-to-End Stack Verification
 python test_e2e_integration.py
 ```
 

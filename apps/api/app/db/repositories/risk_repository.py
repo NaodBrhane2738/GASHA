@@ -36,7 +36,9 @@ class RiskRepository:
                 timestamp=(now - timedelta(hours=i * 4)).isoformat(),
                 score=score,
                 triggerEvent="Baseline Recalculation",
-                environmentId=env_id
+                environmentId=env_id,
+                openPaths=2,
+                openIncidents=1,
             )
             for i, score in enumerate([82, 78, 75, 70, 68, 64][::-1])
         ]
@@ -49,7 +51,9 @@ class RiskRepository:
                 timestamp=risk.calculatedAt,
                 score=risk.overallScore,
                 triggerEvent="Risk Recalculation",
-                environmentId=risk.environmentId
+                environmentId=risk.environmentId,
+                openPaths=getattr(risk, "activeAttackPathsCount", 0),
+                openIncidents=getattr(risk, "activeIncidentsCount", 0),
             )
             if risk.environmentId not in self._history:
                 self._history[risk.environmentId] = []
