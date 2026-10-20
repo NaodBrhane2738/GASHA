@@ -39,3 +39,4 @@ coverage/
 .cache/
 scratch/
 *.db
+next-env.d.ts
