@@ -2,6 +2,7 @@
 
 > **Adaptive Autonomous Defense Platform for Cloud-Native & Serverless Environments**
 > *Built as a high-velocity Turborepo monorepo for seamless cross-team engineering.*
+> **AI & Agent Handbook**: See [docs/AGENT_INTEGRATION_GUIDE.md](docs/AGENT_INTEGRATION_GUIDE.md) for cross-contract parity, Four-Eyes Principle approval rules, WebSocket streaming, and integration troubleshooting.
 
 ---
 
