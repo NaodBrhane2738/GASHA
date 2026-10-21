@@ -1,0 +1,40 @@
+# values marked "sync: false"; it generates the ones marked "generateValue: true".
+# No secret value is stored in this file.
+services:
+  - type: web
+    name: gasha-api
+    runtime: docker
+    plan: free                      # Render defaults to a paid plan if this is omitted
+    branch: main
+    autoDeploy: false               
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: ./apps/api       # the Dockerfile copies requirements.txt and app/ from here
+    healthCheckPath: /health
+    envVars:
+      # --- where the data lives (Supabase Postgres) ---
+      - key: GASHA_STORAGE_BACKEND
+        value: sql
+      - key: GASHA_DB_DIALECT
+        value: postgres
+      - key: DATABASE_URL           # Supabase Session pooler URI (port 5432)
+        sync: false
+      # --- runtime mode ---
+      # "development" seeds demo data in memory; "production" starts empty and expects real discovery.
+      - key: NODE_ENV
+        sync: false
+      - key: LOG_LEVEL
+        value: info
+      # --- web access ---
+      - key: CORS_ORIGINS           # JSON list, e.g. ["https://our-app.vercel.app"]
+        sync: false
+      # --- secrets ---
+      - key: JWT_SECRET
+        generateValue: true
+      - key: INTERNAL_API_KEY
+        generateValue: true
+      - key: GASHA_TELEMETRY_API_KEY  # the demo app must be given the same value
+        generateValue: true
+      - key: GASHA_PROVISIONING_TOKEN
+        generateValue: true
+      - key: CREDENTIAL_ENCRYPTION_KEY  # must be a valid Fernet key: run scripts/dev/generate_secrets.py
+        sync: false
