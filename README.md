@@ -143,28 +143,48 @@ gasha/
 git clone https://github.com/NaodBrhane2738/GASHA.git
 cd GASHA
 
-# 2. Copy environment template
-cp .env.example .env
+# 2. Non-destructive setup helper (copies .env.example → .env if missing)
+python scripts/setup/setup_local.py
 
-# 3. Start PostgreSQL and Redis containers
-docker compose up -d
+# 3. Edit .env — never commit it. Generate secrets:
+python scripts/dev/generate_secrets.py
 
-# 4. Install JavaScript/TypeScript dependencies
+# 4a. Database services only (host runs API + web):
+docker compose up -d postgres redis
+
+# 4b. Or full stack (builds web + api images too):
+# docker compose up --build
+
+# 5. Install JavaScript/TypeScript dependencies
 pnpm install
 
-# 5. Set up Python virtual environment for FastAPI backend
+# 6. Python environment for the API
+py -3.13 -m venv .venv
+# Windows: .venv\Scripts\activate
+# macOS/Linux: source .venv/bin/activate
+pip install -r apps/api/requirements-dev.txt
+
+# 7. Postgres schema (Supabase Session pooler DATABASE_URL recommended)
+#    Local Compose Postgres may fail until the service_role decision is made —
+#    see docs/database-provisioning.md
+python scripts/dev/migrate.py --status
+# python scripts/dev/migrate.py --yes
+
+# 8. Run API on the host (SQLite/memory defaults work without step 7)
 cd apps/api
-python -m venv .venv
-source .venv/bin/activate  # Or on Windows: .venv\Scripts\activate
-pip install -r requirements.txt  # Or poetry install
 uvicorn app.main:app --reload --port 4000
+
+# Demo launcher (API + dashboard): python scripts/demo/run_demo.py --persist
+# Checks: python scripts/test/run_checks.py
 ```
+
+Deployable API blueprint: [`render.yaml`](render.yaml). Integration notes: [`docs/integrations/`](docs/integrations/).
 
 ---
 
 ## 6. Branching & Contribution Workflow
 
-See [`CONTRIBUTING.md`](file:///d:/CODING/GASHA/CONTRIBUTING.md) for full guidelines.
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for full guidelines.
 - `feature/backend-<topic>` : Backend APIs, graph algorithms & engines
 - `feature/frontend-<topic>` : Web dashboard & graph visualizations
 - `feature/cyber-<topic>` : Detection rules & attack scenarios

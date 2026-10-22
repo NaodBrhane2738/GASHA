@@ -18,6 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @gasha/contracts run typecheck
 
@@ -32,9 +33,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: pnpm
       - run: pnpm install --frozen-lockfile
-      # Lint is reported but does not block yet (the frontend has ~10 'no-explicit-any' errors to clean up).
-      - name: Lint (non-blocking for now)
+      # Lint remains non-blocking until frontend clears existing eslint errors.
+      # CONTRIBUTING requires lint to pass; track flipping continue-on-error with Frontend.
+      - name: Lint (non-blocking until frontend clean)
         run: pnpm --filter @gasha/web lint
         continue-on-error: true
       - name: Build
@@ -64,3 +67,41 @@ jobs:
         env:
           PYTHONPATH: packages/telemetry-sdk/python
         run: python -m pytest packages/telemetry-sdk/python/tests -q
+
+  devops-infra:
+    name: DevOps infra checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+      - name: Validate Docker Compose
+        run: docker compose -f docker-compose.yml config --quiet
+      - name: Compile DevOps Python scripts
+        run: |
+          python -m py_compile \
+            infra/scripts/apply_migrations.py \
+            scripts/setup/setup_local.py \
+            scripts/dev/migrate.py \
+            scripts/dev/generate_secrets.py \
+            scripts/dev/check_supabase.py \
+            scripts/demo/run_demo.py \
+            scripts/demo/preflight.py \
+            scripts/demo/reset_local.py \
+            scripts/reset/reset_local.py \
+            scripts/seed/seed.py \
+            scripts/test/run_checks.py
+      - name: Migration runner --help (no DB)
+        run: |
+          pip install "python-dotenv==1.0.1" "psycopg[binary]>=3.2"
+          python infra/scripts/apply_migrations.py --help
+          python scripts/dev/migrate.py --help
+      - name: Setup / seed / reset script smoke (no DB, non-destructive)
+        run: |
+          python scripts/setup/setup_local.py --help
+          python scripts/seed/seed.py
+          python scripts/seed/seed.py --check
+          python scripts/reset/reset_local.py --dry-run
+      # Frontend lint remains continue-on-error in the web job above until Frontend
+      # clears existing @typescript-eslint/no-explicit-any errors (CONTRIBUTING blocker).

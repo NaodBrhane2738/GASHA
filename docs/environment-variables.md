@@ -70,8 +70,9 @@ Source of truth for the names: `.env.example`, `apps/api/app/core/config.py`, `a
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | `scripts/dev/check_supabase.py` | Never printed |
 | `GASHA_TEST_DATABASE_URL` | `tests/integration/test_postgres_engine.py` | Scratch database only. The tests delete rows |
 
-## Known gaps in `.env.example` (to fix)
+## Known gaps / backend follow-ups
 
-1. Telemetry limits are inconsistent. The code reads `MAX_BATCH_SIZE` and `BUFFER_CAPACITY` (unprefixed) via `getattr(settings, ...)`, which works from a `.env` file because the settings class allows extra keys, but NOT from real environment variables on a host. The prefixed fields `GASHA_TELEMETRY_MAX_BATCH_SIZE`, `GASHA_TELEMETRY_MAX_PAYLOAD_BYTES` and `GASHA_TELEMETRY_BUFFER_CAPACITY` are defined in `config.py` but no code uses them. `MAX_PAYLOAD_BYTES`, `GASHA_TELEMETRY_FLUSH_INTERVAL_MS` and `GASHA_TELEMETRY_BATCH_SIZE` appear in `.env.example` but nothing reads them. Ask the backend owners to read the prefixed names, or drop the unused ones.
-2. `GASHA_STORAGE_BACKEND`, `GASHA_DB_DIALECT` and `GASHA_PROVISIONING_TOKEN` are read by the code but not listed.
-3. `DATABASE_URL` in the example uses Supabase's direct host, which is IPv6-only on the free plan. Use the Session pooler URI.
+1. Telemetry limits are inconsistent. The code reads `MAX_BATCH_SIZE` and `BUFFER_CAPACITY` (unprefixed) via `getattr(settings, ...)`, which works from a `.env` file because the settings class allows extra keys, but NOT from real environment variables on a host. The prefixed fields `GASHA_TELEMETRY_MAX_BATCH_SIZE`, `GASHA_TELEMETRY_MAX_PAYLOAD_BYTES` and `GASHA_TELEMETRY_BUFFER_CAPACITY` are defined in `config.py` but no code uses them. Ask the backend owners to read the prefixed names, or drop the unused ones.
+2. ~~`GASHA_STORAGE_BACKEND`, `GASHA_DB_DIALECT` and `GASHA_PROVISIONING_TOKEN` missing from `.env.example`~~ — added to `.env.example` (DevOps).
+3. ~~`DATABASE_URL` example used direct host~~ — `.env.example` now documents Session pooler shape.
+4. Database provisioning steps: see `docs/database-provisioning.md`.
