@@ -1,8 +1,8 @@
 # GASHA backend (apps/api) container image.
-# Build context is apps/api, so build with:  docker build -t gasha-api apps/api
+# Build context is apps/api (see infra/docker/docker-compose.yml).
+# Build with:  docker build -t gasha-api apps/api
 FROM python:3.13-slim
 
-# Don't write .pyc files; send logs straight to the terminal.
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -15,13 +15,13 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Then copy the application code.
 COPY app ./app
 
-# Run as a normal user instead of root, and give it a writable data folder
-# (the backend stores its SQLite database file here).
+# Non-root user; /data is available if GASHA_DB_DIALECT=sqlite.
 RUN useradd --create-home appuser && mkdir /data && chown appuser /data
 USER appuser
-ENV GASHA_DATABASE_PATH=/data/gasha_storage.db
 
-ENV PORT=4000
+ENV PORT=4000 \
+    GASHA_DATABASE_PATH=/data/gasha_storage.db
+
 EXPOSE 4000
 
 HEALTHCHECK --interval=15s --timeout=3s --start-period=10s --retries=3 \
