@@ -1,41 +1,4 @@
-services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: gasha-postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-gasha_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gasha_password}
-      POSTGRES_DB: ${POSTGRES_DB:-gasha_db}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-    container_name: gasha-redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-
-  api:
-    build: ./apps/api
-    container_name: gasha-api
-    restart: unless-stopped
-    ports:
-      - "4000:4000"
-    environment:
-      GASHA_DATABASE_PATH: /data/gasha_storage.db
-      SUPABASE_URL: ${SUPABASE_URL:-}
-      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
-      JWT_SECRET: ${JWT_SECRET:-dev-only-change-me-min-32-characters!!}
-    volumes:
-      - api_data:/data
-
-volumes:
-  postgres_data:
-  redis_data:
-  api_data:
+# Convenience entrypoint from the repo root.
+# Full stack definition: infra/docker/docker-compose.yml
+include:
+  - path: infra/docker/docker-compose.yml

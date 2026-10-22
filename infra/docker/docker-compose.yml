@@ -1,0 +1,118 @@
+# GASHA full local stack: web + api + postgres + redis
+# From repo root:
+#   docker compose -f infra/docker/docker-compose.yml up --build
+# Or use the root docker-compose.yml include (same stack):
+#   docker compose up --build
+
+services:
+  web:
+    build:
+      context: ../../apps/web
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:4000/api/v1}
+        BACKEND_URL: ${BACKEND_URL:-http://api:4000}
+    image: gasha-web:local
+    container_name: gasha-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      # Runtime rewrite target inside the Docker network (also set at build time).
+      BACKEND_URL: ${BACKEND_URL:-http://api:4000}
+      NEXT_PUBLIC_USE_MOCK: ${NEXT_PUBLIC_USE_MOCK:-false}
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - gasha-network
+
+  api:
+    build:
+      context: ../../apps/api
+      dockerfile: Dockerfile
+    image: gasha-api:local
+    container_name: gasha-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-4000}:4000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 4000
+      API_PORT: 4000
+      API_HOST: 0.0.0.0
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      WEB_URL: ${WEB_URL:-http://localhost:3000}
+      API_BASE_URL: ${API_BASE_URL:-http://localhost:4000/api/v1}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
+
+      # Persist via the compose Postgres service (not SQLite).
+      GASHA_STORAGE_BACKEND: ${GASHA_STORAGE_BACKEND:-sql}
+      GASHA_DB_DIALECT: ${GASHA_DB_DIALECT:-postgres}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://gasha:gasha_password@postgres:5432/gasha}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+
+      JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production-min32chars}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-24h}
+      INTERNAL_API_KEY: ${INTERNAL_API_KEY:-gasha-internal-service-key-change-me}
+      CREDENTIAL_ENCRYPTION_KEY: ${CREDENTIAL_ENCRYPTION_KEY:-}
+      GASHA_TELEMETRY_API_KEY: ${GASHA_TELEMETRY_API_KEY:-gasha-telemetry-demo-key-2026}
+      GASHA_TELEMETRY_ENVIRONMENT: ${GASHA_TELEMETRY_ENVIRONMENT:-env-prod}
+
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY:-}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gasha-network
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: gasha-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-gasha}
+      POSTGRES_USER: ${POSTGRES_USER:-gasha}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gasha_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gasha-network
+
+  redis:
+    image: redis:8-alpine
+    container_name: gasha-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gasha-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  gasha-network:
+    driver: bridge
