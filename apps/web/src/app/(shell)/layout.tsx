@@ -14,10 +14,7 @@ export default function ShellLayout({ children }: { children: React.ReactNode })
             <div className="text-[10.5px] text-muted-foreground">Security Operations</div>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-          <span className="inline-block size-2 rounded-full bg-[hsl(var(--low))]" />
-          Connected · demo environment
-        </div>
+
       </header>
 
       <LoopRail />

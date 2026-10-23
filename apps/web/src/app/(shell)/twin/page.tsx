@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { useTwin, usePaths } from '@/lib/api/queries';
 import { TwinGraph } from '@/components/twin/TwinGraph';
 import { GraphToolbar } from '@/components/twin/GraphToolbar';
-import { PathLegend } from '@/components/twin/PathLegend';
 import { useUI } from '@/store/ui';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -34,7 +33,6 @@ export default function TwinPage() {
     <div className="relative h-[calc(100vh-100px)]">
       <TwinGraph twin={twin} activePath={activePath} />
       <GraphToolbar eventCount={8} />
-      <PathLegend />
 
       {selectedNode && (
         <Card className="absolute right-4 top-4 z-10 w-[280px] p-4">
