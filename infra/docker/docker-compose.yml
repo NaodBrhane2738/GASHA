@@ -1,8 +1,15 @@
-# GASHA full local stack: web + api + postgres + redis
+# GASHA local Docker stack (web + api + postgres + redis)
+#
 # From repo root:
-#   docker compose -f infra/docker/docker-compose.yml up --build
-# Or use the root docker-compose.yml include (same stack):
-#   docker compose up --build
+#   docker compose up --build          # full stack
+#   docker compose up -d postgres redis  # DB services only (host runs API/web)
+#
+# Schema is NOT applied automatically. After Postgres is up, provision with:
+#   python scripts/dev/migrate.py --status
+# Prefer Supabase Session pooler DATABASE_URL. Local Compose Postgres may fail
+# migrations that reference role service_role — see docs/database-provisioning.md.
+#
+# Or: docker compose -f infra/docker/docker-compose.yml up --build
 
 services:
   web:
@@ -20,7 +27,6 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
-      # Runtime rewrite target inside the Docker network (also set at build time).
       BACKEND_URL: ${BACKEND_URL:-http://api:4000}
       NEXT_PUBLIC_USE_MOCK: ${NEXT_PUBLIC_USE_MOCK:-false}
     depends_on:
@@ -39,19 +45,21 @@ services:
     ports:
       - "${API_PORT:-4000}:4000"
     environment:
-      NODE_ENV: ${NODE_ENV:-production}
+      # development avoids production_guard / empty demo seeds when using local stack
+      NODE_ENV: ${NODE_ENV:-development}
       PORT: 4000
       API_PORT: 4000
       API_HOST: 0.0.0.0
       LOG_LEVEL: ${LOG_LEVEL:-info}
       WEB_URL: ${WEB_URL:-http://localhost:3000}
       API_BASE_URL: ${API_BASE_URL:-http://localhost:4000/api/v1}
-      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000","http://localhost:3001"]}
 
-      # Persist via the compose Postgres service (not SQLite).
+      # Defaults assume Compose Postgres. Tables must already exist (run migrate.py).
       GASHA_STORAGE_BACKEND: ${GASHA_STORAGE_BACKEND:-sql}
       GASHA_DB_DIALECT: ${GASHA_DB_DIALECT:-postgres}
       DATABASE_URL: ${DATABASE_URL:-postgresql://gasha:gasha_password@postgres:5432/gasha}
+      # Wired for future use; API does not consume Redis yet (docs/environment-variables.md).
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
 
       JWT_SECRET: ${JWT_SECRET:-super-secret-jwt-key-change-in-production-min32chars}
