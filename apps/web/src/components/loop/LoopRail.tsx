@@ -13,7 +13,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { usePaths, useDetections, useIncidents, useResponses } from '@/lib/api/queries';
+import { usePaths, useDetections, useIncidents, useResponses, useTwin, useRisk } from '@/lib/api/queries';
 
 const STAGES = [
   { key: 'twin', label: 'Discover', href: '/twin', icon: Radar, metricKey: 'nodes' },
@@ -32,9 +32,12 @@ export function LoopRail() {
   const { data: dets } = useDetections();
   const { data: incs } = useIncidents();
   const { data: resps } = useResponses();
+  const { data: twin } = useTwin();
+  const { data: riskHist } = useRisk();
+  const latestRisk = riskHist?.[riskHist.length - 1];
 
   const metrics: Record<string, number> = {
-    nodes: 10,
+    nodes: twin?.nodes?.length ?? 0,
     paths: paths?.filter((p) => String(p.status).toLowerCase() === 'open').length ?? 0,
     events: dets?.length ?? 0,
     dets: dets?.filter((d) => {
@@ -43,9 +46,9 @@ export function LoopRail() {
     }).length ?? 0,
     incs: incs?.filter((i) => {
       const s = String(i.status).toLowerCase();
-      return s === 'open' || s === 'active';
+      return s === 'open' || s === 'active' || s === 'investigating';
     }).length ?? 0,
-    risk: 82,
+    risk: latestRisk?.score ?? 35,
     acts: resps?.filter((r) => {
       const s = String(r.state ?? (r as any).status ?? '').toLowerCase();
       return s === 'proposed';

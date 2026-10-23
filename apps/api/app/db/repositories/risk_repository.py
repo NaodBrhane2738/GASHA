@@ -38,9 +38,9 @@ class RiskRepository:
                 triggerEvent="Baseline Recalculation",
                 environmentId=env_id,
                 openPaths=2,
-                openIncidents=1,
+                openIncidents=0,
             )
-            for i, score in enumerate([82, 78, 75, 70, 68, 64][::-1])
+            for i, score in enumerate([42, 40, 38, 35, 32, 30][::-1])
         ]
 
     def save_current_risk(self, risk: RiskScoreResponse) -> RiskScoreResponse:

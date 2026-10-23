@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GASHA Red-Team &middot; Tactical Adversary Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-darkest: #070A0E;
+      --bg-panel: #0C1017;
+      --bg-elevated: #111722;
+      --bg-input: #080C12;
+      --border-subtle: #192230;
+      --border-strong: #253347;
+      --text-white: #F1F5F9;
+      --text-muted: #8494A7;
+      --text-dim: #4B596A;
+      --crimson-red: #EF4444;
+      --crimson-glow: rgba(239, 68, 68, 0.15);
+      --amber-warn: #F59E0B;
+      --amber-glow: rgba(245, 158, 11, 0.15);
+      --emerald-green: #10B981;
+      --cyan-bright: #06B6D4;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-darkest);
+      color: var(--text-white);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Command Header */
+    header.c2-header {
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.85rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .c2-logo {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #DC2626, #EF4444);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 16px;
+      color: #FFF;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+    }
+
+    .brand-title h1 {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+      color: #F87171;
+    }
+
+    .brand-title span {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .target-radar-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .target-radar-badge.unrestricted {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.3);
+      color: #34D399;
+    }
+
+    .target-radar-badge.quarantined {
+      background: var(--crimson-glow);
+      border-color: var(--crimson-red);
+      color: #FCA5A5;
+      animation: pulse-red 1.5s infinite;
+    }
+
+    @keyframes pulse-red {
+      0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+      70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    /* Main Grid */
+    main.c2-workspace {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      min-height: 0;
+    }
+
+    /* Left Sidebar: Attack Controls */
+    aside.arsenal-pane {
+      background-color: var(--bg-panel);
+      border-right: 1px solid var(--border-subtle);
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .config-box {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .field-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .field-row label {
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .field-row input, .field-row select {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-strong);
+      border-radius: 4px;
+      padding: 0.5rem 0.75rem;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      color: var(--text-white);
+      outline: none;
+    }
+
+    .field-row input:focus {
+      border-color: var(--cyan-bright);
+    }
+
+    /* Exploit Cards & Buttons */
+    .exploit-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 4px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+    }
+
+    .exploit-card:hover {
+      border-color: var(--border-strong);
+      background-color: #141C2B;
+    }
+
+    .exploit-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .exploit-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-white);
+    }
+
+    .mitre-tag {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 2px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      color: #FBBF24;
+    }
+
+    .exploit-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .btn-fire {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.55rem 0.85rem;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      user-select: none;
+      transition: all 0.15s ease;
+      margin-top: 0.25rem;
+    }
+
+    .btn-fire.crimson {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #F87171;
+    }
+
+    .btn-fire.crimson:hover {
+      background: rgba(239, 68, 68, 0.3);
+      border-color: #EF4444;
+      color: #FFF;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-fire.amber {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #FBBF24;
+    }
+
+    .btn-fire.amber:hover {
+      background: rgba(245, 158, 11, 0.3);
+      border-color: #F59E0B;
+      color: #FFF;
+    }
+
+    .btn-fire.cyan {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: rgba(6, 182, 212, 0.4);
+      color: #38BDF8;
+    }
+
+    .btn-fire.cyan:hover {
+      background: rgba(6, 182, 212, 0.3);
+      border-color: #06B6D4;
+      color: #FFF;
+    }
+
+    .btn-fire.purple {
+      background: rgba(168, 85, 247, 0.15);
+      border-color: rgba(168, 85, 247, 0.4);
+      color: #C084FC;
+    }
+
+    .btn-fire.purple:hover {
+      background: rgba(168, 85, 247, 0.3);
+      border-color: #A855F7;
+      color: #FFF;
+    }
+
+    /* Right Main Terminal */
+    section.terminal-pane {
+      background-color: var(--bg-darkest);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .terminal-topbar {
+      background-color: var(--bg-panel);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 0.65rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .terminal-body {
+      flex: 1;
+      padding: 1.25rem 1.5rem;
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .log-line {
+      padding: 0.4rem 0.65rem;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.02);
+      border-left: 3px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      line-height: 1.4;
+    }
+
+    .log-line.allowed {
+      border-left-color: var(--emerald-green);
+    }
+
+    .log-line.denied {
+      border-left-color: var(--amber-warn);
+    }
+
+    .log-line.blocked {
+      border-left-color: var(--crimson-red);
+      background: rgba(239, 68, 68, 0.08);
+    }
+
+    .log-meta-strip {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-dim);
+    }
+
+    .log-payload {
+      color: var(--text-white);
+      word-break: break-all;
+    }
+
+    .status-code-tag {
+      font-weight: 700;
+      padding: 0.1rem 0.35rem;
+      border-radius: 2px;
+      font-size: 10px;
+    }
+    .status-code-tag.s401 { background: rgba(245, 158, 11, 0.2); color: #FBBF24; }
+    .status-code-tag.s403 { background: rgba(239, 68, 68, 0.2); color: #F87171; }
+    .status-code-tag.s200 { background: rgba(16, 185, 129, 0.2); color: #34D399; }
+
+    /* Footer Links */
+    footer.c2-footer {
+      background-color: var(--bg-panel);
+      border-top: 1px solid var(--border-subtle);
+      padding: 0.75rem 2rem;
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Command Header -->
+  <header class="c2-header">
+    <div class="brand-cluster">
+      <div class="c2-logo">C2</div>
+      <div class="brand-title">
+        <h1>Adversary C2 Console &middot; Red-Team Lab</h1>
+        <span>Target: http://localhost:3001 (Nexus Store) &middot; Port: 3002</span>
+      </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div id="target-defense-radar" class="target-radar-badge unrestricted">
+        <span>●</span>
+        <span id="radar-text">STATUS: UNRESTRICTED (Target Vulnerable)</span>
+      </div>
+      <button class="btn-fire amber" style="padding: 0.35rem 0.65rem;" onclick="resetQuarantine()">Reset Target Blocklist</button>
+    </div>
+  </header>
+
+  <!-- Workspace Grid -->
+  <main class="c2-workspace">
+
+    <!-- Left Arsenal Sidebar -->
+    <aside class="arsenal-pane">
+
+      <!-- Attacker Parameters Box -->
+      <div>
+        <div class="section-title">
+          <span>&#9881;</span>
+          <span>Adversary Parameters</span>
+        </div>
+        <div class="config-box">
+          <div class="field-row">
+            <label>Spoofed Source IP (X-Forwarded-For)</label>
+            <input type="text" id="cfg-attacker-ip" value="198.51.100.101">
+          </div>
+          <div class="field-row">
+            <label>Victim Target URL</label>
+            <input type="text" id="cfg-target-url" value="http://localhost:3001">
+          </div>
+          <div class="field-row">
+            <label>Attack Velocity</label>
+            <select id="cfg-delay">
+              <option value="50">High Velocity (50ms burst)</option>
+              <option value="250">Stealth Mode (250ms delay)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exploit Arsenal -->
+      <div style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="section-title">
+          <span>&#9876;</span>
+          <span>Tactical Exploit Vectors</span>
+        </div>
+
+        <!-- Exploit 1: SSRF Cloud Metadata Pivot -->
+        <div class="exploit-card">
+          <div class="exploit-header">
+            <strong class="exploit-name">1. SSRF Cloud Metadata Pivot</strong>
+            <span class="mitre-tag">T1071 / T1552</span>
+          </div>
+          <p class="exploit-desc">
+            Tricks the store server into fetching private internal AWS cloud metadata (<code>169.254.169.254</code>) to exfiltrate IAM root credentials.
+          </p>
+          <button class="btn-fire crimson" onclick="fireSSRF()">Execute SSRF Exploit</button>
+        </div>
+
+        <!-- Exploit 2: Credential Stuffing Brute Force -->
+        <div class="exploit-card">
+          <div class="exploit-header">
+            <strong class="exploit-name">2. Credential Stuffing Brute-Force</strong>
+            <span class="mitre-tag">T1110.001</span>
+          </div>
+          <p class="exploit-desc">
+            Sends 5 rapid unauthorized login attempts to trip GASHA's brute-force threshold detection rule (<code>RULE-AUTH-001</code>).
+          </p>
+          <button class="btn-fire amber" onclick="fireBruteForce()">Launch 5x Password Burst</button>
+        </div>
+
+        <!-- Exploit 3: SQL Injection Database Probe -->
+        <div class="exploit-card">
+          <div class="exploit-header">
+            <strong class="exploit-name">3. SQL Injection Probe</strong>
+            <span class="mitre-tag">T1190</span>
+          </div>
+          <p class="exploit-desc">
+            Injects SQL union and tautology probes (<code>' OR 1=1 --</code>) into the product and customer lookup pipeline.
+          </p>
+          <button class="btn-fire cyan" onclick="fireSQLi()">Inject SQL Payloads</button>
+        </div>
+
+        <!-- Exploit 4: Path Traversal / LFI -->
+        <div class="exploit-card">
+          <div class="exploit-header">
+            <strong class="exploit-name">4. Path Traversal &amp; LFI</strong>
+            <span class="mitre-tag">T1083</span>
+          </div>
+          <p class="exploit-desc">
+            Probes for arbitrary file reads on disk (<code>../../../../etc/passwd</code> and <code>.env</code>) via query params.
+          </p>
+          <button class="btn-fire purple" onclick="fireTraversal()">Probe Path Traversal</button>
+        </div>
+
+        <!-- Exploit 5: Crown Jewel Secrets Exfiltration -->
+        <div class="exploit-card">
+          <div class="exploit-header">
+            <strong class="exploit-name">5. Crown Jewel Secret Exfiltration</strong>
+            <span class="mitre-tag">T1078</span>
+          </div>
+          <p class="exploit-desc">
+            Direct unauthorized probe on <code>/api/admin/secrets</code> attempting to harvest the master database encryption key.
+          </p>
+          <button class="btn-fire crimson" onclick="fireSecrets()">Exfiltrate Secret Vault</button>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Right Live Terminal Pane -->
+    <section class="terminal-pane">
+      <div class="terminal-topbar">
+        <span>LIVE C2 INTERACTION TELEMETRY &middot; ADVERSARY FEED</span>
+        <button class="btn-fire amber" style="padding: 0.2rem 0.5rem; font-size: 10px;" onclick="clearTerminal()">Clear Log</button>
+      </div>
+
+      <div class="terminal-body" id="c2-terminal">
+        <div class="log-line">
+          <div class="log-meta-strip">
+            <span>READY</span>
+            <span>SYSTEM_INIT</span>
+          </div>
+          <div class="log-payload">Adversary simulation engine loaded. Ready to execute exploits against target.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="c2-footer">
+    <div>
+      <span>GASHA Autonomous CSOC Demonstration Environment</span> &middot;
+      <span>Attacker Console: <code style="color: #F87171;">http://localhost:3002</code></span>
+    </div>
+    <div>
+      <a href="http://localhost:3000" target="_blank" style="color: #38BDF8; text-decoration: none;">GASHA CSOC Defense Dashboard &rarr;</a>
+    </div>
+  </footer>
+
+  <!-- Javascript & Execution Handlers -->
+  <script>
+    setInterval(pollTargetRadar, 2000);
+    pollTargetRadar();
+
+    function logTerminal(type, text, code, latency) {
+      const term = document.getElementById('c2-terminal');
+      const timeStr = new Date().toTimeString().split(' ')[0];
+      const entry = document.createElement('div');
+      
+      let lineClass = "log-line";
+      let codeClass = "status-code-tag";
+      if (code === 200) { lineClass += " allowed"; codeClass += " s200"; }
+      else if (code === 401) { lineClass += " denied"; codeClass += " s401"; }
+      else if (code === 403) { lineClass += " blocked"; codeClass += " s403"; }
+
+      entry.className = lineClass;
+      entry.innerHTML = `
+        <div class="log-meta-strip">
+          <span>[${timeStr}] ${type} &middot; ${latency ? latency + 'ms' : ''}</span>
+          ${code ? `<span class="${codeClass}">HTTP ${code}</span>` : ''}
+        </div>
+        <div class="log-payload">${text}</div>
+      `;
+      term.insertBefore(entry, term.firstChild);
+    }
+
+    function clearTerminal() {
+      document.getElementById('c2-terminal').innerHTML = '';
+    }
+
+    function getConfig() {
+      return {
+        attackerIp: document.getElementById('cfg-attacker-ip').value.trim(),
+        targetUrl: document.getElementById('cfg-target-url').value.trim(),
+        count: 5,
+        delayMs: parseInt(document.getElementById('cfg-delay').value)
+      };
+    }
+
+    // Exploit 1: SSRF
+    async function fireSSRF() {
+      logTerminal('EXPLOIT_DISPATCH', 'Executing SSRF metadata probe against AWS 169.254.169.254...');
+      try {
+        const res = await fetch('/api/attack/ssrf', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(getConfig())
+        });
+        const data = await res.json();
+        (data.logs || []).forEach(l => {
+          const detail = l.isBlocked 
+            ? `🛑 403 BLOCKED BY GASHA! Target quarantined attacker IP.`
+            : `Neutralized pattern: [${l.detectedPattern}]. Target returned safe handled response.`;
+          logTerminal('SSRF_PROBE', `${l.action} -> ${detail}`, l.status, l.latencyMs);
+        });
+        pollTargetRadar();
+      } catch (err) {
+        logTerminal('ERROR', 'SSRF execution error: ' + err.message);
+      }
+    }
+
+    // Exploit 2: Brute Force
+    async function fireBruteForce() {
+      logTerminal('EXPLOIT_DISPATCH', 'Launching 5x high-velocity password burst (MITRE T1110)...');
+      try {
+        const res = await fetch('/api/attack/brute-force', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(getConfig())
+        });
+        const data = await res.json();
+        (data.logs || []).forEach(l => {
+          const detail = l.isBlocked 
+            ? `🛑 QUARANTINED! Inbound IP blocked by GASHA Active Defense.`
+            : `Attempt ${l.step}/5: 401 Unauthorized for user "${l.user}"`;
+          logTerminal('BRUTE_FORCE', detail, l.status, l.latencyMs);
+        });
+        pollTargetRadar();
+      } catch (err) {
+        logTerminal('ERROR', 'Brute-force error: ' + err.message);
+      }
+    }
+
+    // Exploit 3: SQLi
+    async function fireSQLi() {
+      logTerminal('EXPLOIT_DISPATCH', 'Injecting SQL injection payloads into customer lookup pipeline...');
+      try {
+        const res = await fetch('/api/attack/sqli', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(getConfig())
+        });
+        const data = await res.json();
+        (data.logs || []).forEach(l => {
+          const detail = l.isBlocked 
+            ? `🛑 BLOCKED BY GASHA CSOC Policy.`
+            : `Probe [${l.payload}] detected as [${l.detectedPattern}]. Neutralized.`;
+          logTerminal('SQL_INJECTION', detail, l.status, l.latencyMs);
+        });
+        pollTargetRadar();
+      } catch (err) {
+        logTerminal('ERROR', 'SQLi error: ' + err.message);
+      }
+    }
+
+    // Exploit 4: Traversal
+    async function fireTraversal() {
+      logTerminal('EXPLOIT_DISPATCH', 'Probing path traversal & arbitrary file access (../../etc/passwd)...');
+      try {
+        const res = await fetch('/api/attack/traversal', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(getConfig())
+        });
+        const data = await res.json();
+        (data.logs || []).forEach(l => {
+          logTerminal('PATH_TRAVERSAL', `Probed ${l.action} -> Status: ${l.status}`, l.status, l.latencyMs);
+        });
+        pollTargetRadar();
+      } catch (err) {
+        logTerminal('ERROR', 'Traversal error: ' + err.message);
+      }
+    }
+
+    // Exploit 5: Secrets
+    async function fireSecrets() {
+      logTerminal('EXPLOIT_DISPATCH', 'Attempting unauthorized exfiltration of Crown Jewel Master Encryption Keys...');
+      try {
+        const res = await fetch('/api/attack/secrets', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(getConfig())
+        });
+        const data = await res.json();
+        const detail = data.isBlocked 
+          ? `🛑 403 ACCESS DENIED! Target denied unauthorized crown jewel access.`
+          : `HTTP ${data.status} response`;
+        logTerminal('CROWN_JEWEL', detail, data.status, data.latencyMs);
+        pollTargetRadar();
+      } catch (err) {
+        logTerminal('ERROR', 'Secrets exploit error: ' + err.message);
+      }
+    }
+
+    // Target Quarantine Radar
+    async function pollTargetRadar() {
+      const ip = document.getElementById('cfg-attacker-ip').value.trim();
+      const radar = document.getElementById('target-defense-radar');
+      const radarText = document.getElementById('radar-text');
+
+      try {
+        const res = await fetch('/api/attack/status?ip=' + encodeURIComponent(ip));
+        const data = await res.json();
+
+        if (data.isQuarantined) {
+          radar.className = "target-radar-badge quarantined";
+          radarText.innerHTML = `⚠️ QUARANTINED BY GASHA CSOC (IP ${ip} BLOCKED)`;
+        } else {
+          radar.className = "target-radar-badge unrestricted";
+          radarText.innerHTML = `STATUS: UNRESTRICTED (Target Vulnerable)`;
+        }
+      } catch (e) {}
+    }
+
+    async function resetQuarantine() {
+      try {
+        await fetch('/api/attack/reset', { method: 'POST' });
+        logTerminal('RESET', 'Triggered target blocklist wipe. Quarantine lifted.');
+        pollTargetRadar();
+      } catch (e) {
+        logTerminal('ERROR', 'Failed to reset: ' + e.message);
+      }
+    }
+  </script>
+</body>
+</html>

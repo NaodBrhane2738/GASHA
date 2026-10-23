@@ -10,9 +10,10 @@ OBJECTIVE: Controlled, instrumented Demo Target Application for GASHA.
 
 import re
 import uuid
+import pathlib
 from typing import Optional, Dict, Any, List
 from fastapi import FastAPI, Request, HTTPException, Query, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from pydantic import BaseModel
 
 try:
@@ -47,6 +48,7 @@ except ImportError:
 SQLI_PATTERN = re.compile(r"('|\bunion\b|\bselect\b|--|;\s*drop\b|\bor\b\s+['\d]|\bwhere\b)", re.IGNORECASE)
 XSS_PATTERN = re.compile(r"(<script|javascript:|onerror=|<img|<svg|\balert\()", re.IGNORECASE)
 TRAVERSAL_PATTERN = re.compile(r"(\.\./|\.\.\\|/etc/passwd|win\.ini|boot\.ini)", re.IGNORECASE)
+SSRF_PATTERN = re.compile(r"(169\.254\.|127\.0\.0\.1|localhost|0\.0\.0\.0|::1|metadata|internal-api|iam)", re.IGNORECASE)
 
 
 def get_client_ip(request: Request) -> str:
@@ -103,6 +105,11 @@ def create_demo_target_app() -> FastAPI:
     async def health_check():
         return {"status": "ok", "service": "gasha-demo-target", "version": "0.1.0"}
 
+    @app.get("/", response_class=HTMLResponse, tags=["System"])
+    async def root():
+        template_path = pathlib.Path(__file__).resolve().parent / "templates" / "index.html"
+        return HTMLResponse(content=template_path.read_text(encoding="utf-8"))
+
     @app.post("/api/auth/login", tags=["Authentication"])
     async def login(req: LoginRequest, request: Request):
         source_ip = get_client_ip(request)
@@ -138,6 +145,28 @@ def create_demo_target_app() -> FastAPI:
             ]
         }
 
+    @app.get("/api/integrations/fetch-url", tags=["Operations"])
+    async def fetch_external_url(request: Request, url: Optional[str] = Query(None)):
+        source_ip = get_client_ip(request)
+        user, sid = get_session_info(request)
+        raw_url = url or ""
+        if SSRF_PATTERN.search(raw_url):
+            emit_suspicious_request(
+                source_ip=source_ip,
+                path="/api/integrations/fetch-url",
+                pattern_type="SSRF_PROBE",
+                user_id=user,
+                raw_query=raw_url
+            )
+            return {
+                "status": "safe_handled",
+                "detectedPattern": "SSRF_PROBE",
+                "warning": f"Detected SSRF pattern against internal target [{raw_url}]. Request quarantined.",
+                "results": []
+            }
+        emit_resource_access(source_ip, user_id=user or "anonymous", resource_id="external_url", outcome="ALLOWED")
+        return {"status": "success", "url": raw_url, "data": "simulated_remote_content"}
+
     @app.get("/api/customers/lookup", tags=["Operations"])
     async def lookup_customers(request: Request, query: Optional[str] = Query(None)):
         source_ip = get_client_ip(request)
@@ -152,6 +181,8 @@ def create_demo_target_app() -> FastAPI:
             matched_pattern = "XSS_PROBE"
         elif TRAVERSAL_PATTERN.search(raw_query):
             matched_pattern = "PATH_TRAVERSAL"
+        elif SSRF_PATTERN.search(raw_query):
+            matched_pattern = "SSRF_PROBE"
 
         if matched_pattern:
             # Emit telemetry recording the probe pattern
@@ -236,6 +267,30 @@ def create_demo_target_app() -> FastAPI:
             outcome="UPDATED"
         )
         return {"status": "success", "message": f"User {req.targetUser} role updated to {req.newRole}"}
+
+    @app.post("/api/demo/block-ip", tags=["Observability"])
+    async def api_block_ip(req: Dict[str, Any]):
+        ip = req.get("ip")
+        if ip:
+            try:
+                from security.blocklist import block_ip
+            except ImportError:
+                from apps.demo_target.security.blocklist import block_ip
+            block_ip(ip)
+            return {"status": "blocked", "ip": ip}
+        return JSONResponse(status_code=400, content={"error": "missing ip"})
+
+    @app.post("/api/demo/disable-session", tags=["Observability"])
+    async def api_disable_session(req: Dict[str, Any]):
+        sid = req.get("sessionId")
+        if sid:
+            try:
+                from security.sessions import disable_session
+            except ImportError:
+                from apps.demo_target.security.sessions import disable_session
+            disable_session(sid)
+            return {"status": "disabled", "sessionId": sid}
+        return JSONResponse(status_code=400, content={"error": "missing sessionId"})
 
     @app.get("/api/demo/security-state", tags=["Observability"])
     async def get_security_state():

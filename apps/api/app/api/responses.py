@@ -142,6 +142,16 @@ async def review_proposal(
         if "not found" in err.lower():
             status_code = status.HTTP_404_NOT_FOUND
         raise HTTPException(status_code=status_code, detail=err)
+    
+    # Auto-execute containment action upon operator approval
+    if approval_req.decision == "APPROVE" and record and record.status == "APPROVED":
+        try:
+            from app.response.executor import get_response_executor
+            executor = get_response_executor()
+            record, _, _ = executor.execute_action(record, user.get("sub") or "analyst")
+        except Exception as _exec_err:
+            logger.error(f"Execution error on approval: {_exec_err}")
+
     return record
 
 

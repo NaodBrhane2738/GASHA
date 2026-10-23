@@ -20,54 +20,8 @@ class DetectionRepository:
         self._seed_default_detections()
 
     def _seed_default_detections(self):
-        import os
-        from app.core.production_guard import is_production_mode
-        if is_production_mode() or "PYTEST_CURRENT_TEST" in os.environ:
-            return
-        from datetime import datetime, timezone
-        now_iso = datetime.now(timezone.utc).isoformat()
-        dets = [
-            DetectionEventResponse(
-                id="det-1",
-                rule=DetectionRuleSummarySchema(
-                    ruleId="RULE-AUTH-001",
-                    name="Brute-force authentication attempt",
-                    description="5 failed logins in 12s from 198.51.100.42",
-                    severity="HIGH",
-                    confidence=0.92
-                ),
-                matchedEventIds=["evt-1", "evt-2"],
-                primaryAssetId="auth-svc",
-                timestamp=now_iso,
-                severity="HIGH",
-                confidence=0.92,
-                evidenceSummary="5 failed logins in 12s from 198.51.100.42",
-                environmentId="env-prod",
-                incidentId="inc-1",
-                metadata={"mitreTechniqueId": "T1110", "sourceIp": "198.51.100.42"}
-            ),
-            DetectionEventResponse(
-                id="det-2",
-                rule=DetectionRuleSummarySchema(
-                    ruleId="RULE-INJ-002",
-                    name="SQL injection probe on user lookup",
-                    description="UNION SELECT payload detected in parameter q",
-                    severity="CRITICAL",
-                    confidence=0.96
-                ),
-                matchedEventIds=["evt-3"],
-                primaryAssetId="pg-main",
-                timestamp=now_iso,
-                severity="CRITICAL",
-                confidence=0.96,
-                evidenceSummary="UNION SELECT payload detected in parameter q",
-                environmentId="env-prod",
-                incidentId="inc-1",
-                metadata={"mitreTechniqueId": "T1190"}
-            )
-        ]
-        for d in dets:
-            self._detections[d.id] = d
+        # Clean production-live state: zero mock detections
+        pass
 
     def create_detection(self, detection: DetectionEventResponse) -> DetectionEventResponse:
         with self._lock:

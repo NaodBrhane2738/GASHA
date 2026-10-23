@@ -42,16 +42,16 @@ class AssetRepository:
         
         env_id = "env-prod"
         nodes = [
-            ("edge-lb", "Edge LB", "API_ENDPOINT", "TIER_1_HIGH", "VERCEL", True),
-            ("web-app", "Next.js Web", "VERCEL_DEPLOYMENT", "TIER_0_CROWN_JEWEL", "VERCEL", True),
-            ("api-gate", "API Gateway", "API_ENDPOINT", "TIER_0_CROWN_JEWEL", "VERCEL", True),
-            ("auth-svc", "Auth Service", "SERVICE", "TIER_0_CROWN_JEWEL", "VERCEL", False),
-            ("worker", "Background Worker", "SERVICE", "TIER_2_MEDIUM", "VERCEL", False),
-            ("pg-main", "Postgres Main", "DATABASE", "TIER_0_CROWN_JEWEL", "STATIC_CONFIG", False),
-            ("s3-assets", "S3 Assets", "STORAGE_BUCKET", "TIER_1_HIGH", "STATIC_CONFIG", False),
-            ("secrets", "Secrets Store", "SECRET_STORE", "TIER_0_CROWN_JEWEL", "STATIC_CONFIG", False),
-            ("analyst-lt", "Analyst Laptop", "SERVICE", "TIER_3_LOW", "TELEMETRY", False),
-            ("ext-cdn", "Third-party CDN", "API_ENDPOINT", "TIER_3_LOW", "STATIC_CONFIG", True),
+            ("edge-lb", "Nexus Edge CDN", "API_ENDPOINT", "TIER_1_HIGH", "STATIC_CONFIG", True),
+            ("web-app", "Nexus Storefront (3001)", "VERCEL_DEPLOYMENT", "TIER_0_CROWN_JEWEL", "VERCEL", True),
+            ("api-gate", "Nexus API Gateway", "API_ENDPOINT", "TIER_0_CROWN_JEWEL", "STATIC_CONFIG", True),
+            ("auth-svc", "Nexus Auth Service", "SERVICE", "TIER_0_CROWN_JEWEL", "STATIC_CONFIG", False),
+            ("worker", "Nexus Order Worker", "SERVICE", "TIER_2_MEDIUM", "STATIC_CONFIG", False),
+            ("pg-main", "Nexus PostgreSQL (Orders)", "DATABASE", "TIER_0_CROWN_JEWEL", "STATIC_CONFIG", False),
+            ("s3-assets", "Nexus Cloud Storage (S3)", "STORAGE_BUCKET", "TIER_1_HIGH", "STATIC_CONFIG", False),
+            ("secrets", "Nexus Secrets and IAM", "SECRET_STORE", "TIER_0_CROWN_JEWEL", "STATIC_CONFIG", False),
+            ("analyst-lt", "Adversary Source", "SERVICE", "TIER_3_LOW", "TELEMETRY", False),
+            ("ext-cdn", "Nexus Static CDN", "API_ENDPOINT", "TIER_3_LOW", "STATIC_CONFIG", True),
         ]
         for nid, name, atype, crit, src, pub in nodes:
             self.upsert_asset(

@@ -68,6 +68,48 @@ async def process_stream(events: List[TelemetryEventSchema]) -> int:
             except Exception as e:
                 logger.debug(f"Non-critical realtime broadcast failure: {e}")
 
+            # 6. Auto-propose containment action for high/critical threats with a source IP
+            meta = det.metadata or {}
+            source_ip = meta.get("sourceIp")
+            sev = (det.severity or "").upper()
+            if source_ip and sev in ("HIGH", "CRITICAL"):
+                try:
+                    import uuid
+                    from datetime import datetime, timezone
+                    from app.db.repositories.response_repository import get_response_repository
+                    from app.schemas.response import ResponseRecordResponse
+                    resp_repo = get_response_repository()
+                    existing = [
+                        r for r in resp_repo.list_responses(det.environmentId)
+                        if r.targetIdentifier == source_ip and r.status in ("PROPOSED", "PENDING_APPROVAL")
+                    ]
+                    if not existing:
+                        now_iso = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+                        action_rec = ResponseRecordResponse(
+                            id=f"resp-{uuid.uuid4().hex[:8]}",
+                            incidentId=incident.id,
+                            environmentId=det.environmentId,
+                            actionType="BLOCK_SOURCE",
+                            targetType="IP_ADDRESS",
+                            targetIdentifier=source_ip,
+                            status="PROPOSED",
+                            proposedBy="GASHA Autonomous CSOC Agent",
+                            proposedAt=now_iso,
+                            reason=f"Automated threat containment recommendation: {det.evidenceSummary}",
+                            supportingEvidenceIds=[det.id]
+                        )
+                        resp_repo.save_response(action_rec)
+                        await broadcast_system_event("response.proposed", action_rec.model_dump())
+                except Exception as _resp_err:
+                    logger.debug(f"Response auto-proposal non-critical error: {_resp_err}")
+
+            # 7. Recalculate risk score
+            try:
+                from app.risk.service import get_risk_service
+                get_risk_service().recalculate_risk(det.environmentId)
+            except Exception:
+                pass
+
         # Record generated detections in deduplicator
         if generated_det_ids:
             deduplicator.record_detections(event, generated_det_ids)

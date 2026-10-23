@@ -53,6 +53,9 @@ async def ingest_telemetry_batch(
 
     authorized_env = auth_ctx.get("environmentId")
     response = await enqueue_batch(batch.events, authorized_environment=authorized_env)
+    import asyncio
+    from app.telemetry.processor import process_stream
+    asyncio.create_task(process_stream(batch.events))
     return response
 
 

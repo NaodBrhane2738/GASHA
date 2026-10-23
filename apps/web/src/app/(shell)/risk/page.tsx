@@ -1,14 +1,17 @@
 'use client';
 
-import { useRisk } from '@/lib/api/queries';
+import { useRisk, useTwin } from '@/lib/api/queries';
 import { Card } from '@/components/ui/card';
 import { RiskGauge } from '@/components/risk/RiskGauge';
 import { RiskSparkline } from '@/components/risk/RiskSparkline';
 
 export default function RiskPage() {
   const { data } = useRisk();
+  const { data: twin } = useTwin();
   const latest = data?.[data.length - 1];
   const score = latest?.score ?? 0;
+  const criticalAssetsCount = twin?.nodes?.filter(n => (n.criticality ?? 0) >= 4 || n.isCrownJewel).length ?? 0;
+  const exploitableEdgesCount = twin?.edges?.filter(e => e.exploitable).length ?? 0;
 
   return (
     <div className="h-[calc(100vh-100px)] overflow-y-auto p-4">
@@ -29,8 +32,8 @@ export default function RiskPage() {
           <div className="grid grid-cols-4 gap-4">
             <Stat label="Open paths" value={latest?.openPaths ?? 0} />
             <Stat label="Open incidents" value={latest?.openIncidents ?? 0} />
-            <Stat label="Critical assets" value={2} />
-            <Stat label="Exploitable edges" value={5} />
+            <Stat label="Critical assets" value={criticalAssetsCount} />
+            <Stat label="Exploitable edges" value={exploitableEdgesCount} />
           </div>
         </Card>
       </div>

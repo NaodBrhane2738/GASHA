@@ -7,9 +7,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { useUI } from '@/store/ui';
 
 const PRESETS = [
-  'Summarize incident inc-1',
+  'Summarize active incident',
   'Which path is most likely exploitable?',
-  'What would isolating auth-svc cost us?',
+  'What is the blast radius on Nexus services?',
 ];
 
 export function AnalystDock() {

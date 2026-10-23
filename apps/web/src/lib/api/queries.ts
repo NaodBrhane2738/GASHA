@@ -24,16 +24,16 @@ export const qk = {
 };
 
 export const useTwin = () =>
-  useQuery({ queryKey: qk.twin, queryFn: () => api<TwinGraphData>('/twin') });
+  useQuery({ queryKey: qk.twin, queryFn: () => api<TwinGraphData>('/twin'), refetchInterval: 4000 });
 
 export const usePaths = () =>
   useQuery({ queryKey: qk.paths, queryFn: () => api<AttackPath[]>('/attack-paths') });
 
 export const useDetections = () =>
-  useQuery({ queryKey: qk.detections, queryFn: () => api<Detection[]>('/detections') });
+  useQuery({ queryKey: qk.detections, queryFn: () => api<Detection[]>('/detections'), refetchInterval: 2000 });
 
 export const useIncidents = () =>
-  useQuery({ queryKey: qk.incidents, queryFn: () => api<Incident[]>('/incidents') });
+  useQuery({ queryKey: qk.incidents, queryFn: () => api<Incident[]>('/incidents'), refetchInterval: 2000 });
 
 export const useIncident = (id: string) =>
   useQuery({
@@ -50,10 +50,10 @@ export const useStory = (id: string) =>
   });
 
 export const useResponses = () =>
-  useQuery({ queryKey: qk.responses, queryFn: () => api<ResponseAction[]>('/responses') });
+  useQuery({ queryKey: qk.responses, queryFn: () => api<ResponseAction[]>('/responses'), refetchInterval: 2000 });
 
 export const useRisk = () =>
-  useQuery({ queryKey: qk.risk, queryFn: () => api<RiskSnapshot[]>('/risk') });
+  useQuery({ queryKey: qk.risk, queryFn: () => api<RiskSnapshot[]>('/risk'), refetchInterval: 3000 });
 
 export const useApproveResponse = () => {
   const qc = useQueryClient();

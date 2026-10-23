@@ -83,6 +83,16 @@ class TargetSecurityClient:
             return False, "Target security enforcement module 'blocklist' unavailable."
 
         mod_b.block_ip(canonical_ip)
+        try:
+            import urllib.request, json
+            req = urllib.request.Request(
+                "http://localhost:3001/api/demo/block-ip",
+                data=json.dumps({"ip": canonical_ip}).encode("utf-8"),
+                headers={"Content-Type": "application/json"}
+            )
+            urllib.request.urlopen(req, timeout=1.0)
+        except Exception:
+            pass
         return True, f"Enforced perimeter blocklist drop for source IP '{canonical_ip}'."
 
     def verify_block_ip(self, ip_address: str) -> Tuple[bool, str]:

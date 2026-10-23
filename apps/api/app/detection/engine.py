@@ -138,7 +138,7 @@ class DetectionEngine:
             if not self.tracker.is_in_cooldown(group_key, BRUTE_FORCE_AUTH_RULE.time_window_seconds / 2):
                 self.tracker.mark_fired(group_key)
                 matched_ids = [e["event_id"] for e in window_events]
-                primary_asset = f"asset:auth-service:{env_id}"
+                primary_asset = "auth-svc"
 
                 evidence = (
                     f"Observed {count} failed authentication attempts for target account '{user_id}' "
@@ -184,7 +184,7 @@ class DetectionEngine:
         source_ip = event.payload.sourceIp or "unknown"
         target_path = event.payload.httpPath or "/"
         env_id = event.environmentId
-        primary_asset = f"asset:web-service:{env_id}"
+        primary_asset = "web-app"
 
         evidence = (
             f"Observed passive attack pattern indicator [{probe_type}] targeting path '{target_path}' "
@@ -242,7 +242,7 @@ class DetectionEngine:
             if not self.tracker.is_in_cooldown(group_key, SENSITIVE_ENDPOINT_PROBE_RULE.time_window_seconds / 2):
                 self.tracker.mark_fired(group_key)
                 matched_ids = [e["event_id"] for e in window_events]
-                primary_asset = f"asset:web-service:{env_id}"
+                primary_asset = "web-app"
 
                 evidence = (
                     f"Observed repeated scanning / reconnaissance ({count} probing attempts) against sensitive "
@@ -293,7 +293,7 @@ class DetectionEngine:
         if not (is_elevated or is_denied_attempt):
             return None
 
-        primary_asset = f"asset:iam-service:{env_id}"
+        primary_asset = "secrets"
         if is_denied_attempt:
             evidence = (
                 f"Unauthorized privilege escalation attempt detected: user '{user_id}' requested role '{new_role}', "

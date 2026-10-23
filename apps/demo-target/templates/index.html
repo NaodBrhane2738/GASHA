@@ -1,0 +1,1425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Online Store &middot; Low Prices in Electronics, Fashion &amp; More</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Plus Jakarta Sans', Arial, sans-serif;
+      font-size: 13px;
+      line-height: 19px;
+      color: #0F1111;
+      background-color: #EAEDED;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a { color: #007185; text-decoration: none; cursor: pointer; }
+    a:hover { color: #C7511F; text-decoration: underline; }
+
+    /* ==========================================================================
+       HEADER (NAV-BELT)
+       ========================================================================== */
+    header.nav-belt {
+      background-color: #131921;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo-wrap {
+      display: flex;
+      align-items: center;
+      padding: 4px 8px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+    .nav-logo-wrap:hover { border-color: #FFFFFF; }
+    .brand-logo-svg { height: 32px; display: flex; align-items: center; }
+
+    .nav-location {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      color: #CCCCCC;
+      cursor: pointer;
+    }
+    .nav-location:hover { border-color: #FFFFFF; }
+    .nav-location svg { width: 15px; height: 18px; color: #FFF; }
+    .loc-text { display: flex; flex-direction: column; line-height: 1.15; }
+    .loc-line-1 { font-size: 11px; color: #CCCCCC; }
+    .loc-line-2 { font-size: 13px; font-weight: 700; color: #FFFFFF; }
+
+    .nav-search-bar {
+      flex: 1;
+      display: flex;
+      height: 40px;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #FFF;
+    }
+    .nav-search-bar:focus-within { box-shadow: 0 0 0 2px #F3A847, 0 0 0 3px #F90; }
+    .search-category-select {
+      background-color: #E6E6E6;
+      border: none;
+      border-right: 1px solid #D5D9D9;
+      padding: 0 10px;
+      font-size: 12px;
+      color: #555555;
+      cursor: pointer;
+      outline: none;
+    }
+    .search-input {
+      flex: 1;
+      border: none;
+      padding: 0 12px;
+      font-size: 14px;
+      outline: none;
+      color: #111;
+    }
+    .search-submit-btn {
+      width: 45px;
+      background-color: #FEBD69;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .search-submit-btn:hover { background-color: #F3A847; }
+    .search-submit-btn svg { width: 20px; height: 20px; color: #131921; }
+
+    .nav-right-cluster { display: flex; align-items: center; gap: 4px; }
+    .nav-link-box {
+      padding: 6px 8px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+      cursor: pointer;
+    }
+    .nav-link-box:hover { border-color: #FFFFFF; }
+    .nav-line-top { font-size: 11px; color: #CCCCCC; }
+    .nav-line-bottom { font-size: 13px; font-weight: 700; color: #FFFFFF; }
+
+    .nav-cart {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 8px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      color: #FFFFFF;
+      cursor: pointer;
+      position: relative;
+    }
+    .nav-cart:hover { border-color: #FFFFFF; }
+    .cart-count {
+      position: absolute;
+      left: 17px;
+      top: 6px;
+      color: #F08804;
+      font-size: 14px;
+      font-weight: 800;
+      width: 16px;
+      text-align: center;
+    }
+    .cart-label { font-size: 13px; font-weight: 700; margin-top: 10px; }
+
+    /* Subnav */
+    header.nav-sub {
+      background-color: #232F3E;
+      height: 39px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+      font-size: 14px;
+      color: #FFFFFF;
+      overflow-x: auto;
+    }
+    .subnav-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 6px;
+      border: 1px solid transparent;
+      border-radius: 2px;
+      cursor: pointer;
+      white-space: nowrap;
+      color: #FFFFFF;
+      font-size: 13px;
+    }
+    .subnav-item:hover, .subnav-item.active { border-color: #FFFFFF; }
+
+    /* ==========================================================================
+       PAGE VIEWS & ROUTING
+       ========================================================================== */
+    .app-viewport { flex: 1; display: flex; flex-direction: column; }
+    .page-view { display: none; flex-direction: column; flex: 1; }
+    .page-view.active { display: flex; }
+
+    /* Global Buttons */
+    .btn-add-cart {
+      width: 100%;
+      background-color: #FFD814;
+      border: 1px solid #FCD200;
+      border-radius: 20px;
+      padding: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #0F1111;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(213,217,217,.5);
+      margin-top: auto;
+    }
+    .btn-add-cart:hover { background-color: #F7CA00; }
+
+    /* Generic Category Banner */
+    .dept-hero-header {
+      background-color: #FFFFFF;
+      border-bottom: 1px solid #D5D9D9;
+      padding: 24px 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .dept-title-group h1 { font-size: 24px; font-weight: 700; color: #0F1111; }
+    .dept-title-group p { font-size: 13px; color: #565959; margin-top: 4px; }
+
+    /* Product Grid Layout */
+    .standard-catalog-wrap {
+      max-width: 1440px;
+      margin: 20px auto;
+      padding: 0 20px;
+      width: 100%;
+    }
+    .product-grid-4col {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    .product-item-card {
+      background-color: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 4px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .product-item-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+    .item-art-box {
+      height: 200px;
+      background-color: #F8FAFC;
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      margin-bottom: 12px;
+    }
+    .item-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 6px;
+      background: #CC0C39;
+      color: #FFF;
+      border-radius: 2px;
+      width: fit-content;
+      margin-bottom: 6px;
+    }
+    .item-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #0F1111;
+      line-height: 1.3;
+      margin-bottom: 6px;
+      height: 38px;
+      overflow: hidden;
+    }
+    .item-rating { color: #DE7921; font-size: 12px; margin-bottom: 8px; }
+    .item-price-strip {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .item-curr-price { font-size: 20px; font-weight: 800; color: #0F1111; }
+    .item-orig-price { font-size: 12px; color: #565959; text-decoration: line-through; }
+    .prime-tag { color: #00A8E1; font-weight: 800; font-size: 12px; font-style: italic; }
+
+    /* ==========================================================================
+       VIEW: TODAY'S DEALS (LIGHTNING DEALS & TIMERS)
+       ========================================================================== */
+    .deal-filter-strip {
+      display: flex;
+      gap: 10px;
+      padding: 12px 20px;
+      background-color: #FFFFFF;
+      border-bottom: 1px solid #D5D9D9;
+      overflow-x: auto;
+    }
+    .filter-chip {
+      padding: 6px 14px;
+      border-radius: 16px;
+      border: 1px solid #D5D9D9;
+      background: #FFF;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .filter-chip.active { background: #007185; color: #FFF; border-color: #007185; }
+
+    .countdown-bar {
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      color: #B12704;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .deal-progress-wrap {
+      height: 6px;
+      background: #E5E7EB;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .deal-progress-fill {
+      height: 100%;
+      background: #DE7921;
+    }
+
+    /* ==========================================================================
+       VIEW: NEXUS DEVICES (HARDWARE SHOWCASE)
+       ========================================================================== */
+    .devices-hero-banner {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #FFF;
+      padding: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .devices-hero-text h1 { font-size: 32px; font-weight: 800; }
+    .devices-hero-text p { font-size: 15px; color: #94A3B8; margin: 8px 0 16px; max-width: 500px; }
+    .specs-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 24px;
+      background: #FFF;
+      border: 1px solid #D5D9D9;
+    }
+    .specs-table th, .specs-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #E5E7EB;
+      font-size: 12px;
+    }
+    .specs-table th { background: #F8FAFC; text-align: left; }
+
+    /* ==========================================================================
+       VIEW: GIFT CARDS (CUSTOM AMOUNTS & RELOAD)
+       ========================================================================== */
+    .giftcard-builder-box {
+      background-color: #FFFFFF;
+      border: 1px solid #D5D9D9;
+      border-radius: 4px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 30px;
+      margin-top: 16px;
+    }
+    .giftcard-mock-preview {
+      height: 220px;
+      background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 100%);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      color: #FFF;
+      box-shadow: 0 4px 15px rgba(30, 58, 138, 0.3);
+    }
+    .giftcard-amount-pills { display: flex; gap: 8px; margin: 10px 0; }
+    .amount-pill {
+      padding: 8px 16px;
+      border: 1px solid #D5D9D9;
+      border-radius: 4px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .amount-pill.active { background: #FFD814; border-color: #FCD200; }
+
+    /* ==========================================================================
+       ALL MENU SLIDING DRAWER (AUTHENTIC AMAZON STYLE)
+       ========================================================================== */
+    .all-menu-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(2px);
+      z-index: 200;
+      display: none;
+    }
+    .all-menu-backdrop.open { display: block; }
+
+    .all-menu-drawer {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 365px;
+      background-color: #FFFFFF;
+      z-index: 210;
+      display: flex;
+      flex-direction: column;
+      transform: translateX(-100%);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 4px 0 20px rgba(0,0,0,0.3);
+    }
+    .all-menu-drawer.open { transform: translateX(0); }
+
+    .all-menu-header {
+      background-color: #232F3E;
+      color: #FFFFFF;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .all-menu-close-btn {
+      position: absolute;
+      left: 375px;
+      top: 14px;
+      background: none;
+      border: none;
+      color: #FFF;
+      font-size: 28px;
+      cursor: pointer;
+      display: none;
+    }
+    .all-menu-drawer.open + .all-menu-close-btn { display: block; }
+
+    .all-menu-content { flex: 1; overflow-y: auto; padding: 16px 0; }
+    .drawer-section-title {
+      font-size: 15px;
+      font-weight: 800;
+      padding: 12px 24px 6px;
+      color: #0F1111;
+    }
+    .drawer-item {
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #111;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .drawer-item:hover { background-color: #EAEDED; }
+    .drawer-divider { height: 1px; background: #E5E7EB; margin: 10px 0; }
+
+    /* Home grid & other existing views styling */
+    .hero-banner-strip {
+      display: flex;
+      gap: 10px;
+      padding: 16px 20px 0;
+      overflow-x: auto;
+      max-width: 1520px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .promo-banner {
+      flex: 1; min-width: 220px; height: 250px; border-radius: 8px; padding: 16px;
+      display: flex; flex-direction: column; justify-content: space-between; color: #FFF;
+      cursor: pointer;
+    }
+    .banner-blue { background: linear-gradient(135deg, #0284C7 0%, #0369A1 100%); }
+    .banner-dark { background: linear-gradient(135deg, #18181B 0%, #27272A 100%); }
+    .banner-green { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+    .banner-teal { background: linear-gradient(135deg, #0D9488 0%, #115E59 100%); }
+    .banner-purple { background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 100%); }
+    .banner-title { font-size: 18px; font-weight: 800; line-height: 1.2; }
+    .banner-tag { display: inline-block; font-size: 11px; font-weight: 700; padding: 2px 8px; background: #F59E0B; color: #000; border-radius: 4px; width: fit-content; margin-top: 6px; }
+    .banner-artwork { display: flex; align-items: center; justify-content: center; font-size: 48px; margin: auto 0; }
+
+    .grid-canvas {
+      max-width: 1520px; margin: 16px auto; padding: 0 20px;
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 100%;
+    }
+    .cat-quad-card { background: #FFFFFF; padding: 16px; display: flex; flex-direction: column; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .quad-title { font-size: 17px; font-weight: 700; color: #0F1111; margin-bottom: 12px; }
+    .quad-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; }
+    .quad-item { display: flex; flex-direction: column; gap: 4px; cursor: pointer; }
+    .quad-item:hover .quad-item-title { color: #C7511F; }
+    .quad-thumb { background-color: #F7F7F7; height: 105px; display: flex; align-items: center; justify-content: center; font-size: 32px; border-radius: 2px; }
+    .quad-item-title { font-size: 12px; color: #0F1111; font-weight: 500; }
+    .quad-deal-badge { font-size: 10px; font-weight: 700; color: #CC0C39; }
+    .quad-card-link { margin-top: 14px; font-size: 13px; font-weight: 600; }
+
+    /* Cart & Sign-in */
+    .cart-page-wrap { max-width: 1280px; margin: 20px auto; padding: 0 20px; width: 100%; display: flex; flex-direction: column; gap: 16px; }
+    .cart-visa-promo { background-color: #FFFFFF; border: 1px solid #D5D9D9; border-radius: 4px; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .visa-card-mock { display: flex; align-items: center; gap: 16px; }
+    .mock-visa-card-graphic { width: 110px; height: 65px; background: linear-gradient(135deg, #CBD5E1, #94A3B8); border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; padding: 6px 8px; color: #FFF; font-size: 9px; font-weight: 800; }
+    .visa-math-grid { display: grid; grid-template-columns: auto auto; column-gap: 16px; row-gap: 2px; font-size: 12px; text-align: right; }
+    .cart-main-box { background-color: #FFFFFF; border: 1px solid #D5D9D9; border-radius: 4px; padding: 24px; }
+    .empty-cart-view { display: flex; align-items: center; gap: 30px; padding: 20px 0; }
+    .empty-cart-illustration { width: 220px; height: 140px; background-color: #F8FAFC; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 64px; }
+    .cart-btn-primary { display: inline-block; background-color: #FFD814; border: 1px solid #FCD200; border-radius: 8px; padding: 8px 24px; font-size: 13px; font-weight: 600; color: #0F1111; cursor: pointer; }
+    .cart-btn-secondary { display: inline-block; background-color: #FFF; border: 1px solid #D5D9D9; border-radius: 8px; padding: 8px 24px; font-size: 13px; font-weight: 600; color: #0F1111; cursor: pointer; }
+    .cart-item-row { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; border-bottom: 1px solid #E5E7EB; }
+    .checkout-summary-bar { margin-top: 20px; display: flex; align-items: center; justify-content: space-between; border-top: 2px solid #E5E7EB; padding-top: 16px; }
+
+    /* Sign In Modal */
+    .signin-page-canvas { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 20px; background-color: #FFFFFF; }
+    .signin-card-box { width: 350px; border: 1px solid #D5D9D9; border-radius: 8px; padding: 24px 26px; background-color: #FFFFFF; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+    .signin-input-field { width: 100%; height: 31px; padding: 3px 7px; border: 1px solid #888C8C; border-radius: 3px; font-size: 13px; outline: none; margin-bottom: 12px; }
+    .btn-signin-continue { width: 100%; background: #FFD814; border: 1px solid #FCD200; border-radius: 8px; height: 31px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 4px; margin-bottom: 16px; }
+
+    footer.nav-footer { background-color: #232F3E; color: #DDD; font-size: 12px; margin-top: auto; }
+    .footer-back-to-top { background-color: #37475A; text-align: center; padding: 15px 0; color: #FFF; cursor: pointer; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP HEADER NAV-BELT
+       ======================================================================== -->
+  <header class="nav-belt">
+    <!-- Brand Logo -->
+    <div class="nav-logo-wrap" onclick="navigateTo('home')">
+      <svg class="brand-logo-svg" viewBox="0 0 130 38" fill="none">
+        <text x="5" y="24" fill="#FFFFFF" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="24" letter-spacing="1">nexus</text>
+        <path d="M 12 30 Q 55 40 95 28" stroke="#FF9900" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M 92 24 L 98 28 L 92 34" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+      </svg>
+    </div>
+
+    <!-- Location -->
+    <div class="nav-location" onclick="alert('Delivering to Addis Ababa &bull; Standard Express Hub')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      <div class="loc-text">
+        <span class="loc-line-1">Delivering to</span>
+        <span class="loc-line-2">Addis Ababa</span>
+      </div>
+    </div>
+
+    <!-- Global Search -->
+    <div class="nav-search-bar">
+      <select class="search-category-select" id="search-cat-dropdown">
+        <option value="all">All Departments</option>
+        <option value="fashion">rag &amp; bone Fashion</option>
+        <option value="devices">Nexus Devices</option>
+        <option value="electronics">Electronics</option>
+        <option value="deals">Today's Deals</option>
+      </select>
+      <input type="text" class="search-input" id="global-search-input" placeholder="Search Nexus..." onkeydown="if(event.key==='Enter') runGlobalSearch()">
+      <button class="search-submit-btn" onclick="runGlobalSearch()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    </div>
+
+    <!-- Right Cluster -->
+    <div class="nav-right-cluster">
+      <div class="nav-link-box" onclick="navigateTo('signin')">
+        <span class="nav-line-top" id="header-user-greeting">Hello, sign in</span>
+        <span class="nav-line-bottom">Account &amp; Lists &#9662;</span>
+      </div>
+
+      <div class="nav-link-box" onclick="navigateTo('cart')">
+        <span class="nav-line-top">Returns</span>
+        <span class="nav-line-bottom">&amp; Orders</span>
+      </div>
+
+      <div class="nav-cart" onclick="navigateTo('cart')">
+        <svg width="38" height="30" viewBox="0 0 38 30" fill="none">
+          <path d="M5 5 H10 L14 20 H30 L34 8 H11" stroke="#FFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="16" cy="24" r="2.5" fill="#FFF"/>
+          <circle cx="28" cy="24" r="2.5" fill="#FFF"/>
+        </svg>
+        <span class="cart-count" id="cart-item-count">0</span>
+        <span class="cart-label">Cart</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       SUBNAV BAR (EVERY ITEM OPENS ITS DEDICATED VIEW)
+       ======================================================================== -->
+  <header class="nav-sub">
+    <!-- 1. All Menu Drawer Toggle -->
+    <div class="subnav-item" onclick="toggleAllMenu()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <strong>All</strong>
+    </div>
+
+    <!-- 2. rag & bone New York -->
+    <div class="subnav-item" onclick="navigateTo('ragbone')">rag &amp; bone New York</div>
+
+    <!-- 3. Today's Deals -->
+    <div class="subnav-item" onclick="navigateTo('deals')">Today's Deals</div>
+
+    <!-- 4. Nexus Devices -->
+    <div class="subnav-item" onclick="navigateTo('devices')">Nexus Devices</div>
+
+    <!-- 5. Fashion -->
+    <div class="subnav-item" onclick="navigateTo('fashion')">Fashion</div>
+
+    <!-- 6. Electronics -->
+    <div class="subnav-item" onclick="navigateTo('electronics')">Electronics</div>
+
+    <!-- 7. Gift Cards -->
+    <div class="subnav-item" onclick="navigateTo('giftcards')">Gift Cards</div>
+
+    <!-- Customer Service -->
+    <div class="subnav-item" style="margin-left: auto;" onclick="navigateTo('deals')">Customer Service</div>
+  </header>
+
+  <!-- ========================================================================
+       SLIDING "ALL" MENU DRAWER
+       ======================================================================== -->
+  <div class="all-menu-backdrop" id="all-menu-backdrop" onclick="toggleAllMenu()"></div>
+  <div class="all-menu-drawer" id="all-menu-drawer">
+    <div class="all-menu-header">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFF" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span id="drawer-user-greeting">Hello, Sign In</span>
+    </div>
+
+    <div class="all-menu-content">
+      <div class="drawer-section-title">Digital Content &amp; Devices</div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('devices');">Nexus Devices &amp; Smart Tech <span>&rsaquo;</span></div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('devices');">Nexus Fire TV 4K <span>&rsaquo;</span></div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('devices');">Nexus Echo Audio Studio <span>&rsaquo;</span></div>
+
+      <div class="drawer-divider"></div>
+
+      <div class="drawer-section-title">Shop by Department</div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('ragbone');">rag &amp; bone New York <span>&rsaquo;</span></div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('fashion');">Women's &amp; Men's Fashion <span>&rsaquo;</span></div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('electronics');">Consumer Electronics <span>&rsaquo;</span></div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('deals');">Today's Deals &amp; Lightning Events <span>&rsaquo;</span></div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('giftcards');">Gift Cards &amp; Store Credit <span>&rsaquo;</span></div>
+
+      <div class="drawer-divider"></div>
+
+      <div class="drawer-section-title">Programs &amp; Features</div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('giftcards');">Gift Card Balance Reload <span>&rsaquo;</span></div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('deals');">Customer Service &amp; Help <span>&rsaquo;</span></div>
+
+      <div class="drawer-divider"></div>
+
+      <div class="drawer-section-title">Help &amp; Settings</div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('signin');">Your Account</div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('cart');">Your Orders</div>
+      <div class="drawer-item" onclick="toggleAllMenu(); navigateTo('signin');">Sign In / Sign Out</div>
+    </div>
+  </div>
+  <button class="all-menu-close-btn" onclick="toggleAllMenu()">&times;</button>
+
+  <!-- ========================================================================
+       APPLICATION VIEWPORT (PAGE ROUTING)
+       ======================================================================== -->
+  <div class="app-viewport">
+
+    <!-- ======================================================================
+         PAGE 1: HOME PAGE
+         ====================================================================== -->
+    <div class="page-view active" id="view-home">
+      <div class="hero-banner-strip">
+        <div class="promo-banner banner-blue" onclick="navigateTo('ragbone')">
+          <div><div class="banner-title">Free shipping on Halloween finds</div><span class="banner-tag">LIMITED DEALS</span></div>
+          <div class="banner-artwork">&#127875;</div>
+          <span style="font-size: 12px; font-weight: 700;">Shop collection &rarr;</span>
+        </div>
+        <div class="promo-banner banner-dark" onclick="navigateTo('devices')">
+          <div><div class="banner-title">NBA on Nexus Prime</div><span class="banner-tag">TONIGHT 8:30 PM</span></div>
+          <div class="banner-artwork">&#127936;</div>
+          <span style="font-size: 12px; font-weight: 700;">Watch live &rarr;</span>
+        </div>
+        <div class="promo-banner banner-green" onclick="navigateTo('fashion')">
+          <div><div class="banner-title">Costumes under $50 for women</div><span class="banner-tag">TRENDING</span></div>
+          <div class="banner-artwork">&#129505;</div>
+          <span style="font-size: 12px; font-weight: 700;">Explore styles &rarr;</span>
+        </div>
+        <div class="promo-banner banner-teal" onclick="navigateTo('deals')">
+          <div><div class="banner-title">Kids' costumes under $50</div><span class="banner-tag">TOP RATED</span></div>
+          <div class="banner-artwork">&#9876;</div>
+          <span style="font-size: 12px; font-weight: 700;">Browse gifts &rarr;</span>
+        </div>
+        <div class="promo-banner banner-purple" onclick="navigateTo('giftcards')">
+          <div><div class="banner-title">Halloween party finds under $20</div><span class="banner-tag">BEST VALUE</span></div>
+          <div class="banner-artwork">&#127878;</div>
+          <span style="font-size: 12px; font-weight: 700;">See all &rarr;</span>
+        </div>
+      </div>
+
+      <div class="grid-canvas">
+        <div class="cat-quad-card">
+          <div class="quad-title">Save on Nexus Devices</div>
+          <div class="quad-2x2">
+            <div class="quad-item" onclick="navigateTo('devices')">
+              <div class="quad-thumb">&#128225;</div>
+              <span class="quad-item-title">Smart Router Pro</span>
+              <span class="quad-deal-badge">Save $30</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('devices')">
+              <div class="quad-thumb">&#128241;</div>
+              <span class="quad-item-title">Nexus Tablet 11</span>
+              <span class="quad-deal-badge">Save $50</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('devices')">
+              <div class="quad-thumb">&#128250;</div>
+              <span class="quad-item-title">Smart Display 8</span>
+              <span class="quad-deal-badge">Save $40</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('devices')">
+              <div class="quad-thumb">&#128266;</div>
+              <span class="quad-item-title">Audio Studio Max</span>
+              <span class="quad-deal-badge">Save $25</span>
+            </div>
+          </div>
+          <a class="quad-card-link" onclick="navigateTo('devices')">See all device deals</a>
+        </div>
+
+        <div class="cat-quad-card">
+          <div class="quad-title">rag &amp; bone fall arrivals</div>
+          <div class="quad-2x2">
+            <div class="quad-item" onclick="navigateTo('ragbone')">
+              <div class="quad-thumb">&#128086;</div>
+              <span class="quad-item-title">Jeans</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('ragbone')">
+              <div class="quad-thumb">&#129438;</div>
+              <span class="quad-item-title">Shoes &amp; Boots</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('ragbone')">
+              <div class="quad-thumb">&#128092;</div>
+              <span class="quad-item-title">Handbags</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('ragbone')">
+              <div class="quad-thumb">&#129509;</div>
+              <span class="quad-item-title">Outerwear</span>
+            </div>
+          </div>
+          <a class="quad-card-link" onclick="navigateTo('ragbone')">Shop the collection</a>
+        </div>
+
+        <div class="cat-quad-card">
+          <div class="quad-title">Fall styles for all</div>
+          <div class="quad-2x2">
+            <div class="quad-item" onclick="navigateTo('fashion')">
+              <div class="quad-thumb">&#128084;</div>
+              <span class="quad-item-title">Men's Shirts</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('fashion')">
+              <div class="quad-thumb">&#129509;</div>
+              <span class="quad-item-title">Women's Knitwear</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('fashion')">
+              <div class="quad-thumb">&#129504;</div>
+              <span class="quad-item-title">Kids' Fleece</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('fashion')">
+              <div class="quad-thumb">&#129507;</div>
+              <span class="quad-item-title">Accessories</span>
+            </div>
+          </div>
+          <a class="quad-card-link" onclick="navigateTo('fashion')">Discover more</a>
+        </div>
+
+        <div class="cat-quad-card">
+          <div class="quad-title">Shop $50+ gift card brands</div>
+          <div class="quad-2x2">
+            <div class="quad-item" onclick="navigateTo('giftcards')">
+              <div class="quad-thumb">&#128179;</div>
+              <span class="quad-item-title">Digital Cards</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('giftcards')">
+              <div class="quad-thumb">&#127873;</div>
+              <span class="quad-item-title">Gift Boxes</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('giftcards')">
+              <div class="quad-thumb">&#128178;</div>
+              <span class="quad-item-title">Physical Cards</span>
+            </div>
+            <div class="quad-item" onclick="navigateTo('giftcards')">
+              <div class="quad-thumb">&#128176;</div>
+              <span class="quad-item-title">Reload Balance</span>
+            </div>
+          </div>
+          <a class="quad-card-link" onclick="navigateTo('giftcards')">View gift cards</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 2: RAG & BONE NEW YORK (IMAGE 4)
+         ====================================================================== -->
+    <div class="page-view" id="view-ragbone">
+      <div class="brand-hero-section">
+        <h1 class="brand-headline" style="text-align: center; font-size: 28px; letter-spacing: 4px; text-transform: uppercase; font-weight: 300;">rag &amp; bone</h1>
+        <div style="text-align: center; font-size: 11px; letter-spacing: 2px; color: #666; margin-bottom: 16px;">NEW YORK</div>
+        <div style="display: flex; justify-content: center; gap: 20px; border-top: 1px solid #E5E7EB; padding-top: 12px;">
+          <span style="font-weight: 700; border-bottom: 2px solid #000; padding-bottom: 4px; cursor: pointer;">Jeans &amp; Pants</span>
+          <span style="cursor: pointer; color: #555;">Women's</span>
+          <span style="cursor: pointer; color: #555;">Men's</span>
+          <span style="cursor: pointer; color: #555;">Miramar</span>
+          <span style="cursor: pointer; color: #555;">About Us</span>
+        </div>
+      </div>
+
+      <div class="standard-catalog-wrap">
+        <div class="product-grid-4col">
+          <div class="product-item-card">
+            <div class="item-art-box">&#128086;</div>
+            <div class="item-title">Women's Miramar Terry Wide Leg Pant</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9734; 18 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$185.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Women\'s Miramar Terry Wide Leg Pant', 185.00)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128086;</div>
+            <div class="item-title">Women's Featherweight Logan Wide Leg Jean</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 42 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$225.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Women\'s Featherweight Logan Wide Leg Jean', 225.00)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128086;</div>
+            <div class="item-title">Women's Miramar Terry Pull On Bell Pant</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9734; 29 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$195.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Women\'s Miramar Terry Pull On Bell Pant', 195.00)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128086;</div>
+            <div class="item-title">Women's Miramar Terry Wide Leg Pant (Dark Wash)</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 64 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$185.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Women\'s Miramar Terry Wide Leg Pant (Dark Wash)', 185.00)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 3: TODAY'S DEALS (LIGHTNING DEALS)
+         ====================================================================== -->
+    <div class="page-view" id="view-deals">
+      <div class="dept-hero-header">
+        <div class="dept-title-group">
+          <h1>Today's Deals &amp; Lightning Events</h1>
+          <p>Early access deals updated every 60 seconds. Limited quantity available.</p>
+        </div>
+      </div>
+
+      <div class="deal-filter-strip">
+        <button class="filter-chip active">All Deals</button>
+        <button class="filter-chip">Deal of the Day</button>
+        <button class="filter-chip">Lightning Deals</button>
+        <button class="filter-chip">Under $25</button>
+        <button class="filter-chip">Under $50</button>
+        <button class="filter-chip">Prime Early Access</button>
+      </div>
+
+      <div class="standard-catalog-wrap">
+        <div class="product-grid-4col">
+          <div class="product-item-card">
+            <div class="item-art-box">&#127911;</div>
+            <span class="item-badge">-42% DEAL</span>
+            <div class="countdown-bar">Ends in 02:41:19 &bull; Lightning Deal</div>
+            <div class="deal-progress-wrap"><div class="deal-progress-fill" style="width: 78%;"></div></div>
+            <div class="item-title">Sony WH-1000XM5 Wireless Noise Canceling Headphones</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 14,920 reviews</div>
+            <div class="item-price-strip">
+              <span class="item-curr-price">$229.99</span>
+              <span class="item-orig-price">$399.99</span>
+              <span class="prime-tag">&#10003;prime</span>
+            </div>
+            <button class="btn-add-cart" onclick="addItemToCart('Sony WH-1000XM5 Wireless Headphones', 229.99)">Claim Deal</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128187;</div>
+            <span class="item-badge">-30% DEAL</span>
+            <div class="countdown-bar">Ends in 05:14:02 &bull; Lightning Deal</div>
+            <div class="deal-progress-wrap"><div class="deal-progress-fill" style="width: 61%;"></div></div>
+            <div class="item-title">Apple MacBook Air M3 Chip &bull; 16GB Unified Memory &bull; 512GB SSD</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 3,210 reviews</div>
+            <div class="item-price-strip">
+              <span class="item-curr-price">$1,049.00</span>
+              <span class="item-orig-price">$1,499.00</span>
+              <span class="prime-tag">&#10003;prime</span>
+            </div>
+            <button class="btn-add-cart" onclick="addItemToCart('Apple MacBook Air M3 Chip', 1049.00)">Claim Deal</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128250;</div>
+            <span class="item-badge">-50% DEAL</span>
+            <div class="countdown-bar">Ends in 01:05:44 &bull; Lightning Deal</div>
+            <div class="deal-progress-wrap"><div class="deal-progress-fill" style="width: 92%;"></div></div>
+            <div class="item-title">LG 65-Inch Class OLED evo 4K Smart TV &bull; 120Hz Gaming</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 8,112 reviews</div>
+            <div class="item-price-strip">
+              <span class="item-curr-price">$1,196.99</span>
+              <span class="item-orig-price">$2,399.99</span>
+              <span class="prime-tag">&#10003;prime</span>
+            </div>
+            <button class="btn-add-cart" onclick="addItemToCart('LG 65-Inch OLED evo 4K Smart TV', 1196.99)">Claim Deal</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#9749;</div>
+            <span class="item-badge">-35% DEAL</span>
+            <div class="countdown-bar">Ends in 06:22:15 &bull; Lightning Deal</div>
+            <div class="deal-progress-wrap"><div class="deal-progress-fill" style="width: 44%;"></div></div>
+            <div class="item-title">Breville Barista Touch Espresso Coffee Machine Stainless Steel</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9734; 2,419 reviews</div>
+            <div class="item-price-strip">
+              <span class="item-curr-price">$649.95</span>
+              <span class="item-orig-price">$999.95</span>
+              <span class="prime-tag">&#10003;prime</span>
+            </div>
+            <button class="btn-add-cart" onclick="addItemToCart('Breville Barista Touch Espresso Machine', 649.95)">Claim Deal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 4: NEXUS DEVICES (HARDWARE SHOWCASE)
+         ====================================================================== -->
+    <div class="page-view" id="view-devices">
+      <div class="devices-hero-banner">
+        <div class="devices-hero-text">
+          <h1>Nexus Smart Devices &amp; AI Hardware</h1>
+          <p>Engineered for seamless ambient computing, ultra-fast Wi-Fi 7 connectivity, and crystal clear multi-room audio.</p>
+          <button class="btn-add-cart" style="width: fit-content; padding: 10px 24px;" onclick="addItemToCart('Nexus Smart Speaker Studio Max', 199.99)">Buy Studio Max &bull; $199.99</button>
+        </div>
+        <div style="font-size: 80px;">&#128266;</div>
+      </div>
+
+      <div class="standard-catalog-wrap">
+        <div class="product-grid-4col">
+          <div class="product-item-card">
+            <div class="item-art-box">&#128225;</div>
+            <div class="item-title">Nexus Mesh Router Pro &bull; Tri-Band Wi-Fi 7 Coverage</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.9 &bull; 920 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$149.99</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Nexus Mesh Router Pro', 149.99)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128241;</div>
+            <div class="item-title">Nexus Tablet 11 &bull; 2K Crystal OLED Display &bull; 128GB</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9734; 4.6 &bull; 1,410 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$179.99</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Nexus Tablet 11', 179.99)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128250;</div>
+            <div class="item-title">Nexus Smart Display 8 &bull; Built-in HD Camera with Shutter</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9734; 4.5 &bull; 830 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$129.99</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Nexus Smart Display 8', 129.99)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128247;</div>
+            <div class="item-title">Nexus Security Cam 2K &bull; Color Night Vision &bull; 2-Pack</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.8 &bull; 2,190 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$89.99</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Nexus Security Cam 2K (2-Pack)', 89.99)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 5: FASHION HUB
+         ====================================================================== -->
+    <div class="page-view" id="view-fashion">
+      <div class="dept-hero-header">
+        <div class="dept-title-group">
+          <h1>Nexus Fashion &middot; Autumn &amp; Winter Collection</h1>
+          <p>Curated premium apparel, luxury knitwear, footwear, and designer accessories.</p>
+        </div>
+      </div>
+
+      <div class="standard-catalog-wrap">
+        <div class="product-grid-4col">
+          <div class="product-item-card">
+            <div class="item-art-box">&#129509;</div>
+            <div class="item-title">Merino Wool Ribbed Turtleneck Sweater &bull; Oatmeal</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.9 &bull; 88 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$165.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Merino Wool Ribbed Turtleneck Sweater', 165.00)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128084;</div>
+            <div class="item-title">Heavyweight Cotton Overshirt Jacket &bull; Sage Green</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9734; 4.7 &bull; 114 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$120.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Heavyweight Cotton Overshirt Jacket', 120.00)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#129438;</div>
+            <div class="item-title">Leather Chelsea Lug Sole Boots &bull; Water-Resistant</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.8 &bull; 340 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$210.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Leather Chelsea Lug Sole Boots', 210.00)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128092;</div>
+            <div class="item-title">Full Grain Italian Leather Everyday Tote Bag &bull; Cognac</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 &bull; 76 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$285.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Italian Leather Everyday Tote Bag', 285.00)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 6: ELECTRONICS
+         ====================================================================== -->
+    <div class="page-view" id="view-electronics">
+      <div class="dept-hero-header">
+        <div class="dept-title-group">
+          <h1>Consumer Electronics &amp; High-Compute Tech</h1>
+          <p>Audio, displays, gaming rigs, and photography equipment backed by Prime warranty.</p>
+        </div>
+      </div>
+
+      <div class="standard-catalog-wrap">
+        <div class="product-grid-4col">
+          <div class="product-item-card">
+            <div class="item-art-box">&#127918;</div>
+            <div class="item-title">PlayStation 5 Pro Console &bull; 2TB High-Speed SSD</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.9 &bull; 4,820 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$699.99</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('PlayStation 5 Pro Console', 699.99)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128247;</div>
+            <div class="item-title">Fujifilm X100VI Digital Camera &bull; 40.2MP BSI Sensor</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 5.0 &bull; 1,120 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$1,599.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Fujifilm X100VI Digital Camera', 1599.00)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128250;</div>
+            <div class="item-title">Apple Studio Display &bull; 27-inch 5K Retina Display</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9734; 4.6 &bull; 640 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$1,499.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Apple Studio Display 27-inch 5K', 1499.00)">Add to Cart</button>
+          </div>
+
+          <div class="product-item-card">
+            <div class="item-art-box">&#128266;</div>
+            <div class="item-title">Sonos Era 300 &bull; Spatial Audio Dolby Atmos Smart Speaker</div>
+            <div class="item-rating">&#9733;&#9733;&#9733;&#9733;&#9733; 4.8 &bull; 920 reviews</div>
+            <div class="item-price-strip"><span class="item-curr-price">$449.00</span><span class="prime-tag">&#10003;prime</span></div>
+            <button class="btn-add-cart" onclick="addItemToCart('Sonos Era 300 Spatial Audio Speaker', 449.00)">Add to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 7: GIFT CARDS
+         ====================================================================== -->
+    <div class="page-view" id="view-giftcards">
+      <div class="dept-hero-header">
+        <div class="dept-title-group">
+          <h1>Nexus Gift Cards &amp; Instant Balance Reload</h1>
+          <p>Never expires. Deliver via email, physical gift box, or reload your personal store balance.</p>
+        </div>
+      </div>
+
+      <div class="standard-catalog-wrap">
+        <div class="giftcard-builder-box">
+          <div class="giftcard-mock-preview">
+            <div style="display: flex; justify-content: space-between;">
+              <strong style="font-size: 20px; letter-spacing: 1px;">nexus</strong>
+              <span style="font-size: 11px; opacity: 0.8;">E-GIFT CERTIFICATE</span>
+            </div>
+            <div>
+              <div style="font-size: 36px; font-weight: 800;" id="giftcard-preview-val">$50.00</div>
+              <div style="font-size: 12px; opacity: 0.9;">Redeemable for millions of items across Nexus</div>
+            </div>
+          </div>
+
+          <div>
+            <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Select Gift Card Amount:</h2>
+            <div class="giftcard-amount-pills">
+              <button class="amount-pill" onclick="setGiftAmount(25, this)">$25</button>
+              <button class="amount-pill active" onclick="setGiftAmount(50, this)">$50</button>
+              <button class="amount-pill" onclick="setGiftAmount(100, this)">$100</button>
+              <button class="amount-pill" onclick="setGiftAmount(200, this)">$200</button>
+            </div>
+
+            <div style="margin: 16px 0;">
+              <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">Recipient Email Address</label>
+              <input type="email" id="gift-recipient-email" value="alex@example.com" style="width: 100%; padding: 8px 10px; border: 1px solid #D5D9D9; border-radius: 4px; font-size: 13px;">
+            </div>
+
+            <div style="margin: 16px 0;">
+              <label style="font-size: 12px; font-weight: 700; display: block; margin-bottom: 4px;">Custom Gift Message</label>
+              <input type="text" id="gift-message" value="Enjoy shopping on Nexus!" style="width: 100%; padding: 8px 10px; border: 1px solid #D5D9D9; border-radius: 4px; font-size: 13px;">
+            </div>
+
+            <button class="btn-add-cart" style="padding: 10px; font-size: 14px;" onclick="addGiftCardToCart()">Add Gift Card to Cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 8: SHOPPING CART (IMAGE 3)
+         ====================================================================== -->
+    <div class="page-view" id="view-cart">
+      <div class="cart-page-wrap">
+        <div class="cart-visa-promo">
+          <div class="visa-card-mock">
+            <div class="mock-visa-card-graphic">
+              <span>nexus</span>
+              <span style="font-size: 8px;">VISA PLATINUM</span>
+            </div>
+            <div class="visa-promo-copy">
+              <strong>Get $50 off instantly upon approval of Nexus Visa.</strong>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 20px;">
+            <div class="visa-math-grid">
+              <span style="color:#565959;">Current subtotal:</span>
+              <strong id="visa-calc-subtotal">$0.00</strong>
+              <span style="color:#565959;">Gift Card savings:</span>
+              <strong style="color: #CC0C39;">- $50.00</strong>
+              <span style="color: #B12704; font-weight:700;">Cost after savings:</span>
+              <strong style="color: #B12704;" id="visa-calc-final">$0.00</strong>
+            </div>
+            <button class="cart-btn-secondary" style="font-size: 11px; padding: 4px 12px;" onclick="alert('Nexus Visa Application Gateway')">Learn more</button>
+          </div>
+        </div>
+
+        <div class="cart-main-box">
+          <div id="cart-empty-view" class="empty-cart-view">
+            <div class="empty-cart-illustration">&#128722;</div>
+            <div class="empty-cart-actions">
+              <h2>Your Nexus Cart is empty</h2>
+              <a onclick="navigateTo('deals')" style="font-size: 14px;">Shop today's deals</a>
+              <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="cart-btn-primary" onclick="navigateTo('signin')">Sign in to your account</button>
+                <button class="cart-btn-secondary" onclick="navigateTo('signin')">Sign up now</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="cart-items-view" style="display: none;">
+            <h2 style="font-size: 24px; font-weight: 700; border-bottom: 1px solid #E5E7EB; padding-bottom: 12px; margin-bottom: 16px;">Shopping Cart</h2>
+            <div id="cart-item-rows-container"></div>
+
+            <div class="checkout-summary-bar">
+              <button class="cart-btn-secondary" onclick="clearCart()">Empty Cart</button>
+              <div style="display: flex; align-items: center; gap: 20px;">
+                <div class="subtotal-text">Subtotal (<span id="cart-total-qty">0</span> items): <strong style="color: #B12704;" id="cart-total-price">$0.00</strong></div>
+                <button class="cart-btn-primary" style="padding: 10px 30px; font-size: 14px;" onclick="simulateCheckout()">Proceed to checkout</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 9: SIGN-IN GATEWAY (IMAGE 2)
+         ====================================================================== -->
+    <div class="page-view" id="view-signin">
+      <div class="signin-page-canvas">
+        <div class="signin-brand-header">
+          <svg style="height: 38px;" viewBox="0 0 130 38" fill="none">
+            <text x="5" y="24" fill="#0F1111" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="28" letter-spacing="1">nexus</text>
+            <path d="M 12 30 Q 55 42 95 30" stroke="#FF9900" stroke-width="3" stroke-linecap="round" fill="none"/>
+            <path d="M 92 26 L 98 30 L 92 36" stroke="#FF9900" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+
+        <div class="signin-card-box">
+          <h2>Sign in or create account</h2>
+
+          <div id="signin-alert-box" style="display:none; border: 1px solid #CC0C39; border-left: 10px solid #CC0C39; background: #FFF; padding: 12px 16px; border-radius: 4px; margin-bottom: 16px; font-size: 12px; color: #CC0C39;">
+            <strong>There was a problem</strong>
+            <div id="signin-error-message">Invalid credentials. Please check your username and password.</div>
+          </div>
+
+          <label style="font-size: 13px; font-weight: 700; margin-bottom: 4px; display: block;">Enter mobile number or email</label>
+          <input type="text" class="signin-input-field" id="signin-identity-input" placeholder="Email or mobile phone number">
+
+          <label style="font-size: 13px; font-weight: 700; margin-bottom: 4px; display: block;">Password</label>
+          <input type="password" class="signin-input-field" id="signin-password-input" placeholder="Password">
+
+          <button class="btn-signin-continue" onclick="submitStoreSignIn()">Continue</button>
+
+          <p style="font-size: 11px; color: #565959; line-height: 1.5; margin-bottom: 16px;">
+            By continuing, you agree to Nexus's <a href="#">Conditions of Use</a> and <a href="#">Privacy Notice</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer class="nav-footer">
+    <div class="footer-back-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+      Back to top
+    </div>
+    <div style="padding: 30px 20px; text-align: center; font-size: 11px; color: #DDD;">
+      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 18px; margin-bottom: 10px;">
+        <a href="#" style="color: #FFF;">Conditions of Use</a>
+        <a href="#" style="color: #FFF;">Privacy Notice</a>
+        <a href="#" style="color: #FFF;">Consumer Health Data Privacy Disclosure</a>
+        <a href="#" style="color: #FFF;">Your Ads Privacy Choices</a>
+      </div>
+      <div>&copy; 1996-2026, Nexus.com, Inc. or its affiliates</div>
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       JAVASCRIPT
+       ======================================================================== -->
+  <script>
+    let cartItems = [];
+    let authenticatedUser = localStorage.getItem("nexus_user") || null;
+    let authenticatedToken = localStorage.getItem("nexus_token") || null;
+    let selectedGiftAmount = 50;
+
+    updateHeaderAuthState();
+
+    // View Navigation
+    function navigateTo(viewName) {
+      document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active'));
+      const target = document.getElementById('view-' + viewName);
+      if (target) {
+        target.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Mark active subnav item
+      document.querySelectorAll('.subnav-item').forEach(s => s.classList.remove('active'));
+    }
+
+    // Sliding Drawer Menu Toggle
+    function toggleAllMenu() {
+      const backdrop = document.getElementById('all-menu-backdrop');
+      const drawer = document.getElementById('all-menu-drawer');
+      backdrop.classList.toggle('open');
+      drawer.classList.toggle('open');
+    }
+
+    // Gift Card Amount Picker
+    function setGiftAmount(val, btn) {
+      selectedGiftAmount = val;
+      document.getElementById('giftcard-preview-val').textContent = '$' + val.toFixed(2);
+      document.querySelectorAll('.amount-pill').forEach(p => p.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+    }
+
+    function addGiftCardToCart() {
+      const email = document.getElementById('gift-recipient-email').value;
+      addItemToCart(`Nexus E-Gift Card ($${selectedGiftAmount} for ${email})`, selectedGiftAmount);
+    }
+
+    // Global Search
+    async function runGlobalSearch() {
+      const q = document.getElementById('global-search-input').value.trim();
+      if (!q) return;
+
+      try {
+        const res = await fetch('/api/customers/lookup?query=' + encodeURIComponent(q));
+        const data = await res.json();
+
+        if (data.status === 'safe_handled') {
+          // Handled and neutralized safely; navigate customer seamlessly
+          navigateTo('deals');
+        } else {
+          navigateTo('deals');
+        }
+      } catch (err) {
+        navigateTo('deals');
+      }
+    }
+
+    // Cart Management
+    function addItemToCart(name, price) {
+      cartItems.push({ name, price });
+      renderCart();
+      navigateTo('cart');
+
+      // Dispatch telemetry event to backend
+      try {
+        fetch('/api/tickets', {
+          headers: authenticatedToken ? { 'Authorization': 'Bearer ' + authenticatedToken } : {}
+        });
+      } catch (e) {}
+    }
+
+    function renderCart() {
+      const countEl = document.getElementById('cart-item-count');
+      const emptyView = document.getElementById('cart-empty-view');
+      const itemsView = document.getElementById('cart-items-view');
+      const container = document.getElementById('cart-item-rows-container');
+
+      countEl.textContent = cartItems.length;
+
+      if (cartItems.length === 0) {
+        emptyView.style.display = 'flex';
+        itemsView.style.display = 'none';
+        document.getElementById('visa-calc-subtotal').textContent = '$0.00';
+        document.getElementById('visa-calc-final').textContent = '$0.00';
+        return;
+      }
+
+      emptyView.style.display = 'none';
+      itemsView.style.display = 'block';
+
+      let total = 0;
+      container.innerHTML = cartItems.map((item, idx) => {
+        total += item.price;
+        return `
+          <div class="cart-item-row">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div style="width: 60px; height: 60px; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 24px; border-radius: 4px;">&#128230;</div>
+              <div>
+                <div style="font-size: 14px; font-weight: 700; color: #0F1111;">${item.name}</div>
+                <div style="font-size: 11px; color: #007600; font-weight: 600;">In Stock</div>
+                <a onclick="removeCartItem(${idx})" style="font-size: 11px; color: #007185;">Delete</a>
+              </div>
+            </div>
+            <div style="font-size: 17px; font-weight: 800; color: #B12704;">$${item.price.toFixed(2)}</div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('cart-total-qty').textContent = cartItems.length;
+      document.getElementById('cart-total-price').textContent = '$' + total.toFixed(2);
+      document.getElementById('visa-calc-subtotal').textContent = '$' + total.toFixed(2);
+      const afterSavings = Math.max(0, total - 50);
+      document.getElementById('visa-calc-final').textContent = '$' + afterSavings.toFixed(2);
+    }
+
+    function removeCartItem(idx) {
+      cartItems.splice(idx, 1);
+      renderCart();
+    }
+
+    function clearCart() {
+      cartItems = [];
+      renderCart();
+    }
+
+    async function simulateCheckout() {
+      try {
+        const headers = {};
+        if (authenticatedToken) headers['Authorization'] = 'Bearer ' + authenticatedToken;
+        await fetch('/api/admin/secrets', { headers });
+        alert('Thank you, your order has been placed successfully!');
+        clearCart();
+        navigateTo('home');
+      } catch (err) {
+        alert('Order Placed! Thank you for shopping with Nexus.');
+        clearCart();
+        navigateTo('home');
+      }
+    }
+
+    // Sign In Management
+    function fillSignInCreds(u, p) {
+      document.getElementById('signin-identity-input').value = u;
+      document.getElementById('signin-password-input').value = p;
+    }
+
+    async function submitStoreSignIn() {
+      const u = document.getElementById('signin-identity-input').value.trim();
+      const p = document.getElementById('signin-password-input').value.trim();
+      const alertBox = document.getElementById('signin-alert-box');
+      const errorMsg = document.getElementById('signin-error-message');
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username: u, password: p })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.status === 'success') {
+          authenticatedToken = data.token;
+          authenticatedUser = data.user;
+          localStorage.setItem('nexus_token', authenticatedToken);
+          localStorage.setItem('nexus_user', authenticatedUser);
+          updateHeaderAuthState();
+          alertBox.style.display = 'none';
+          alert(`Welcome, ${data.user}! Successfully signed in.`);
+          navigateTo('home');
+        } else {
+          alertBox.style.display = 'block';
+          errorMsg.textContent = data.message || 'Invalid username or password. Please try again.';
+        }
+      } catch (err) {
+        alertBox.style.display = 'block';
+        errorMsg.textContent = 'Sign in network failure: ' + err.message;
+      }
+    }
+
+    function updateHeaderAuthState() {
+      const greeting = document.getElementById('header-user-greeting');
+      const drawerGreeting = document.getElementById('drawer-user-greeting');
+      if (authenticatedUser) {
+        greeting.textContent = `Hello, ${authenticatedUser}`;
+        if (drawerGreeting) drawerGreeting.textContent = `Hello, ${authenticatedUser}`;
+      } else {
+        greeting.textContent = 'Hello, sign in';
+        if (drawerGreeting) drawerGreeting.textContent = 'Hello, Sign In';
+      }
+    }
+  </script>
+</body>
+</html>
