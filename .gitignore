@@ -41,3 +41,4 @@ scratch/
 *.db
 next-env.d.ts
 apps/data/
+*.tsbuildinfo

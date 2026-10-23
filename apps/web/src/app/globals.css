@@ -124,3 +124,56 @@ body { font-size: 13.5px; }
   border-radius: 6px;
 }
 ::-webkit-scrollbar-thumb:hover { background: hsl(var(--muted-foreground)); }
+
+/* Threat-in-action animations for Digital Twin */
+@keyframes threat-radar {
+  0% {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(1.18);
+    opacity: 0;
+  }
+}
+
+@keyframes threat-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5), 0 0 30px rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.85);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(239, 68, 68, 0.95), 0 0 50px rgba(239, 68, 68, 0.55);
+    border-color: rgba(255, 70, 70, 1);
+  }
+}
+
+@keyframes threat-edge-flow {
+  from {
+    stroke-dashoffset: 24;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.threat-node-active {
+  animation: threat-pulse-glow 1.3s infinite cubic-bezier(0.4, 0, 0.6, 1);
+  border-color: #ef4444 !important;
+}
+
+.threat-radar-wave {
+  animation: threat-radar 1.5s cubic-bezier(0, 0.2, 0.8, 1) infinite;
+}
+
+.threat-edge-active path {
+  stroke: #ef4444 !important;
+  stroke-width: 3px !important;
+  stroke-dasharray: 6 4 !important;
+  animation: threat-edge-flow 0.6s linear infinite !important;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.95));
+}

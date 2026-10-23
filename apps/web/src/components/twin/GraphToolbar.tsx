@@ -2,11 +2,22 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, RotateCcw, Filter } from 'lucide-react';
+import { Play, Pause, RotateCcw, Filter, Zap } from 'lucide-react';
 import { useReplay } from '@/hooks/useReplay';
 import { useUI } from '@/store/ui';
+import { cn } from '@/lib/utils';
 
-export function GraphToolbar({ eventCount = 0 }: { eventCount?: number }) {
+interface GraphToolbarProps {
+  eventCount?: number;
+  simulatedThreat?: boolean;
+  onToggleSimulatedThreat?: () => void;
+}
+
+export function GraphToolbar({
+  eventCount = 0,
+  simulatedThreat = false,
+  onToggleSimulatedThreat,
+}: GraphToolbarProps) {
   const { playing, play, pause } = useReplay(eventCount);
   const activePathId = useUI((s) => s.activePathId);
   const setActivePath = useUI((s) => s.setActivePath);
@@ -37,6 +48,21 @@ export function GraphToolbar({ eventCount = 0 }: { eventCount?: number }) {
       <Badge variant="outline" className="gap-1 text-[10.5px]">
         <Filter className="size-3" /> Live
       </Badge>
+
+      {onToggleSimulatedThreat && (
+        <>
+          <div className="h-4 w-px bg-border" />
+          <Button
+            variant={simulatedThreat ? 'destructive' : 'secondary'}
+            size="sm"
+            className={cn('h-7 gap-1.5 text-[11px] font-medium transition-all', simulatedThreat && 'animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.5)]')}
+            onClick={onToggleSimulatedThreat}
+          >
+            <Zap className="size-3.5" />
+            {simulatedThreat ? 'Threat Active (Click to Reset)' : 'Simulate Threat Action'}
+          </Button>
+        </>
+      )}
     </div>
   );
 }
