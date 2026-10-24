@@ -15,11 +15,11 @@ app = FastAPI(
     version="1.0.0"
 )
 
-TARGET_BASE = os.getenv("TARGET_URL", "http://localhost:3001")
+TARGET_BASE = os.getenv("TARGET_URL", "http://localhost:3101")
 
 class AttackConfig(BaseModel):
     attackerIp: str = "198.51.100.101"
-    targetUrl: str = "http://localhost:3001"
+    targetUrl: str = os.getenv("TARGET_URL", "http://localhost:3101")
     count: int = 5
     delayMs: int = 50
 

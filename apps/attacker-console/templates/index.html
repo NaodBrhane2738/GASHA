@@ -406,7 +406,7 @@
       <div class="c2-logo">C2</div>
       <div class="brand-title">
         <h1>Adversary C2 Console &middot; Red-Team Lab</h1>
-        <span>Target: http://localhost:3001 (Nexus Store) &middot; Port: 3002</span>
+        <span>Target: Nexus Storefront (Port 3101) &middot; C2 Port: 3102</span>
       </div>
     </div>
 
@@ -438,7 +438,7 @@
           </div>
           <div class="field-row">
             <label>Victim Target URL</label>
-            <input type="text" id="cfg-target-url" value="http://localhost:3001">
+            <input type="text" id="cfg-target-url" value="http://localhost:3101">
           </div>
           <div class="field-row">
             <label>Attack Velocity</label>
@@ -544,10 +544,10 @@
   <footer class="c2-footer">
     <div>
       <span>GASHA Autonomous CSOC Demonstration Environment</span> &middot;
-      <span>Attacker Console: <code style="color: #F87171;">http://localhost:3002</code></span>
+      <span>Attacker Console: <code style="color: #F87171;">Port 3102</code></span>
     </div>
     <div>
-      <a href="http://localhost:3000" target="_blank" style="color: #38BDF8; text-decoration: none;">GASHA CSOC Defense Dashboard &rarr;</a>
+      <a id="dashboard-link" href="http://localhost:3100" target="_blank" style="color: #38BDF8; text-decoration: none;">GASHA CSOC Defense Dashboard &rarr;</a>
     </div>
   </footer>
 

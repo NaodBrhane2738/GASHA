@@ -86,7 +86,7 @@ class TargetSecurityClient:
         try:
             import urllib.request, json
             req = urllib.request.Request(
-                "http://localhost:3001/api/demo/block-ip",
+                os.getenv("DEMO_TARGET_URL", "http://localhost:3101/api/demo/block-ip"),
                 data=json.dumps({"ip": canonical_ip}).encode("utf-8"),
                 headers={"Content-Type": "application/json"}
             )
