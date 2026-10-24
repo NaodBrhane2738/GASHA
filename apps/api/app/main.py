@@ -49,25 +49,13 @@ def create_app() -> FastAPI:
         redoc_url="/redoc"
     )
 
-    # CORS configuration
+    # CORS configuration with LAN and local network multi-interface support
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=settings.CORS_ORIGINS,
+        allow_origin_regex=r"^https?://.*",
         allow_credentials=True,
-        allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-        allow_headers=[
-            "Authorization",
-            "Content-Type",
-            "Accept",
-            "Origin",
-            "User-Agent",
-            "X-Requested-With",
-            "X-Telemetry-Api-Key",
-            "X-GASHA-TELEMETRY-KEY",
-            "X-GASHA-ENVIRONMENT",
-            "X-API-Key",
-            "X-Session-ID"
-        ],
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     @app.middleware("http")

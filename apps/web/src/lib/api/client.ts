@@ -5,7 +5,17 @@ export class ApiError extends Error {
   }
 }
 
-const BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:4000/api/v1';
+export function getBaseApiUrl(): string {
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+  if (typeof window !== 'undefined') {
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    return `${protocol}//${hostname}:4000/api/v1`;
+  }
+  return 'http://127.0.0.1:4000/api/v1';
+}
 
 let authToken: string | null = null;
 let authPromise: Promise<string | null> | null = null;
@@ -24,7 +34,8 @@ async function getAuthToken(): Promise<string | null> {
 
   authPromise = (async () => {
     try {
-      const res = await fetch(`${BASE}/auth/login`, {
+      const base = getBaseApiUrl();
+      const res = await fetch(`${base}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -67,8 +78,9 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     headers['Authorization'] = `Bearer ${token}`;
   }
 
+  const base = getBaseApiUrl();
   const cleanPath = path.startsWith('/') ? path : `/${path}`;
-  const res = await fetch(`${BASE}${cleanPath}`, {
+  const res = await fetch(`${base}${cleanPath}`, {
     ...init,
     headers,
     credentials: 'include',

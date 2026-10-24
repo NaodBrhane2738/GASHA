@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { Detection } from '@/types/domain';
+import { getBaseApiUrl } from '@/lib/api/client';
 
 export function useEventStream(onEvent: (d: Detection) => void) {
   const cb = useRef(onEvent);
@@ -21,11 +22,11 @@ export function useEventStream(onEvent: (d: Detection) => void) {
         const token = typeof window !== 'undefined' ? localStorage.getItem('gasha_token') : null;
         let ticket: string | null = null;
 
+        const backendBase = getBaseApiUrl();
+
         // Try getting a short-lived ticket
         try {
-          const ticketUrl = process.env.NEXT_PUBLIC_API_URL 
-            ? `${process.env.NEXT_PUBLIC_API_URL}/realtime/ticket`
-            : 'http://127.0.0.1:4000/api/v1/realtime/ticket';
+          const ticketUrl = `${backendBase}/realtime/ticket`;
           const res = await fetch(ticketUrl, {
             method: 'POST',
             headers: {
@@ -41,7 +42,6 @@ export function useEventStream(onEvent: (d: Detection) => void) {
           // Proceed with token query param if ticket issue fails
         }
 
-        const backendBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://127.0.0.1:4000/api/v1';
         const wsUrlStr = backendBase.replace(/^http/, 'ws');
         const wsEndpoint = `${wsUrlStr}/realtime/ws?${ticket ? `ticket=${ticket}` : (token ? `token=${token}` : '')}`;
 
