@@ -1,39 +1,18 @@
-import Link from 'next/link';
 import { LoopRail } from '@/components/loop/LoopRail';
-import { AnalystDock } from '@/components/analyst/AnalystDock';
 import { PolicyBanner } from '@/components/soc/PolicyBanner';
+import { AuthGate, ShellHeader } from '@/components/shell/ShellChrome';
+import { DemoControl } from '@/components/shell/DemoControl';
 
 export default function ShellLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <header className="flex items-center justify-between border-b border-border px-4 py-2.5">
-        <div className="flex items-center gap-2.5">
-          <div className="flex size-7 items-center justify-center rounded-md bg-primary/15 text-primary">
-            <span className="text-[13px] font-bold">G</span>
-          </div>
-          <div>
-            <div className="text-[13px] font-semibold leading-none">Gasha AEGIS</div>
-            <div className="text-[10.5px] text-muted-foreground">Security Operations</div>
-          </div>
-        </div>
-        <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
-          <Link href="/soc" className="rounded-md px-2 py-1 font-medium hover:bg-secondary hover:text-foreground">
-            SOC
-          </Link>
-          <span className="flex items-center gap-2">
-            <span className="inline-block size-2 rounded-full bg-[hsl(var(--low))]" />
-            Connected · demo environment
-          </span>
-        </div>
-      </header>
-
-      <PolicyBanner />
-
-      <LoopRail />
-
-      <main className="flex-1 overflow-hidden">{children}</main>
-
-      <AnalystDock />
-    </div>
+    <AuthGate>
+      <div className="flex min-h-screen flex-col bg-background">
+        <ShellHeader />
+        <PolicyBanner />
+        <LoopRail />
+        <main className="flex-1 overflow-hidden">{children}</main>
+        <DemoControl />
+      </div>
+    </AuthGate>
   );
 }

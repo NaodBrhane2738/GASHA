@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Keep screen recordings of the dev server clean.
+  devIndicators: false,
 };
 
 export default nextConfig;

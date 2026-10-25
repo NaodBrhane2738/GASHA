@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { useReleaseMitigation } from '@/lib/soc/queries';
+import { useReleaseMitigation } from '@/lib/api/queries';
 import type { Mitigation } from '@/types/soc';
 import { fmtRemaining, socSeverityColor } from './meta';
 
@@ -51,10 +51,10 @@ export function MitigationsPanel({ items }: { items: Mitigation[] }) {
               className="h-7 px-2 text-[11px]"
               disabled={release.isPending}
               onClick={() =>
-                release.mutate(m.sourceKey, {
-                  onSuccess: () => toast.success(`Released ${m.sourceKey}`),
-                  onError: (e) => toast.error(`Release failed: ${e.message}`),
-                })
+                release.mutateAsync(m.sourceKey).then(
+                  () => toast.success(`Released ${m.sourceKey}`),
+                  (e: Error) => toast.error(`Release failed: ${e.message}`),
+                )
               }
             >
               Release

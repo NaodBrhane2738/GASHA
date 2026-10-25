@@ -72,6 +72,8 @@ export interface MetricsBucket {
   locked: number;
   rejected: number;
   peakSourceRate: number;
+  latencyP50?: number;
+  latencyP95?: number;
 }
 
 export interface MetricsSnapshot {

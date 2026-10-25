@@ -9,12 +9,19 @@ import { useUI } from '@/store/ui';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { riskColor } from '@/lib/graph/nodeMeta';
+import { useIncidents } from '@/lib/api/queries';
 
 export default function TwinPage() {
   const { data: twin, isLoading } = useTwin();
   const { data: paths } = usePaths();
   const activePathId = useUI((s) => s.activePathId);
   const selectedNodeId = useUI((s) => s.selectedNodeId);
+  const { data: incidents } = useIncidents();
+  const attacked = useMemo(
+    () => (twin?.nodes ?? []).filter((n) => n.metadata?.status === 'under-attack').map((n) => n.id),
+    [twin],
+  );
+  const openIncidents = incidents?.filter((i) => i.status !== 'resolved') ?? [];
 
   const activePath = useMemo(
     () => paths?.find((p) => p.id === activePathId) ?? null,
@@ -31,13 +38,23 @@ export default function TwinPage() {
   }
 
   return (
-    <div className="relative h-[calc(100vh-100px)]">
-      <TwinGraph twin={twin} activePath={activePath} />
-      <GraphToolbar eventCount={8} />
+    <div className="relative h-[calc(100vh-150px)] min-h-[480px] lg:h-[calc(100vh-100px)]">
+      <TwinGraph twin={twin} activePath={activePath} highlightNodeIds={attacked} />
+      <GraphToolbar eventCount={0} />
       <PathLegend />
+      <div className="pointer-events-none absolute bottom-4 left-1/2 z-10 -translate-x-1/2 rounded-md border bg-card/90 px-3 py-1.5 text-[11px] backdrop-blur">
+        {attacked.length ? (
+          <span>
+            <span className="font-semibold text-[hsl(var(--critical))]">{attacked.length} assets under active attack</span>
+            <span className="text-muted-foreground"> · {openIncidents.length} open incident{openIncidents.length === 1 ? '' : 's'}</span>
+          </span>
+        ) : (
+          <span className="text-muted-foreground">No assets under active attack</span>
+        )}
+      </div>
 
       {selectedNode && (
-        <Card className="absolute right-4 top-4 z-10 w-[280px] p-4">
+        <Card className="absolute right-4 top-16 z-10 w-[min(280px,calc(100%-2rem))] p-4 sm:top-4">
           <div className="mb-2 flex items-center justify-between">
             <div className="text-[13px] font-semibold">{selectedNode.label}</div>
             <Badge variant="outline" className="font-mono text-[10px]">
@@ -56,6 +73,10 @@ export default function TwinPage() {
             <div className="flex justify-between">
               <span>Criticality</span>
               <span className="font-mono text-foreground">{selectedNode.criticality}/5</span>
+            </div>
+            <div className="flex justify-between">
+              <span>Status</span>
+              <span className="font-mono text-foreground">{String(selectedNode.metadata?.status ?? 'normal')}</span>
             </div>
             <div className="flex justify-between">
               <span>Risk</span>

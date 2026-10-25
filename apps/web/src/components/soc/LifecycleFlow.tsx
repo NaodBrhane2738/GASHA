@@ -102,7 +102,7 @@ export function IncidentTimeline({ incident }: { incident: SocIncident | null })
               aria-hidden
             />
             <div className="flex flex-wrap items-baseline gap-x-2 text-[11.5px]">
-              <span className="w-[64px] shrink-0 font-mono text-[10.5px] text-muted-foreground">{fmtTime(step.at)}</span>
+              <span className="w-[78px] shrink-0 whitespace-nowrap font-mono text-[10.5px] text-muted-foreground">{fmtTime(step.at)}</span>
               <span className="w-[78px] shrink-0 text-[10.5px] font-semibold uppercase tracking-wide">{step.stage}</span>
               <span className="text-muted-foreground">{step.detail}</span>
             </div>

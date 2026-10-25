@@ -10,13 +10,13 @@ export default function IncidentsPage() {
   const { data } = useIncidents();
 
   return (
-    <div className="h-[calc(100vh-100px)] overflow-y-auto p-4">
+    <div className="h-full overflow-y-auto p-3 sm:p-4 lg:h-[calc(100vh-100px)]">
       <h2 className="mb-4 text-[13px] font-semibold">Correlated Incidents</h2>
       <div className="space-y-2">
         {data?.map((inc) => (
           <Link key={inc.id} href={`/incidents/${inc.id}`} className="block">
             <Card className="p-4 transition-all hover:border-muted-foreground/40">
-              <div className="mb-2 flex items-center gap-2">
+              <div className="mb-2 flex flex-wrap items-center gap-2">
                 <span
                   className="rounded px-1.5 py-0.5 text-[10.5px] font-medium"
                   style={{
@@ -31,10 +31,11 @@ export default function IncidentsPage() {
                   {inc.status}
                 </Badge>
               </div>
-              <div className="flex items-center gap-4 text-[11.5px] text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] text-muted-foreground">
                 <span className="font-mono">{inc.id}</span>
                 <span>{inc.detectionIds.length} detections</span>
-                <span>path: {inc.pathId}</span>
+                {inc.pathId && <span>path: {inc.pathId}</span>}
+                <span>risk {inc.riskBefore}{inc.riskAfter !== undefined ? ` → ${inc.riskAfter}` : ''}</span>
                 <span>confidence {(inc.confidence * 100).toFixed(0)}%</span>
                 <span className="ml-auto">
                   opened {new Date(inc.openedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

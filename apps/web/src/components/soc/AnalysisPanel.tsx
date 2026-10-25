@@ -2,7 +2,9 @@
 
 import { ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useFindingAnalysis } from '@/lib/soc/queries';
+import { useMemo } from 'react';
+import { useSim } from '@/lib/sim/runtime';
+import { analyze } from '@/lib/sim/remediation';
 import type { Finding } from '@/types/soc';
 import { CATEGORY_LABEL, fmtTime, socSeverityColor } from './meta';
 
@@ -49,7 +51,12 @@ export function FindingsFeed({
 }
 
 export function AnalysisPanel({ findingId }: { findingId: string | null }) {
-  const { data, isLoading, error } = useFindingAnalysis(findingId);
+  const findings = useSim((s) => s.state?.findings);
+  const data = useMemo(() => {
+    const f = findings?.find((x) => x.id === findingId);
+    if (!f) return null;
+    return analyze(f, findings!.filter((x) => x.sourceKey === f.sourceKey && x.id !== f.id).slice(0, 8));
+  }, [findings, findingId]);
 
   if (!findingId) {
     return (
@@ -58,8 +65,9 @@ export function AnalysisPanel({ findingId }: { findingId: string | null }) {
       </div>
     );
   }
-  if (isLoading) return <div className="py-10 text-center text-[11.5px] text-muted-foreground">Analysing…</div>;
-  if (error || !data) return <div className="py-10 text-center text-[11.5px] text-destructive">Analysis unavailable.</div>;
+  if (!data) {
+    return <div className="py-10 text-center text-[11.5px] text-muted-foreground">This finding has aged out of the retention window.</div>;
+  }
 
   const f = data.finding;
   return (

@@ -9,7 +9,7 @@ export default function ResponsePage() {
   const history = data?.filter((r) => r.state !== 'proposed') ?? [];
 
   return (
-    <div className="h-[calc(100vh-100px)] overflow-y-auto p-4">
+    <div className="h-full overflow-y-auto p-3 sm:p-4 lg:h-[calc(100vh-100px)]">
       <h2 className="mb-4 text-[13px] font-semibold">Controlled Response</h2>
 
       <div className="mb-6">
@@ -20,6 +20,11 @@ export default function ResponsePage() {
           {proposed.map((a) => (
             <ActionCard key={a.id} action={a} />
           ))}
+          {proposed.length === 0 && (
+            <div className="rounded-md border border-dashed px-3 py-4 text-[11.5px] text-muted-foreground">
+              Nothing awaiting approval — every proposed containment has been reviewed.
+            </div>
+          )}
         </div>
       </div>
 

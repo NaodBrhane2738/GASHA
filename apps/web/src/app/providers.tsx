@@ -1,44 +1,41 @@
 'use client';
 
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { ApiError } from '@/lib/api/client';
+import { startSimulation, useSim } from '@/lib/sim/runtime';
+
+/** Toasts each newly dispatched SOC alert so the alert pipeline is visible on screen. */
+function AlertToasts() {
+  const alerts = useSim((s) => s.state?.alerts);
+  const seen = useRef<Set<string> | null>(null);
+
+  useEffect(() => {
+    if (!alerts) return;
+    if (!seen.current) {
+      seen.current = new Set(alerts.map((a) => a.id));
+      return;
+    }
+    for (const a of [...alerts].reverse()) {
+      if (seen.current.has(a.id)) continue;
+      seen.current.add(a.id);
+      toast.error(a.subject, { description: `Alert emailed to ${a.to}` });
+    }
+  }, [alerts]);
+
+  return null;
+}
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const [qc] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            staleTime: 30_000,
-            refetchOnWindowFocus: false,
-            // Never hammer a server that is rate limiting or has locked us out.
-            retry: (count, err) => !(err instanceof ApiError && err.isPolicy) && count < 1,
-          },
-        },
-      }),
-  );
-
-  // Start MSW only in the browser during dev
   useEffect(() => {
-    if (process.env.NODE_ENV !== 'development') return;
-    if (typeof window === 'undefined') return;
-    let cancelled = false;
-    (async () => {
-      const { worker } = await import('@/lib/mock/browser');
-      await worker.start({ onUnhandledRequest: 'bypass' });
-      if (cancelled) worker.stop();
-    })();
-    return () => {
-      cancelled = true;
-    };
+    startSimulation();
   }, []);
 
   return (
-    <QueryClientProvider client={qc}>
+    <>
       {children}
-      <Toaster position="bottom-right" theme="dark" />
-    </QueryClientProvider>
+      <AlertToasts />
+      <Toaster position="bottom-right" theme="dark" richColors />
+    </>
   );
 }

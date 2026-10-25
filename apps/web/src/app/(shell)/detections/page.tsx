@@ -12,9 +12,9 @@ export default function DetectionsPage() {
   }, {});
 
   return (
-    <div className="h-[calc(100vh-100px)] overflow-y-auto p-4">
+    <div className="h-full overflow-y-auto p-3 sm:p-4 lg:h-[calc(100vh-100px)]">
       <h2 className="mb-4 text-[13px] font-semibold">Behavioral Detections</h2>
-      <div className="mb-4 grid grid-cols-4 gap-3">
+      <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-4">
         {(['critical', 'high', 'medium', 'low'] as const).map((s) => (
           <Card key={s} className="p-3">
             <div className="text-[10.5px] uppercase tracking-wide text-muted-foreground">{s}</div>
@@ -25,8 +25,8 @@ export default function DetectionsPage() {
         ))}
       </div>
 
-      <Card className="overflow-hidden">
-        <table className="w-full text-[12px]">
+      <Card className="overflow-x-auto">
+        <table className="w-full min-w-[760px] text-[12px]">
           <thead className="border-b border-border bg-secondary/50 text-left text-[10.5px] uppercase tracking-wide text-muted-foreground">
             <tr>
               <th className="px-3 py-2">Time</th>

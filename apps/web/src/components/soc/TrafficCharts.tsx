@@ -137,3 +137,43 @@ export function SourceRateChart({
     </div>
   );
 }
+
+const LATENCY = [
+  { key: 'latencyP50', label: 'p50', color: CHART.allowed },
+  { key: 'latencyP95', label: 'p95', color: CHART.locked },
+] as const;
+
+export function LatencyLegend() {
+  return (
+    <div className="flex items-center gap-3 text-[10.5px] text-muted-foreground">
+      {LATENCY.map((s) => (
+        <span key={s.key} className="flex items-center gap-1.5">
+          <span className="inline-block h-0.5 w-3 rounded" style={{ background: s.color }} aria-hidden />
+          {s.label}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+export function LatencyChart({ series }: { series: MetricsBucket[] }) {
+  return (
+    <div className="h-[150px] w-full" role="img" aria-label="Request latency p50 and p95 in milliseconds">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart data={series}>
+          <CartesianGrid vertical={false} stroke="hsl(var(--border))" strokeDasharray="2 4" />
+          <XAxis dataKey="ts" tickFormatter={fmtTime} tick={axisTick} tickLine={false} axisLine={false} minTickGap={48} />
+          <YAxis tick={axisTick} tickLine={false} axisLine={false} width={36} unit="ms" allowDecimals={false} />
+          <Tooltip
+            contentStyle={tooltipStyle}
+            labelFormatter={(ts) => fmtTime(String(ts))}
+            formatter={(v, name) => [`${v} ms`, LATENCY.find((l) => l.key === name)?.label ?? name]}
+          />
+          {LATENCY.map((l) => (
+            <Line key={l.key} type="monotone" dataKey={l.key} stroke={l.color} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} />
+          ))}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}

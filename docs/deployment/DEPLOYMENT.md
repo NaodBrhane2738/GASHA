@@ -1,6 +1,24 @@
-# Deploying GASHA (Render + Vercel)
+# Deploying GASHA
 
-Two pieces get deployed. The order matters because each one needs the other's URL.
+## Presentation build: Vercel only (recommended for the demo)
+
+The dashboard (`apps/web`) runs a self-contained simulation in the browser, so the demo needs
+**no backend, no database and no environment variables**.
+
+1. Merge the `feature/backend-soc-monitoring` pull request into `main`.
+2. <https://vercel.com> → **Add New → Project** → import `GASHA`.
+3. **Root Directory → `apps/web`** (required: monorepo). Framework preset: Next.js.
+4. Deploy. Sign in on the deployed URL with `admin` / `admin123`.
+
+See `docs/deployment/DEMO_SCRIPT.md` for the recording walkthrough.
+
+---
+
+## Full stack: Render (API) + Vercel (dashboard)
+
+The FastAPI backend in `apps/api` implements the same pipeline server-side (real 429/423
+enforcement middleware, alert emails, SOC API). The presentation dashboard does not call it;
+deploy it when you want to show or integrate the real API.
 
 | Piece | Folder | Host | Why |
 | --- | --- | --- | --- |
@@ -8,7 +26,7 @@ Two pieces get deployed. The order matters because each one needs the other's UR
 | Dashboard (Next.js) | `apps/web` | **Vercel** | Static/edge-friendly frontend. |
 
 Whoever owns the GitHub repo should do this, because both Render and Vercel need to be
-granted access to the repo. Total time: about 20 minutes.
+granted access to the repo.
 
 ---
 
@@ -38,17 +56,7 @@ directly if you want to try it first: pick it in steps 1 and 2 instead of `main`
 
 ## 2. Deploy the dashboard on Vercel
 
-1. Sign in at <https://vercel.com> with GitHub. **Add New → Project**, import `GASHA`.
-2. **Root Directory → Edit → `apps/web`.** (Required: this is a monorepo.) Framework preset: Next.js.
-3. **Environment Variables**, add:
-
-   | Name | Value |
-   | --- | --- |
-   | `NEXT_PUBLIC_API_URL` | `https://gasha-api.onrender.com/api/v1` (your Render URL + `/api/v1`) |
-
-4. **Deploy.** Copy the production URL, e.g. `https://gasha.vercel.app`.
-
-> `NEXT_PUBLIC_*` values are baked in at build time. If you change it later, redeploy.
+Same as the presentation build above. Copy the production URL, e.g. `https://gasha.vercel.app`.
 
 ---
 
@@ -65,10 +73,9 @@ Save. Render redeploys automatically.
 
 ---
 
-## 4. Sign in to the SOC dashboard (temporary)
+## 4. Call the SOC API directly
 
-The SOC endpoints require an analyst bearer token, and there is no sign-in page yet. Until
-there is, issue a token manually:
+The API's `/api/v1/soc/*` endpoints require an analyst bearer token. Issue one manually:
 
 1. Render → `gasha-api` → **Environment** → reveal and copy `JWT_SECRET`.
 2. On your own machine, from the repo:
@@ -79,13 +86,10 @@ there is, issue a token manually:
    JWT_SECRET='<paste>' python -m app.core.issue_token your-name --hours 8
    ```
 
-3. Open `https://gasha.vercel.app/soc`, open the browser console (F12) and run:
+3. Use it as `Authorization: Bearer <token>`, e.g.
+   `curl -H "Authorization: Bearer <token>" https://gasha-api.onrender.com/api/v1/soc/metrics`
 
-   ```js
-   sessionStorage.setItem('gasha.accessToken', '<token from step 2>'); location.reload();
-   ```
-
-The token lives only in that browser tab and expires after the hours you chose. Never post
+The token expires after the hours you chose. Never post
 `JWT_SECRET` or tokens in chat, issues or commits; anyone holding `JWT_SECRET` can mint tokens.
 
 ---
@@ -135,7 +139,7 @@ Full list: `.env.example`. Architecture: `docs/architecture/soc-monitoring.md`.
 
 | Symptom | Fix |
 | --- | --- |
-| Dashboard shows zeros / "reconnecting…" | Check `NEXT_PUBLIC_API_URL` (needs `/api/v1`), redeploy Vercel; check step 4 token. |
+| Vercel build fails | Root Directory must be `apps/web`. |
 | Browser console shows a CORS error | `CORS_ORIGINS` in Render must exactly match the Vercel URL (scheme, no trailing slash). |
 | API returns 401 on `/soc/*` | Token missing/expired, or minted with a different `JWT_SECRET`. |
 | Render deploy fails on startup with a JSON error | `CORS_ORIGINS` / `ALERT_EMAIL_TO` must be JSON lists, e.g. `["https://a.com"]`. |
