@@ -10,6 +10,7 @@ import type {
   RiskSnapshot,
   StoryEvent,
   TwinGraphData,
+  Vulnerability,
 } from '@/types/domain';
 
 export const qk = {
@@ -21,6 +22,7 @@ export const qk = {
   story: (id: string) => ['story', id] as const,
   responses: ['responses'] as const,
   risk: ['risk'] as const,
+  vulnerabilities: ['vulnerabilities'] as const,
 };
 
 export const useTwin = () =>
@@ -34,6 +36,9 @@ export const useDetections = () =>
 
 export const useIncidents = () =>
   useQuery({ queryKey: qk.incidents, queryFn: () => api<Incident[]>('/incidents'), refetchInterval: 2000 });
+
+export const useVulnerabilities = () =>
+  useQuery({ queryKey: qk.vulnerabilities, queryFn: () => api<Vulnerability[]>('/vulnerabilities'), refetchInterval: 4000 });
 
 export const useIncident = (id: string) =>
   useQuery({

@@ -143,3 +143,20 @@ export interface RiskSnapshot {
   openPaths: number;
   openIncidents: number;
 }
+
+export interface Vulnerability {
+  id: string;
+  assetId: string;
+  environmentId?: string;
+  ruleId?: string;
+  cveId?: string;
+  title: string;
+  description: string;
+  severity: Severity;
+  cvssScore?: number;
+  category: string;
+  remediationGuidance: string;
+  status: 'OPEN' | 'MITIGATED' | 'SUPPRESSED';
+  evidence?: Record<string, unknown>;
+  discoveredAt?: string;
+}
