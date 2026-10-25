@@ -18,9 +18,8 @@ export function getBaseApiUrl(): string {
 }
 
 let authToken: string | null = null;
-let authPromise: Promise<string | null> | null = null;
 
-async function getAuthToken(): Promise<string | null> {
+export function getStoredToken(): string | null {
   if (authToken) return authToken;
   if (typeof window !== 'undefined') {
     const saved = localStorage.getItem('gasha_token');
@@ -29,47 +28,77 @@ async function getAuthToken(): Promise<string | null> {
       return saved;
     }
   }
+  return null;
+}
 
-  if (authPromise) return authPromise;
-
-  authPromise = (async () => {
+export function getStoredUser(): { username: string; role: string; environmentId: string } | null {
+  if (typeof window !== 'undefined') {
     try {
-      const base = getBaseApiUrl();
-      const res = await fetch(`${base}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: process.env.NEXT_PUBLIC_API_USER ?? 'operator',
-          password: process.env.NEXT_PUBLIC_API_PASSWORD ?? 'OperatorSecure2026!',
-          environmentId: process.env.NEXT_PUBLIC_API_ENV ?? 'env-prod',
-        }),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const token = data.accessToken || data.access_token;
-        if (token) {
-          authToken = token;
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('gasha_token', token);
-          }
-          return authToken;
-        }
-      }
+      const saved = localStorage.getItem('gasha_user');
+      if (saved) return JSON.parse(saved);
     } catch {
-      // In offline or fallback, proceed without token
+      return null;
     }
-    return null;
-  })();
+  }
+  return null;
+}
 
+export async function loginUser(
+  username: string,
+  password: string,
+  environmentId = 'env-prod'
+): Promise<{ success: boolean; error?: string }> {
   try {
-    return await authPromise;
-  } finally {
-    authPromise = null;
+    const base = getBaseApiUrl();
+    const res = await fetch(`${base}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: username.trim(),
+        password,
+        environmentId,
+      }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      return { success: false, error: errData.detail || 'Invalid username or password' };
+    }
+
+    const data = await res.json();
+    const token = data.accessToken || data.access_token;
+    if (token) {
+      authToken = token;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('gasha_token', token);
+        localStorage.setItem(
+          'gasha_user',
+          JSON.stringify({
+            username: username.trim(),
+            role: data.role || 'security_analyst',
+            environmentId: data.environmentId || environmentId,
+          })
+        );
+      }
+      return { success: true };
+    }
+    return { success: false, error: 'Authentication failed: no token returned' };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Network error reaching authentication service' };
+  }
+}
+
+export function logoutUser() {
+  authToken = null;
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('gasha_token');
+    localStorage.removeItem('gasha_user');
+    window.location.href = '/login';
   }
 }
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const token = await getAuthToken();
+  const token = getStoredToken();
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
     ...(init?.headers as Record<string, string>),
@@ -90,6 +119,9 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     if (res.status === 401 && typeof window !== 'undefined') {
       localStorage.removeItem('gasha_token');
       authToken = null;
+      if (!window.location.pathname.startsWith('/login')) {
+        window.location.href = '/login';
+      }
     }
     throw new ApiError(res.status, await res.text());
   }

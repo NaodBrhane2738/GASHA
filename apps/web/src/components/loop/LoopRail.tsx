@@ -56,41 +56,39 @@ export function LoopRail() {
   };
 
   return (
-    <div className="flex items-center gap-1 overflow-x-auto border-b border-border bg-card/50 px-4 py-2">
-      {STAGES.map((s, i) => {
-        const Icon = s.icon;
-        const active = pathname.startsWith(s.href) && (i === 0 || s.key !== 'twin');
-        const metric = metrics[s.metricKey] ?? 0;
-        return (
-          <div key={`${s.key}-${i}`} className="flex items-center gap-1">
+    <nav className="w-full border-b border-border bg-card/60 backdrop-blur-sm px-4 py-2" aria-label="Security Lifecycle Loop">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 w-full">
+        {STAGES.map((s, i) => {
+          const Icon = s.icon;
+          const active = pathname.startsWith(s.href) && (i === 0 || s.key !== 'twin');
+          const metric = metrics[s.metricKey] ?? 0;
+          return (
             <Link
+              key={`${s.key}-${i}`}
               href={s.href}
               className={cn(
-                'group flex items-center gap-2 rounded-md px-3 py-1.5 text-[12px] transition-colors',
+                'group flex items-center justify-center gap-2 rounded-md py-1.5 px-2.5 text-[12px] transition-all text-center border',
                 active
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground',
+                  ? 'bg-primary/15 text-primary border-primary/40 font-semibold shadow-sm shadow-primary/15'
+                  : 'text-muted-foreground hover:bg-secondary/70 hover:text-foreground border-transparent',
               )}
             >
-              <Icon className="size-3.5" />
-              <span className="font-medium">{s.label}</span>
+              <Icon className="size-3.5 shrink-0" />
+              <span className="truncate">{s.label}</span>
               {metric > 0 && (
                 <span
                   className={cn(
-                    'rounded px-1.5 py-0.5 text-[10px] font-mono',
-                    active ? 'bg-primary/20 text-primary' : 'bg-secondary text-muted-foreground',
+                    'rounded px-1.5 py-0.2 text-[10px] font-mono shrink-0',
+                    active ? 'bg-primary/25 text-primary font-bold' : 'bg-secondary text-muted-foreground',
                   )}
                 >
                   {metric}
                 </span>
               )}
             </Link>
-            {i < STAGES.length - 1 && (
-              <span className="text-muted-foreground/40">→</span>
-            )}
-          </div>
-        );
-      })}
-    </div>
+          );
+        })}
+      </div>
+    </nav>
   );
 }
