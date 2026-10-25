@@ -19,7 +19,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     NODE_ENV: str = "development"
     API_PORT: int = 4000
-    API_HOST: str = "0.0.0.0"
+    API_HOST: str = "127.0.0.1"
     API_BASE_URL: str = "http://localhost:4000/api/v1"
     WEB_URL: str = "http://localhost:3000"
     LOG_LEVEL: str = "debug"

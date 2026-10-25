@@ -130,32 +130,33 @@ gasha/
 
 ---
 
-## 5. Collaborator 1-Click Quickstart
+## 5. Instant Run from GitHub (Zero External Server Required)
 
-To run the entire platform with all 4 services concurrently:
+GASHA is completely self-contained. **No external database, no Docker containers, and no LAN configuration** are required to run the full platform.
 
 ### Prerequisites
-- **Node.js**: `v20.x+` & **pnpm**: `v9.x+`
+- **Node.js**: `v20.x+` (with `pnpm` or `npm`)
 - **Python**: `3.10+` & `pip`
 
 ### Step-by-Step Setup
 ```bash
-# 1. Clone repository
+# 1. Clone repository directly from GitHub
 git clone https://github.com/NaodBrhane2738/GASHA.git
 cd GASHA
 
 # 2. Install dependencies
-pnpm install
+pnpm install                     # (or: npm install)
 pip install -r apps/api/requirements.txt
 
 # 3. Start all services with one command:
 python run_all.py
-# Or on Windows, simply double-click start_all.bat
-# Or via pnpm: pnpm dev:all
+# (Or on Windows: double-click start_all.bat, or run: pnpm dev:all)
 ```
 
 ### Services & URLs
-| Service | URL | Description |
+All services run locally on `localhost` (`127.0.0.1`):
+
+| Service | Local URL | Description |
 | :--- | :--- | :--- |
 | **GASHA Web Console** | `http://localhost:3100` | Security operations dashboard & Digital Twin |
 | **Nexus Storefront Target** | `http://localhost:3101` | Live defended demo e-commerce app |
@@ -168,73 +169,7 @@ python run_all.py
 
 ---
 
-### Accessing Over Local Network (Wi-Fi)
-If a collaborator on the same Wi-Fi network needs to access your running instance at `http://<your-ip>:3100`:
-1. **Windows Network Profile**: The host machine's Wi-Fi network category MUST be set to **Private Network** (Windows Defender Firewall blocks incoming connections on Public networks by default):
-   - Open **Settings** > **Network & internet** > **Wi-Fi**
-   - Click on your connected Wi-Fi network
-   - Change Network profile type from **Public** to **Private**
-2. **Finding Your IP**: Run `ipconfig` in terminal (look for IPv4 Address under Wireless LAN adapter, e.g. `192.168.1.x`).
-3. **Collaborator Access**: The collaborator can now navigate to:
-   - Web Console: `http://192.168.1.x:3100`
-   - Target Store: `http://192.168.1.x:3101`
-   - Attacker Console: `http://192.168.1.x:3102`
-
----
-
-## 6. Advanced Local Setup & Development
-
-### Prerequisites
-- **Node.js**: `v20.x+` & **pnpm**: `v9.x+` (or `npm`)
-- **Python**: `3.13` & `pip`. On Windows create the environment with `py -3.13 -m venv .venv`.
-- **Docker**: For PostgreSQL & Redis
-
-### Quickstart
-```bash
-# 1. Clone repository
-git clone https://github.com/NaodBrhane2738/GASHA.git
-cd GASHA
-
-# 2. Non-destructive setup helper (copies .env.example → .env if missing)
-python scripts/setup/setup_local.py
-
-# 3. Edit .env — never commit it. Generate secrets:
-python scripts/dev/generate_secrets.py
-
-# 4a. Database services only (host runs API + web):
-docker compose up -d postgres redis
-
-# 4b. Or full stack (builds web + api images too):
-# docker compose up --build
-
-# 5. Install JavaScript/TypeScript dependencies
-pnpm install
-
-# 6. Python environment for the API
-py -3.13 -m venv .venv
-# Windows: .venv\Scripts\activate
-# macOS/Linux: source .venv/bin/activate
-pip install -r apps/api/requirements-dev.txt
-
-# 7. Postgres schema (Supabase Session pooler DATABASE_URL recommended)
-#    Local Compose Postgres may fail until the service_role decision is made —
-#    see docs/database-provisioning.md
-python scripts/dev/migrate.py --status
-# python scripts/dev/migrate.py --yes
-
-# 8. Run API on the host (SQLite/memory defaults work without step 7)
-cd apps/api
-uvicorn app.main:app --reload --port 4000
-
-# Demo launcher (API + dashboard): python scripts/demo/run_demo.py --persist
-# Checks: python scripts/test/run_checks.py
-```
-
-Deployable API blueprint: [`render.yaml`](render.yaml). Integration notes: [`docs/integrations/`](docs/integrations/).
-
----
-
-## 7. Branching & Contribution Workflow
+## 6. Branching & Contribution Workflow
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for full guidelines.
 - `feature/backend-<topic>` : Backend APIs, graph algorithms & engines

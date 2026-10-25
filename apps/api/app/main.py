@@ -49,7 +49,7 @@ def create_app() -> FastAPI:
         redoc_url="/redoc"
     )
 
-    # CORS configuration with LAN and local network multi-interface support
+    # CORS configuration for local development
     app.add_middleware(
         CORSMiddleware,
         allow_origin_regex=r"^https?://.*",

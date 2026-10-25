@@ -2,41 +2,48 @@ import subprocess
 import sys
 import time
 import os
-import signal
+import shutil
 
 def run():
     print("=" * 60)
-    print("Starting GASHA Platform Full Stack...")
+    print("Starting GASHA Platform Full Stack (Local Standalone Mode)...")
     print("=" * 60)
     
     base_dir = os.path.dirname(os.path.abspath(__file__))
     
     # 1. Core API
-    print("[1/4] Starting GASHA Core API on http://0.0.0.0:4000...")
+    print("[1/4] Starting GASHA Core API on http://localhost:4000...")
     api_proc = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "app.main:app", "--app-dir", "apps/api", "--host", "0.0.0.0", "--port", "4000"],
+        [sys.executable, "-m", "uvicorn", "app.main:app", "--app-dir", "apps/api", "--host", "127.0.0.1", "--port", "4000"],
         cwd=base_dir
     )
     
     # 2. Demo Target Storefront
-    print("[2/4] Starting Nexus Storefront Target on http://0.0.0.0:3101...")
+    print("[2/4] Starting Nexus Storefront Target on http://localhost:3101...")
     store_proc = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "main:app", "--app-dir", "apps/demo-target", "--host", "0.0.0.0", "--port", "3101"],
+        [sys.executable, "-m", "uvicorn", "main:app", "--app-dir", "apps/demo-target", "--host", "127.0.0.1", "--port", "3101"],
         cwd=base_dir
     )
     
     # 3. Attacker Console
-    print("[3/4] Starting Attacker Console on http://0.0.0.0:3102...")
+    print("[3/4] Starting Attacker Console on http://localhost:3102...")
     attacker_proc = subprocess.Popen(
-        [sys.executable, "-m", "uvicorn", "main:app", "--app-dir", "apps/attacker-console", "--host", "0.0.0.0", "--port", "3102"],
+        [sys.executable, "-m", "uvicorn", "main:app", "--app-dir", "apps/attacker-console", "--host", "127.0.0.1", "--port", "3102"],
         cwd=base_dir
     )
     
-    # 4. Web Console
-    print("[4/4] Starting GASHA Web Console on http://0.0.0.0:3100...")
-    pnpm_cmd = "pnpm.cmd" if sys.platform == "win32" else "pnpm"
+    # 4. Web Console (Auto-detect pnpm or npm)
+    print("[4/4] Starting GASHA Web Console on http://localhost:3100...")
+    pnpm_path = shutil.which("pnpm")
+    if pnpm_path:
+        pnpm_cmd = "pnpm.cmd" if sys.platform == "win32" else "pnpm"
+        web_cmd = [pnpm_cmd, "--filter", "@gasha/web", "dev"]
+    else:
+        npm_cmd = "npm.cmd" if sys.platform == "win32" else "npm"
+        web_cmd = [npm_cmd, "run", "dev", "--prefix", "apps/web"]
+
     web_proc = subprocess.Popen(
-        [pnpm_cmd, "--filter", "@gasha/web", "dev"],
+        web_cmd,
         cwd=base_dir
     )
     
