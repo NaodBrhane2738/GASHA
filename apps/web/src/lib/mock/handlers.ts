@@ -6,10 +6,12 @@ import { incidentsFixture } from './fixtures/incidents';
 import { storyFixture } from './fixtures/story';
 import { riskFixture } from './fixtures/risk';
 import { responsesFixture } from './fixtures/responses';
+import { socHandlers } from './soc';
 
 let responsesState = [...responsesFixture];
 
 export const handlers = [
+  ...socHandlers,
   http.get('/api/twin', () => HttpResponse.json(twinFixture)),
   http.get('/api/attack-paths', () => HttpResponse.json(pathsFixture)),
   http.get('/api/detections', () => HttpResponse.json(detectionsFixture)),

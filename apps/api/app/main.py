@@ -14,11 +14,14 @@ EXPECTED RESULTS / BEHAVIOR:
 """
 
 import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.adaptive.soc_runtime import SocRuntime
 from app.core.config import settings
 from app.core.logging import setup_logging
+from app.response.middleware import PolicyEnforcementMiddleware, SecurityHeadersMiddleware
 from app.api import (
     auth,
     connections,
@@ -34,20 +37,44 @@ from app.api import (
     investigations,
     responses,
     environment,
-    realtime
+    realtime,
+    soc,
 )
 
 setup_logging()
 logger = logging.getLogger("gasha.main")
 
 def create_app() -> FastAPI:
+    soc_runtime = SocRuntime.from_settings(settings)
+
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        await soc_runtime.start()
+        yield
+        await soc_runtime.stop()
+
     app = FastAPI(
         title="GASHA Core API",
         description="Graph-Adaptive Security & Hardening Architecture Backend API",
         version="0.1.0",
         docs_url="/docs",
-        redoc_url="/redoc"
+        redoc_url="/redoc",
+        lifespan=lifespan,
     )
+    app.state.soc = soc_runtime
+
+    # Middleware runs bottom-up: CORS (outermost) -> security headers -> policy enforcement,
+    # so 429/423 responses still carry CORS and hardening headers the browser can read.
+    if settings.SOC_ENFORCEMENT_ENABLED:
+        app.add_middleware(
+            PolicyEnforcementMiddleware,
+            pipeline=soc_runtime.pipeline,
+            exempt_prefixes=settings.SOC_EXEMPT_PATHS,
+            trust_proxy_headers=settings.SOC_TRUST_PROXY_HEADERS,
+            max_body_bytes=settings.SOC_MAX_BODY_BYTES,
+            inspect_body_bytes=settings.SOC_INSPECT_BODY_BYTES,
+        )
+    app.add_middleware(SecurityHeadersMiddleware)
 
     # CORS configuration
     app.add_middleware(
@@ -56,6 +83,7 @@ def create_app() -> FastAPI:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        expose_headers=["Retry-After", "RateLimit-Limit", "RateLimit-Remaining", "RateLimit-Reset", "X-GASHA-Policy"],
     )
 
     # Register API v1 Routers
@@ -75,6 +103,7 @@ def create_app() -> FastAPI:
     app.include_router(responses.router, prefix=f"{api_v1_prefix}/responses", tags=["Controlled Response"])
     app.include_router(environment.router, prefix=f"{api_v1_prefix}/environment", tags=["Environment State"])
     app.include_router(realtime.router, prefix=f"{api_v1_prefix}/realtime", tags=["Realtime Stream"])
+    app.include_router(soc.router, prefix=f"{api_v1_prefix}/soc", tags=["SOC Monitoring"])
 
     @app.get("/health", tags=["Health"])
     async def health_check():

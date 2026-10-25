@@ -1,5 +1,7 @@
+import Link from 'next/link';
 import { LoopRail } from '@/components/loop/LoopRail';
 import { AnalystDock } from '@/components/analyst/AnalystDock';
+import { PolicyBanner } from '@/components/soc/PolicyBanner';
 
 export default function ShellLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -14,11 +16,18 @@ export default function ShellLayout({ children }: { children: React.ReactNode })
             <div className="text-[10.5px] text-muted-foreground">Security Operations</div>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-          <span className="inline-block size-2 rounded-full bg-[hsl(var(--low))]" />
-          Connected · demo environment
+        <div className="flex items-center gap-4 text-[11px] text-muted-foreground">
+          <Link href="/soc" className="rounded-md px-2 py-1 font-medium hover:bg-secondary hover:text-foreground">
+            SOC
+          </Link>
+          <span className="flex items-center gap-2">
+            <span className="inline-block size-2 rounded-full bg-[hsl(var(--low))]" />
+            Connected · demo environment
+          </span>
         </div>
       </header>
+
+      <PolicyBanner />
 
       <LoopRail />
 

@@ -30,6 +30,11 @@
   --medium: 45 93% 48%;
   --low: 210 90% 55%;
   --aegis: 190 95% 50%;
+
+  /* SOC traffic chart series (validated: dataviz validate_palette.js, light surface) */
+  --chart-allowed: #1a7fae;
+  --chart-throttled: #a8650a;
+  --chart-locked: #c0245a;
 }
 
 .dark {
@@ -58,6 +63,11 @@
   --medium: 45 93% 58%;
   --low: 210 90% 65%;
   --aegis: 190 95% 55%;
+
+  /* validated against dark card surface #14171f */
+  --chart-allowed: #2a9fd0;
+  --chart-throttled: #bf7c12;
+  --chart-locked: #d6336c;
 }
 
 @theme inline {

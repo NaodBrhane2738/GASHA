@@ -13,20 +13,35 @@ EXPECTED RESULTS / BEHAVIOR:
 ==============================================================================
 """
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, Request, status
 from app.core.auth import verify_telemetry_api_key
+from app.core.events import utc_iso
 from app.schemas.telemetry import TelemetryBatchIngestRequest
+from app.telemetry.validator import validate_event
 
 router = APIRouter()
 
 @router.post("/ingest", status_code=status.HTTP_202_ACCEPTED)
 async def ingest_telemetry_batch(
     batch: TelemetryBatchIngestRequest,
+    request: Request,
     authenticated: bool = Depends(verify_telemetry_api_key)
 ):
-    # Asynchronous pipeline dispatch
+    pipeline = request.app.state.soc.pipeline
+    enforcement = {}
+    processed = 0
+    for event in batch.events:
+        if not validate_event(event):
+            continue
+        processed += 1
+        decision = pipeline.observe_telemetry(event)
+        if decision and decision.action in ("THROTTLE", "LOCK"):
+            # The defended app applies these decisions (e.g. demo-target blocklist).
+            enforcement[decision.sourceKey] = decision.model_dump(
+                include={"action", "statusCode", "ruleId", "retryAfterSeconds", "sourceKey"})
     return {
         "status": "ACCEPTED",
-        "eventsProcessed": len(batch.events),
-        "timestamp": "2026-09-18T00:00:00Z"
+        "eventsProcessed": processed,
+        "enforcement": list(enforcement.values()),
+        "timestamp": utc_iso(),
     }
