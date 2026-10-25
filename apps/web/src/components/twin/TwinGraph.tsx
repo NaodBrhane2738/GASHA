@@ -4,7 +4,6 @@ import { useEffect, useMemo } from 'react';
 import {
   Background,
   Controls,
-  MiniMap,
   ReactFlow,
   ReactFlowProvider,
   useEdgesState,
@@ -253,18 +252,6 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
       >
         <Background gap={24} size={1} color="hsl(var(--border))" />
         <Controls position="bottom-right" showInteractive={false} />
-        <MiniMap
-          pannable
-          zoomable
-          nodeColor={(n) => {
-            const d = n.data as TwinNodeData;
-            if (d.isAttacked) return '#ef4444';
-            if (d.onPath) return 'hsl(var(--critical))';
-            if (d.isCrownJewel) return 'hsl(var(--medium))';
-            return 'hsl(var(--muted-foreground))';
-          }}
-          maskColor="hsl(var(--background) / 0.7)"
-        />
       </ReactFlow>
     </div>
   );
