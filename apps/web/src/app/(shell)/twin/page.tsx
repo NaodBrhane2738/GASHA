@@ -7,9 +7,8 @@ import { GraphToolbar } from '@/components/twin/GraphToolbar';
 import { useUI } from '@/store/ui';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { riskColor } from '@/lib/graph/nodeMeta';
-import { AlertTriangle, Zap, ShieldAlert, Flame, Crosshair } from 'lucide-react';
+import { AlertTriangle, Zap, ShieldAlert, Flame } from 'lucide-react';
 
 export default function TwinPage() {
   const { data: twin, isLoading } = useTwin();
@@ -83,8 +82,6 @@ export default function TwinPage() {
     return list;
   }, [detections, incidents, simulatedThreat]);
 
-  const primaryThreat = activeThreats[0] ?? null;
-  const primaryThreatNode = primaryThreat && twin ? twin.nodes.find((n) => n.id === primaryThreat.nodeId) : null;
   const isSelectedNodeAttacked = selectedNode ? activeThreats.some((t) => t.nodeId === selectedNode.id) : false;
   const selectedNodeThreat = selectedNode ? activeThreats.find((t) => t.nodeId === selectedNode.id) : null;
 
@@ -94,33 +91,6 @@ export default function TwinPage() {
 
   return (
     <div className="relative h-[calc(100vh-100px)]">
-      {/* Real-time Threat in Action HUD Alert Banner */}
-      {primaryThreat && (
-        <div className="pointer-events-auto absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-3 rounded-full border border-red-500/60 bg-red-950/90 px-4 py-1.5 shadow-[0_0_20px_rgba(239,68,68,0.35)] backdrop-blur animate-pulse">
-          <span className="relative flex size-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-            <span className="relative inline-flex size-2.5 rounded-full bg-red-500" />
-          </span>
-          <div className="flex items-center gap-2 text-[12px] font-semibold text-red-100">
-            <span className="tracking-wide">THREAT IN ACTION:</span>
-            <span className="text-white font-bold underline decoration-red-400">
-              {primaryThreatNode?.label || primaryThreat.nodeId}
-            </span>
-            <span className="text-red-300 font-mono text-[11px]">
-              [{primaryThreat.technique}]
-            </span>
-          </div>
-          <Button
-            size="sm"
-            variant="destructive"
-            className="h-6 gap-1 px-2.5 text-[11px] font-medium shadow-sm"
-            onClick={() => setSelectedNode(primaryThreat.nodeId)}
-          >
-            <Crosshair className="size-3" /> Focus Target
-          </Button>
-        </div>
-      )}
-
       <TwinGraph
         twin={twin}
         activePath={activePath}
