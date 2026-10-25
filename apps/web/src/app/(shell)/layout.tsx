@@ -7,7 +7,7 @@ import { AnalystDock } from '@/components/analyst/AnalystDock';
 import { getStoredToken, getStoredUser, logoutUser } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { User, LogOut, ShieldCheck } from 'lucide-react';
+import { User, LogOut } from 'lucide-react';
 
 export default function ShellLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -54,9 +54,6 @@ export default function ShellLayout({ children }: { children: React.ReactNode })
         {/* Right side: User Identity & Logout */}
         <div className="flex items-center gap-3">
           <div className="hidden sm:flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1 text-[11px]">
-            <ShieldCheck className="size-3.5 text-emerald-500" />
-            <span className="text-muted-foreground font-mono">{user?.environmentId || 'env-prod'}</span>
-            <span className="text-border">|</span>
             <User className="size-3 text-muted-foreground" />
             <span className="font-medium text-foreground">{user?.username || 'analyst01'}</span>
           </div>

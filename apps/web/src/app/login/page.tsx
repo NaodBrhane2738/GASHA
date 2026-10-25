@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, Lock, User, KeyRound, AlertCircle, Sparkles, Terminal } from 'lucide-react';
+import { Shield, Lock, User, KeyRound, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,8 +10,8 @@ import { loginUser } from '@/lib/api/client';
 
 export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState('analyst01');
-  const [password, setPassword] = useState('agis');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,12 +34,6 @@ export default function LoginPage() {
     } else {
       setError(res.error || 'Authentication rejected. Verify credentials.');
     }
-  };
-
-  const setDemoCredentials = () => {
-    setUsername('analyst01');
-    setPassword('agis');
-    setError(null);
   };
 
   return (
@@ -86,7 +80,7 @@ export default function LoginPage() {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="analyst01"
+                placeholder="Enter username"
                 required
                 className="w-full rounded-md border border-border bg-secondary/40 py-2 pl-9 pr-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               />
@@ -108,7 +102,7 @@ export default function LoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password (agis)"
+                placeholder="Enter passkey"
                 required
                 className="w-full rounded-md border border-border bg-secondary/40 py-2 pl-9 pr-3 text-[13px] text-foreground placeholder:text-muted-foreground/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary font-mono"
               />
@@ -133,26 +127,6 @@ export default function LoginPage() {
             )}
           </Button>
         </form>
-
-        {/* Demo Quick-Fill Pill */}
-        <div className="mt-5 pt-4 border-t border-border/80">
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-2">
-            <span className="flex items-center gap-1 font-mono text-[10.5px]">
-              <Terminal className="size-3 text-primary" /> Default Credentials:
-            </span>
-            <button
-              type="button"
-              onClick={setDemoCredentials}
-              className="text-primary hover:underline font-semibold flex items-center gap-1 text-[10.5px]"
-            >
-              <Sparkles className="size-3" /> Auto-fill
-            </button>
-          </div>
-          <div className="flex items-center justify-between rounded bg-secondary/60 px-2.5 py-1.5 text-[11px] font-mono text-muted-foreground">
-            <span>User: <strong className="text-foreground">analyst01</strong></span>
-            <span>Password: <strong className="text-foreground">agis</strong></span>
-          </div>
-        </div>
       </Card>
     </div>
   );
