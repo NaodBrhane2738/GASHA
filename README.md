@@ -130,7 +130,59 @@ gasha/
 
 ---
 
-## 5. Local Setup & Development
+## 5. Collaborator 1-Click Quickstart
+
+To run the entire platform with all 4 services concurrently:
+
+### Prerequisites
+- **Node.js**: `v20.x+` & **pnpm**: `v9.x+`
+- **Python**: `3.10+` & `pip`
+
+### Step-by-Step Setup
+```bash
+# 1. Clone repository
+git clone https://github.com/NaodBrhane2738/GASHA.git
+cd GASHA
+
+# 2. Install dependencies
+pnpm install
+pip install -r apps/api/requirements.txt
+
+# 3. Start all services with one command:
+python run_all.py
+# Or on Windows, simply double-click start_all.bat
+# Or via pnpm: pnpm dev:all
+```
+
+### Services & URLs
+| Service | URL | Description |
+| :--- | :--- | :--- |
+| **GASHA Web Console** | `http://localhost:3100` | Security operations dashboard & Digital Twin |
+| **Nexus Storefront Target** | `http://localhost:3101` | Live defended demo e-commerce app |
+| **Attacker Simulation Console** | `http://localhost:3102` | Interactive red-team attack trigger console |
+| **GASHA Core API** | `http://localhost:4000/docs` | FastAPI backend & interactive Swagger docs |
+
+### Default Credentials
+- **Username**: `analyst01`
+- **Password**: `agis`
+
+---
+
+### Accessing Over Local Network (Wi-Fi)
+If a collaborator on the same Wi-Fi network needs to access your running instance at `http://<your-ip>:3100`:
+1. **Windows Network Profile**: The host machine's Wi-Fi network category MUST be set to **Private Network** (Windows Defender Firewall blocks incoming connections on Public networks by default):
+   - Open **Settings** > **Network & internet** > **Wi-Fi**
+   - Click on your connected Wi-Fi network
+   - Change Network profile type from **Public** to **Private**
+2. **Finding Your IP**: Run `ipconfig` in terminal (look for IPv4 Address under Wireless LAN adapter, e.g. `192.168.1.x`).
+3. **Collaborator Access**: The collaborator can now navigate to:
+   - Web Console: `http://192.168.1.x:3100`
+   - Target Store: `http://192.168.1.x:3101`
+   - Attacker Console: `http://192.168.1.x:3102`
+
+---
+
+## 6. Advanced Local Setup & Development
 
 ### Prerequisites
 - **Node.js**: `v20.x+` & **pnpm**: `v9.x+` (or `npm`)
@@ -182,7 +234,7 @@ Deployable API blueprint: [`render.yaml`](render.yaml). Integration notes: [`doc
 
 ---
 
-## 6. Branching & Contribution Workflow
+## 7. Branching & Contribution Workflow
 
 See [`CONTRIBUTING.md`](CONTRIBUTING.md) for full guidelines.
 - `feature/backend-<topic>` : Backend APIs, graph algorithms & engines

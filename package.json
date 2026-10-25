@@ -6,6 +6,8 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "dev:all": "python run_all.py",
+    "start:all": "python run_all.py",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "test:contracts": "pnpm --filter @gasha/contracts typecheck",
