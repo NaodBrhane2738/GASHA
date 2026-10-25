@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { useDetections, useIncidents, useTwin } from '@/lib/api/queries';
 import { useEventStream } from '@/lib/realtime/useEventStream';
 import { Card } from '@/components/ui/card';
@@ -23,7 +24,10 @@ import {
 import type { Detection } from '@/types/domain';
 import { cn } from '@/lib/utils';
 
-export default function TelemetryPage() {
+function TelemetryView() {
+  const searchParams = useSearchParams();
+  const inspectId = searchParams.get('inspect') || searchParams.get('id') || searchParams.get('incidentId');
+
   const { data: initial } = useDetections();
   const { data: incidents } = useIncidents();
   const { data: twin } = useTwin();
@@ -57,6 +61,22 @@ export default function TelemetryPage() {
     const nodeList = twin?.nodes ?? [];
     return allDetections.map((d) => resolveIncidentDossier(d, incList, nodeList));
   }, [allDetections, incidents, twin]);
+
+  // Automatically open incident dossier if requested via URL search param
+  useEffect(() => {
+    if (inspectId && dossiers.length > 0) {
+      const match = dossiers.find(
+        (d) =>
+          d.id === inspectId ||
+          d.incidentId === inspectId ||
+          d.telemetryEvidence.rawPayload?.detectionId === inspectId ||
+          (inspectId.startsWith('inc-') && d.incidentId.includes(inspectId)),
+      );
+      if (match) {
+        setSelectedDossier(match);
+      }
+    }
+  }, [inspectId, dossiers]);
 
   // Filter dossiers
   const filtered = useMemo(() => {
@@ -270,5 +290,13 @@ export default function TelemetryPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function TelemetryPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-muted-foreground font-mono text-[12px]">Loading telemetry observations…</div>}>
+      <TelemetryView />
+    </Suspense>
   );
 }

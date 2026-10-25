@@ -19,7 +19,9 @@ import {
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
+  Route,
 } from 'lucide-react';
+import { useUI } from '@/store/ui';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
@@ -293,9 +295,28 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
           </div>
 
           <div className="flex items-center gap-2.5">
-            <Link href={`/twin`}>
+            <Link
+              href={`/twin`}
+              onClick={() => {
+                if (dossier.targetAsset.id) {
+                  useUI.getState().setSelectedNode(dossier.targetAsset.id);
+                }
+              }}
+            >
               <Button variant="outline" size="sm" className="h-8 gap-1.5 text-[11.5px]">
-                <Server className="size-3.5" /> Locate on Digital Twin
+                <Server className="size-3.5 text-primary" /> Locate on Digital Twin
+              </Button>
+            </Link>
+            <Link
+              href={`/paths`}
+              onClick={() => {
+                if (dossier.pathId) {
+                  useUI.getState().setActivePath(dossier.pathId);
+                }
+              }}
+            >
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 text-[11.5px] border-amber-500/30 text-amber-400 hover:text-amber-300 hover:border-amber-500/50">
+                <Route className="size-3.5" /> View Attack Paths
               </Button>
             </Link>
             <Link href={`/response`}>

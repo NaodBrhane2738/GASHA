@@ -14,6 +14,7 @@ export interface CveIntelligence {
 export interface DetailedIncidentDossier {
   id: string;
   incidentId: string;
+  pathId?: string;
   timestamp: string;
   severity: 'critical' | 'high' | 'medium' | 'low';
   title: string;
@@ -209,6 +210,7 @@ export function resolveIncidentDossier(
   return {
     id: detection.id,
     incidentId: correlatedIncident?.id || `inc-${detection.id.replace('det-', '')}`,
+    pathId: correlatedIncident?.pathId || (correlatedIncident as any)?.attackPathId || 'path-1',
     timestamp: ts,
     severity: (detection.severity || 'high').toLowerCase() as any,
     title: correlatedIncident?.title || title,
