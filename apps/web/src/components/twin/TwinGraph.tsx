@@ -3,7 +3,6 @@
 import { useEffect, useMemo } from 'react';
 import {
   Background,
-  Controls,
   ReactFlow,
   ReactFlowProvider,
   useEdgesState,
@@ -249,9 +248,9 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
         minZoom={0.2}
         maxZoom={2}
         onlyRenderVisibleElements
+        proOptions={{ hideAttribution: true }}
       >
         <Background gap={24} size={1} color="hsl(var(--border))" />
-        <Controls position="bottom-right" showInteractive={false} />
       </ReactFlow>
     </div>
   );
