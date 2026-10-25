@@ -82,3 +82,26 @@ export const useRejectResponse = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: qk.responses }),
   });
 };
+
+export interface ProposeResponseInput {
+  incidentId: string;
+  actionType: 'BLOCK_SOURCE' | 'DISABLE_SESSION' | 'ISOLATE_RESOURCE';
+  targetType: 'IP_ADDRESS' | 'SESSION_ID' | 'ASSET_ID';
+  targetIdentifier: string;
+  reason: string;
+  supportingEvidenceIds?: string[];
+}
+
+export const useProposeResponse = () => {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (input: ProposeResponseInput) =>
+      api<ResponseAction>('/responses/propose', {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: qk.responses });
+    },
+  });
+};

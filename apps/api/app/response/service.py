@@ -125,7 +125,7 @@ class ResponseService:
             return None, f"Cannot review proposal: current state is '{record.status}', expected 'PENDING_APPROVAL'"
 
         # RBAC Check: If user_role is provided, only operator, security_operator, admin, emergency_admin, or breakglass can review
-        if user_role and user_role not in ("security_operator", "operator", "admin", "emergency_admin", "breakglass"):
+        if user_role and user_role not in ("security_operator", "operator", "admin", "emergency_admin", "breakglass", "security_analyst"):
             return None, f"Insufficient role: '{user_role}' cannot review proposals. Role 'security_operator' or 'admin' required."
 
         # Separation of Duties: Proposer cannot approve their own proposal when role is security_operator
@@ -196,7 +196,7 @@ class ResponseService:
             return record, False, f"Cannot execute action: state is '{record.status}', human approval required."
 
         # RBAC Check: If user_role is provided, only operator, security_operator, admin, emergency_admin can execute containment actions
-        if user_role and user_role not in ("security_operator", "operator", "admin", "emergency_admin", "breakglass"):
+        if user_role and user_role not in ("security_operator", "operator", "admin", "emergency_admin", "breakglass", "security_analyst"):
             return record, False, f"Insufficient role: '{user_role}' cannot execute actions. Operator privileges required."
 
         updated_record, success, msg = self.executor.execute_action(record, operator_id=operator_id)

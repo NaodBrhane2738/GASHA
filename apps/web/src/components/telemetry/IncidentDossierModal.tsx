@@ -2,6 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useProposeResponse } from '@/lib/api/queries';
+import { toast } from 'sonner';
 import {
   X,
   ShieldAlert,
@@ -34,10 +37,30 @@ interface Props {
 }
 
 export function IncidentDossierModal({ dossier, onClose }: Props) {
+  const router = useRouter();
+  const proposeResponse = useProposeResponse();
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'narrative' | 'cve' | 'telemetry'>('narrative');
 
   if (!dossier) return null;
+
+  const handleQuarantine = async () => {
+    try {
+      await proposeResponse.mutateAsync({
+        incidentId: dossier.incidentId,
+        actionType: 'BLOCK_SOURCE',
+        targetType: 'IP_ADDRESS',
+        targetIdentifier: dossier.attacker.ip,
+        reason: `Quarantine adversary IP targeting asset ${dossier.targetAsset.label} via Observe dossier`,
+        supportingEvidenceIds: [dossier.id],
+      });
+      toast.success(`Quarantine action queued for IP ${dossier.attacker.ip}`);
+    } catch (e) {
+      console.warn('Backend proposal note:', e);
+    }
+    onClose();
+    router.push(`/response?quarantine=${dossier.attacker.ip}`);
+  };
 
   const copyPayload = () => {
     navigator.clipboard.writeText(JSON.stringify(dossier.telemetryEvidence.rawPayload, null, 2));
@@ -319,11 +342,14 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
                 <Route className="size-3.5" /> View Attack Paths
               </Button>
             </Link>
-            <Link href={`/response`}>
-              <Button variant="destructive" size="sm" className="h-8 gap-1.5 text-[11.5px] font-semibold">
-                <Lock className="size-3.5" /> Quarantine Attacker IP
-              </Button>
-            </Link>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={handleQuarantine}
+              className="h-8 gap-1.5 text-[11.5px] font-semibold shadow-sm"
+            >
+              <Lock className="size-3.5" /> Quarantine Attacker IP ({dossier.attacker.ip})
+            </Button>
           </div>
         </div>
       </div>
