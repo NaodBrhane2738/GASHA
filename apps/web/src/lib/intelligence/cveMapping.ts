@@ -52,23 +52,25 @@ export function resolveIncidentDossier(
   incidents: Incident[] = [],
   twinNodes: TwinNode[] = []
 ): DetailedIncidentDossier {
-  const summaryLower = (detection.summary || '').toLowerCase();
-  const techLower = (detection.technique || '').toLowerCase();
+  const summaryText = detection.summary || (detection as any).evidenceSummary || '';
+  const summaryLower = summaryText.toLowerCase();
+  const techLower = (detection.technique || (detection as any).metadata?.mitreTechniqueId || '').toLowerCase();
   const ruleObj = typeof detection.rule === 'object' && detection.rule ? detection.rule : null;
   const ruleNameLower = (ruleObj?.name || (typeof detection.rule === 'string' ? detection.rule : '')).toLowerCase();
+  const assetId = detection.nodeId || (detection as any).primaryAssetId || 'web-app';
 
   // Find correlated incident
   const correlatedIncident = incidents.find(
     (inc) =>
       inc.detectionIds?.includes(detection.id) ||
       (inc as any).detectionEventIds?.includes(detection.id) ||
-      (inc as any).primaryAffectedAssetId === detection.nodeId
+      (inc as any).primaryAffectedAssetId === assetId
   );
 
   // Find target node
-  const targetNode = twinNodes.find((n) => n.id === detection.nodeId) || {
-    id: detection.nodeId,
-    label: detection.nodeId === 'web-app' ? 'Nexus Storefront' : detection.nodeId === 'auth-svc' ? 'Nexus Auth Service' : detection.nodeId,
+  const targetNode = twinNodes.find((n) => n.id === assetId) || {
+    id: assetId,
+    label: assetId === 'web-app' ? 'Nexus Storefront' : assetId === 'auth-svc' ? 'Nexus Auth Service' : assetId,
     kind: 'compute' as const,
     exposure: 'public' as const,
     criticality: 4 as const,
@@ -195,20 +197,22 @@ export function resolveIncidentDossier(
   }
 
   // Extract source IP
-  const ipMatch = detection.summary.match(/(?:source IP|IP)\s+'?([0-9.]+)'?/i);
-  const attackerIp = ipMatch?.[1] || '198.51.100.101';
+  const ipMatch = summaryText.match(/(?:source IP|IP)\s+'?([0-9.]+)'?/i);
+  const attackerIp = (detection as any).metadata?.sourceIp || ipMatch?.[1] || '198.51.100.101';
 
   // Extract path
-  const pathMatch = detection.summary.match(/path\s+'([^']+)'/i);
-  const targetPath = pathMatch?.[1] || '/api/integrations/fetch-url';
+  const pathMatch = summaryText.match(/path\s+'([^']+)'/i);
+  const targetPath = (detection as any).metadata?.targetPath || pathMatch?.[1] || '/api/integrations/fetch-url';
+
+  const ts = detection.ts || (detection as any).timestamp || new Date().toISOString();
 
   return {
     id: detection.id,
     incidentId: correlatedIncident?.id || `inc-${detection.id.replace('det-', '')}`,
-    timestamp: detection.ts,
+    timestamp: ts,
     severity: (detection.severity || 'high').toLowerCase() as any,
     title: correlatedIncident?.title || title,
-    summary: detection.summary,
+    summary: summaryText || 'Suspicious network incursion activity detected',
     fullNarrative,
     targetAsset: {
       id: targetNode.id,
@@ -226,7 +230,7 @@ export function resolveIncidentDossier(
     cve,
     mitre: {
       tactic,
-      techniqueId: detection.technique || 'T1190',
+      techniqueId: detection.technique || (detection as any).metadata?.mitreTechniqueId || 'T1190',
       techniqueName,
       description: mitreDesc,
     },
@@ -234,15 +238,16 @@ export function resolveIncidentDossier(
       rawPayload: {
         detectionId: detection.id,
         ruleName: typeof detection.rule === 'object' ? detection.rule.name : detection.rule,
-        technique: detection.technique,
+        technique: detection.technique || (detection as any).metadata?.mitreTechniqueId,
         confidence: detection.confidence,
-        targetAssetId: detection.nodeId,
+        targetAssetId: assetId,
         sourceIp: attackerIp,
-        timestamp: detection.ts,
-        evidence: detection.summary,
+        timestamp: ts,
+        evidence: summaryText,
+        metadata: (detection as any).metadata || {},
       },
       status: 'VERIFIED_DETERMINISTIC_TELEMETRY',
-      confidence: detection.confidence,
+      confidence: detection.confidence ?? 0.9,
     },
   };
 }
