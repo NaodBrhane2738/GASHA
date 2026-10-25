@@ -69,6 +69,8 @@ class Settings(BaseSettings):
     SOC_INSPECT_BODY_BYTES: int = 65_536
     # Only enable behind a proxy you control; otherwise clients can spoof X-Forwarded-For.
     SOC_TRUST_PROXY_HEADERS: bool = False
+    # Number of trusted proxies in front of the API (Render / Railway / Fly: 1).
+    SOC_TRUSTED_PROXY_HOPS: int = 1
     # Telemetry ingest is exempt: it is API-key authenticated and its bodies carry attack evidence by
     # design, so inspecting them would lock out the collector. Its events are analysed by the pipeline.
     SOC_EXEMPT_PATHS: List[str] = ["/health", "/docs", "/redoc", "/openapi.json", "/api/v1/soc", "/api/v1/realtime",

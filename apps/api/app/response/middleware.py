@@ -44,20 +44,26 @@ def problem_body(d: PolicyDecision, path: str, incident_id: Optional[str]) -> by
 
 class PolicyEnforcementMiddleware:
     def __init__(self, app: ASGIApp, pipeline: SocPipeline, exempt_prefixes: Iterable[str] = (),
-                 trust_proxy_headers: bool = False, max_body_bytes: int = 1_048_576,
+                 trust_proxy_headers: bool = False, trusted_proxy_hops: int = 1,
+                 max_body_bytes: int = 1_048_576,
                  inspect_body_bytes: int = 65_536):
         self.app = app
         self.pipeline = pipeline
         self.exempt = tuple(exempt_prefixes)
         self.trust_proxy = trust_proxy_headers
+        self.proxy_hops = max(1, trusted_proxy_hops)
         self.max_body = max_body_bytes
         self.inspect_body = inspect_body_bytes
 
     def _source(self, scope) -> str:
         if self.trust_proxy:
+            # Each trusted proxy appends the address it received the request from, so the client IP
+            # is `proxy_hops` entries from the right. Entries further left are client-controlled.
             for k, v in scope.get("headers", []):
                 if k == b"x-forwarded-for":
-                    return v.decode("latin-1").split(",")[0].strip()
+                    hops = [h.strip() for h in v.decode("latin-1").split(",") if h.strip()]
+                    if len(hops) >= self.proxy_hops:
+                        return hops[-self.proxy_hops]
         client = scope.get("client")
         return client[0] if client else "unknown"
 

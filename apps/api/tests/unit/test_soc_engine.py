@@ -226,3 +226,12 @@ def test_alert_dispatcher_retries_then_succeeds(monkeypatch):
         return transport
 
     assert len(asyncio.run(run()).sent) == 1
+
+
+def test_forwarded_for_uses_rightmost_trusted_hop_not_spoofable_left_entry():
+    from app.response.middleware import PolicyEnforcementMiddleware
+
+    mw = PolicyEnforcementMiddleware(None, pipeline=None, trust_proxy_headers=True, trusted_proxy_hops=1)
+    scope = {"headers": [(b"x-forwarded-for", b"6.6.6.6, 203.0.113.9")], "client": ("10.0.0.1", 1)}
+    assert mw._source(scope) == "203.0.113.9"  # attacker-supplied 6.6.6.6 is ignored
+    assert PolicyEnforcementMiddleware(None, pipeline=None)._source(scope) == "10.0.0.1"

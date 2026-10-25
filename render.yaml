@@ -1,0 +1,39 @@
+# Render Blueprint for the GASHA API (FastAPI).
+# Render dashboard -> New -> Blueprint -> select this repo. See docs/deployment/DEPLOYMENT.md.
+services:
+  - type: web
+    name: gasha-api
+    runtime: python
+    rootDir: apps/api
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    plan: free
+    # SOC state (rate limits, locks, incidents) is in memory: keep exactly one instance.
+    numInstances: 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: JWT_SECRET
+        generateValue: true
+      - key: INTERNAL_API_KEY
+        generateValue: true
+      - key: GASHA_TELEMETRY_API_KEY
+        generateValue: true
+      # Replace with the real Vercel URL after the frontend deploy (JSON list).
+      - key: CORS_ORIGINS
+        value: '["http://localhost:3000"]'
+      - key: WEB_URL
+        value: http://localhost:3000
+      # Render terminates TLS in front of the app and appends the client IP to X-Forwarded-For.
+      - key: SOC_TRUST_PROXY_HEADERS
+        value: "true"
+      - key: SOC_TRUSTED_PROXY_HOPS
+        value: "1"
+      # "log" writes alerts to the service logs. Switch to resend/smtp per DEPLOYMENT.md.
+      - key: ALERT_EMAIL_PROVIDER
+        value: log

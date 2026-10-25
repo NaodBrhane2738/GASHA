@@ -71,6 +71,7 @@ def create_app() -> FastAPI:
             pipeline=soc_runtime.pipeline,
             exempt_prefixes=settings.SOC_EXEMPT_PATHS,
             trust_proxy_headers=settings.SOC_TRUST_PROXY_HEADERS,
+            trusted_proxy_hops=settings.SOC_TRUSTED_PROXY_HOPS,
             max_body_bytes=settings.SOC_MAX_BODY_BYTES,
             inspect_body_bytes=settings.SOC_INSPECT_BODY_BYTES,
         )
