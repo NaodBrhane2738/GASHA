@@ -81,11 +81,6 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
                 <span className="font-mono text-primary font-semibold">{dossier.incidentId}</span>
                 <span>&middot;</span>
                 <span>Detected: {new Date(dossier.timestamp).toLocaleString()}</span>
-                <span>&middot;</span>
-                <span className="font-mono text-emerald-400 flex items-center gap-1">
-                  <span className="size-1.5 rounded-full bg-emerald-400 animate-ping" />
-                  Active Incident
-                </span>
               </div>
             </div>
           </div>

@@ -104,15 +104,6 @@ export default function TelemetryPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-mono text-muted-foreground shadow-sm">
-            <span
-              className={cn(
-                'size-2 rounded-full',
-                connected ? 'bg-emerald-400 animate-ping' : 'bg-amber-400',
-              )}
-            />
-            <span>{connected ? 'LIVE TELEMETRY STREAMING' : 'CONNECTING...'}</span>
-          </div>
           <Badge variant="outline" className="font-mono text-[11px] border-primary/30 text-primary">
             {filtered.length} Events Observed
           </Badge>
