@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useUI } from '@/store/ui';
 import Link from 'next/link';
 import type { Incident } from '@/types/domain';
 import { Card } from '@/components/ui/card';
@@ -28,6 +29,8 @@ interface IncidentArchiveViewProps {
   incidents?: Incident[];
   onSelectIncident?: (incident: Incident) => void;
   className?: string;
+  initialFolderDate?: string | null;
+  initialSelectedIncidentId?: string | null;
 }
 
 // Fallback baseline critical archive records across dates to ensure rich archive folders
@@ -158,16 +161,55 @@ Endpoint detection agents flagged the malicious batch invocations, terminated th
   },
 ];
 
-export function IncidentArchiveView({ incidents = [], onSelectIncident, className }: IncidentArchiveViewProps) {
-  const [activeFolderDate, setActiveFolderDate] = useState<string | null>(null);
-  const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(null);
+export function IncidentArchiveView({
+  incidents = [],
+  onSelectIncident,
+  className,
+  initialFolderDate = null,
+  initialSelectedIncidentId = null,
+}: IncidentArchiveViewProps) {
+  const [activeFolderDate, setActiveFolderDate] = useState<string | null>(initialFolderDate);
+  const [selectedIncidentId, setSelectedIncidentId] = useState<string | null>(initialSelectedIncidentId);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Merge live incidents with fallback baseline incidents to ensure complete archive folders
+  useEffect(() => {
+    if (initialFolderDate) {
+      setActiveFolderDate(initialFolderDate);
+    }
+  }, [initialFolderDate]);
+
+  useEffect(() => {
+    if (initialSelectedIncidentId) {
+      setSelectedIncidentId(initialSelectedIncidentId);
+    }
+  }, [initialSelectedIncidentId]);
+
+  const archivedFromUI = useUI((s) => s.archivedIncidents);
+
+  // Merge live incidents with fallback baseline incidents and UI dynamic archives
   const allIncidents = useMemo(() => {
     const map = new Map<string, Incident>();
     for (const inc of FALLBACK_ARCHIVED_INCIDENTS) {
       map.set(inc.id, inc);
+    }
+    for (const inc of (archivedFromUI || [])) {
+      map.set(inc.id, {
+        id: inc.id,
+        title: inc.title,
+        severity: (inc.severity as any) || 'critical',
+        status: (inc.status as any) || 'contained',
+        openedAt: inc.openedAt,
+        createdAt: inc.createdAt || inc.openedAt,
+        detectionIds: inc.detectionIds || [],
+        confidence: 0.99,
+        riskBefore: inc.riskBefore || 99,
+        riskAfter: inc.riskAfter || 15,
+        primaryAffectedAssetId: inc.primaryAffectedAssetId,
+        cveId: inc.cveId || 'CVE-2023-34362',
+        technique: inc.technique || 'T1190 · Exploit Public-Facing App',
+        summary: inc.summary,
+        description: inc.description,
+      } as Incident);
     }
     for (const inc of incidents) {
       const existing = map.get(inc.id);
@@ -179,7 +221,7 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
       });
     }
     return Array.from(map.values());
-  }, [incidents]);
+  }, [incidents, archivedFromUI]);
 
   // Group incidents by calendar date (YYYY-MM-DD)
   const dateFolders = useMemo(() => {

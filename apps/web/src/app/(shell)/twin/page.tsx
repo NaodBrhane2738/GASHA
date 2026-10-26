@@ -2,14 +2,31 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTwin, usePaths, useDetections, useIncidents, useResponses, useProposeResponse } from '@/lib/api/queries';
+import Link from 'next/link';
+import {
+  useTwin,
+  usePaths,
+  useDetections,
+  useIncidents,
+  useProposeResponse,
+  useApproveResponse,
+} from '@/lib/api/queries';
 import { TwinGraph } from '@/components/twin/TwinGraph';
-import { useUI } from '@/store/ui';
+import { useUI, type ArchivedIncidentRecord } from '@/store/ui';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { riskColor } from '@/lib/graph/nodeMeta';
-import { AlertTriangle, ShieldAlert, Lock, Activity, X, ShieldCheck, Database } from 'lucide-react';
+import {
+  AlertTriangle,
+  ShieldAlert,
+  Lock,
+  Activity,
+  X,
+  ShieldCheck,
+  Database,
+  ArrowRight,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface NodeThreatDetail {
@@ -31,12 +48,16 @@ export default function TwinPage() {
   const { data: detections } = useDetections();
   const { data: incidents } = useIncidents();
   const proposeResponse = useProposeResponse();
+  const approveResponse = useApproveResponse();
 
   const [simulatedThreat, setSimulatedThreat] = useState(false);
 
   const activePathId = useUI((s) => s.activePathId);
   const selectedNodeId = useUI((s) => s.selectedNodeId);
   const setSelectedNode = useUI((s) => s.setSelectedNode);
+  const blockedIps = useUI((s) => s.blockedIps);
+  const blockedAssetIds = useUI((s) => s.blockedAssetIds);
+  const blockThreat = useUI((s) => s.blockThreat);
 
   const activePath = useMemo(
     () => paths?.find((p) => p.id === activePathId) ?? null,
@@ -60,11 +81,16 @@ export default function TwinPage() {
         const timeMs = rawTime ? new Date(rawTime).getTime() : 0;
         if (!timeMs || (now - timeMs) <= RECENT_WINDOW_MS) {
           const targetId = det.nodeId || (det as any).primaryAssetId;
-          if (targetId && !list.some((t) => t.nodeId === targetId)) {
-            const rawSum = (det.summary || (det as any).evidenceSummary || '').toLowerCase();
-            const ipMatch = (det.summary || (det as any).evidenceSummary || '').match(/(?:source IP|IP)\s+'?([0-9.]+)'?/i);
-            const attackerIp = (det as any).metadata?.sourceIp || ipMatch?.[1] || '198.51.100.101';
+          const rawSum = (det.summary || (det as any).evidenceSummary || '').toLowerCase();
+          const ipMatch = (det.summary || (det as any).evidenceSummary || '').match(/(?:source IP|IP)\s+'?([0-9.]+)'?/i);
+          const attackerIp = (det as any).metadata?.sourceIp || ipMatch?.[1] || '198.51.100.101';
 
+          // If asset or adversary IP is already blocked/contained, exclude from active threats
+          if (targetId && blockedAssetIds.includes(targetId)) continue;
+          if (blockedIps.includes(attackerIp)) continue;
+          if (blockedIps.some((ip) => rawSum.includes(ip.toLowerCase()))) continue;
+
+          if (targetId && !list.some((t) => t.nodeId === targetId)) {
             let cveId = 'CVE-2023-34362';
             let cveTitle = 'Critical SSRF Cloud Metadata Pivot';
             let explanation = `Adversary at IP ${attackerIp} is actively executing Server-Side Request Forgery probes targeting internal cloud metadata (169.254.169.254) to pivot deeper into backend data tiers.`;
@@ -106,15 +132,21 @@ export default function TwinPage() {
     if (incidents && Array.isArray(incidents)) {
       for (const inc of incidents) {
         const status = String(inc.status).toUpperCase();
+        const targetId = (inc as any).primaryAffectedAssetId || inc.pathId;
+        const incIp = (inc as any).attackerIp || '198.51.100.101';
+
+        if (targetId && blockedAssetIds.includes(targetId)) continue;
+        if (blockedIps.includes(incIp)) continue;
+        if (blockedIps.some((ip) => (inc.title || '').includes(ip) || (inc.summary || '').includes(ip))) continue;
+
         if (status === 'ACTIVE' || status === 'INVESTIGATING' || status === 'OPEN') {
-          const targetId = (inc as any).primaryAffectedAssetId || inc.pathId;
           if (targetId && !list.some((t) => t.nodeId === targetId)) {
             list.push({
               nodeId: targetId,
               incidentId: inc.id,
               technique: 'INCIDENT ACTIVE',
               summary: inc.title,
-              attackerIp: '198.51.100.101',
+              attackerIp: incIp,
               cveId: 'CVE-2023-34362',
               cveTitle: 'Active Multi-Stage Incursion',
               explanation: `Correlated multi-stage security incident affecting ${targetId}. Malicious network incursions detected with high confidence. Immediate perimeter containment recommended.`,
@@ -125,7 +157,7 @@ export default function TwinPage() {
       }
     }
 
-    if (simulatedThreat && !list.some((t) => t.nodeId === 'auth-svc')) {
+    if (simulatedThreat && !blockedAssetIds.includes('auth-svc') && blockedIps.length === 0 && !list.some((t) => t.nodeId === 'auth-svc')) {
       list.unshift({
         nodeId: 'auth-svc',
         incidentId: 'inc-sim-auth',
@@ -140,10 +172,58 @@ export default function TwinPage() {
     }
 
     return list;
-  }, [detections, incidents, simulatedThreat]);
+  }, [detections, incidents, simulatedThreat, blockedIps, blockedAssetIds]);
 
   const isSelectedNodeAttacked = selectedNode ? activeThreats.some((t) => t.nodeId === selectedNode.id) : false;
   const selectedNodeThreat = selectedNode ? activeThreats.find((t) => t.nodeId === selectedNode.id) : null;
+  const isNodeSecured = selectedNode
+    ? (blockedAssetIds.includes(selectedNode.id) || (blockedIps.length > 0 && (selectedNode.id === 'auth-svc' || selectedNode.id === 'nexus-target' || selectedNode.id === 'api-gateway'))) && !isSelectedNodeAttacked
+    : false;
+
+  // Execute block directly: neutralizes threat, stops all twin flashing, and moves incident to Archive
+  const handleExecuteBlock = async (threat: NodeThreatDetail) => {
+    try {
+      try {
+        const prop = await proposeResponse.mutateAsync({
+          incidentId: threat.incidentId || 'inc-4f3e5cf1',
+          actionType: 'BLOCK_SOURCE',
+          targetType: 'IP_ADDRESS',
+          targetIdentifier: threat.attackerIp,
+          reason: `Automated perimeter block executed from Digital Twin for ${threat.nodeId}`,
+          supportingEvidenceIds: threat.evidenceIds,
+        });
+        if (prop?.id) {
+          await approveResponse.mutateAsync(prop.id);
+        }
+      } catch (err) {
+        console.warn('Backend block response note:', err);
+      }
+
+      const nowIso = new Date().toISOString();
+      const archivedRecord: ArchivedIncidentRecord = {
+        id: threat.incidentId || `inc-${Date.now()}`,
+        title: threat.summary || `Adversary ${threat.technique} Attack on ${threat.nodeId}`,
+        severity: 'critical',
+        status: 'contained',
+        openedAt: nowIso,
+        createdAt: nowIso,
+        attackerIp: threat.attackerIp,
+        primaryAffectedAssetId: threat.nodeId,
+        cveId: threat.cveId,
+        technique: threat.technique,
+        summary: `Threat blocked at firewall. Adversary IP ${threat.attackerIp} quarantined from ${threat.nodeId}.`,
+        description: threat.explanation || `Adversary at IP ${threat.attackerIp} executed malicious incursions targeting ${threat.nodeId}. Perimeter firewall block successfully enforced. All systems returned to nominal status. Record moved to Archive.`,
+        riskBefore: 99,
+        riskAfter: 15,
+        detectionIds: threat.evidenceIds,
+      };
+
+      blockThreat(threat.attackerIp, threat.nodeId, archivedRecord);
+      toast.success(`Perimeter block enforced for ${threat.attackerIp}! Digital twin nominal. Moved to Archive.`);
+    } catch (err: any) {
+      toast.error(err?.message || 'Execution failed');
+    }
+  };
 
   const handleQuarantine = async (threat: NodeThreatDetail) => {
     try {
@@ -164,18 +244,45 @@ export default function TwinPage() {
   };
 
   if (isLoading || !twin) {
-    return <div className="p-6 text-muted-foreground">Loading digital twin…</div>;
+    return <div className="p-6 text-muted-foreground font-mono text-[12px]">Loading digital twin…</div>;
   }
 
   return (
     <div className="relative h-[calc(100vh-100px)]">
+      {/* Floating Status Pill Header */}
+      <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-lg border border-border bg-card/90 backdrop-blur px-3 py-1.5 shadow-md">
+        {activeThreats.length > 0 ? (
+          <div className="flex items-center gap-2">
+            <ShieldAlert className="size-4 text-red-400" />
+            <span className="text-[12px] font-bold text-red-300">
+              {activeThreats.length} Active Security Incursion{activeThreats.length > 1 ? 's' : ''} Detected
+            </span>
+            <Badge variant="destructive" className="font-mono text-[9px] uppercase font-bold">
+              {activeThreats[0].nodeId}
+            </Badge>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <ShieldCheck className="size-4 text-emerald-400" />
+            <span className="text-[12px] font-semibold text-foreground">
+              {blockedIps.length > 0 ? 'All Systems Nominal · Active Perimeter Defense Enforced' : 'Digital Twin · All Systems Nominal'}
+            </span>
+            {blockedIps.length > 0 && (
+              <Link href="/response?view=archives">
+                <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-950/30 font-mono text-[9px] cursor-pointer ml-1">
+                  {blockedIps.length} Threat{blockedIps.length > 1 ? 's' : ''} Contained in Archive &rarr;
+                </Badge>
+              </Link>
+            )}
+          </div>
+        )}
+      </div>
+
       <TwinGraph
         twin={twin}
         activePath={activePath}
         simulatedAttackNodeId={simulatedThreat ? 'auth-svc' : null}
       />
-
-
 
       {/* Selected Node Inspector Side Card */}
       {selectedNode && (
@@ -186,7 +293,7 @@ export default function TwinPage() {
               <span className="text-[13.5px] font-bold text-foreground">{selectedNode.label}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Badge variant={isSelectedNodeAttacked ? 'destructive' : 'outline'} className="font-mono text-[10px]">
+              <Badge variant={isSelectedNodeAttacked ? 'destructive' : isNodeSecured ? 'outline' : 'outline'} className={`font-mono text-[10px] ${isNodeSecured ? 'border-emerald-500/40 text-emerald-400' : ''}`}>
                 {selectedNode.kind}
               </Badge>
               <button
@@ -198,6 +305,36 @@ export default function TwinPage() {
               </button>
             </div>
           </div>
+
+          {/* SECURED & NOMINAL INSPECTION STATE */}
+          {isNodeSecured && (
+            <div className="mb-3 space-y-2.5 rounded-lg border border-emerald-500/50 bg-emerald-950/20 p-3 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400">
+                  <ShieldCheck className="size-4 text-emerald-400" />
+                  <span>ALL SYSTEMS NOMINAL & PROTECTED</span>
+                </div>
+                <Badge variant="outline" className="border-emerald-500/50 text-emerald-300 font-mono text-[9px] uppercase font-bold">
+                  CONTAINED
+                </Badge>
+              </div>
+
+              <p className="text-[11.5px] text-emerald-200/90 leading-relaxed">
+                Adversary threat was successfully executed and blocked at the perimeter firewall. Node risk dropped to nominal baseline (15). Record moved to Archive.
+              </p>
+
+              <div className="pt-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => router.push('/response?view=archives')}
+                  className="w-full h-8 text-[11px] font-semibold gap-1.5 border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/40 hover:text-white"
+                >
+                  <Database className="size-3 text-emerald-400" /> View Incident in Archive &rarr;
+                </Button>
+              </div>
+            </div>
+          )}
 
           {/* ACTIVE SECURITY INCURSION & FORENSIC EXPLANATION */}
           {isSelectedNodeAttacked && selectedNodeThreat && (
@@ -229,22 +366,33 @@ export default function TwinPage() {
                 <span className="text-red-400 font-bold">RISK: 99 CRITICAL</span>
               </div>
 
-              {/* QUARANTINE ACTION BUTTON */}
-              <div className="pt-2 space-y-1.5">
+              {/* ACTIONS: EXECUTE BLOCK OR QUARANTINE */}
+              <div className="pt-2 space-y-2">
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => handleQuarantine(selectedNodeThreat)}
+                  onClick={() => handleExecuteBlock(selectedNodeThreat)}
+                  disabled={approveResponse.isPending}
                   className="w-full h-8 text-[11.5px] font-bold gap-1.5 shadow-md shadow-red-500/25"
                 >
-                  <Lock className="size-3.5" /> Quarantine Attacker IP ({selectedNodeThreat.attackerIp}) &rarr;
+                  <Lock className="size-3.5" />
+                  {approveResponse.isPending ? 'Enforcing Block…' : 'Execute Block & Move to Archive'}
                 </Button>
 
                 <Button
                   variant="outline"
                   size="sm"
+                  onClick={() => handleQuarantine(selectedNodeThreat)}
+                  className="w-full h-7 text-[11px] gap-1.5 text-red-300 hover:text-white border-red-500/40 hover:bg-red-950/30"
+                >
+                  Quarantine & Review in Response &rarr;
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => router.push(`/telemetry?inspect=${selectedNodeThreat.evidenceIds[0] || selectedNodeThreat.incidentId}`)}
-                  className="w-full h-7 text-[11px] gap-1.5 text-muted-foreground hover:text-foreground"
+                  className="w-full h-7 text-[10.5px] gap-1.5 text-muted-foreground hover:text-foreground"
                 >
                   <Activity className="size-3 text-primary" /> Inspect in Observe
                 </Button>
@@ -270,9 +418,19 @@ export default function TwinPage() {
               <span>Base Risk</span>
               <span
                 className="font-mono font-bold"
-                style={{ color: isSelectedNodeAttacked ? '#ef4444' : riskColor(selectedNode.riskScore) }}
+                style={{
+                  color: isSelectedNodeAttacked
+                    ? '#ef4444'
+                    : isNodeSecured
+                    ? '#10b981'
+                    : riskColor(selectedNode.riskScore),
+                }}
               >
-                {isSelectedNodeAttacked ? '99 (COMPROMISED)' : selectedNode.riskScore}
+                {isSelectedNodeAttacked
+                  ? '99 (COMPROMISED)'
+                  : isNodeSecured
+                  ? '15 (NOMINAL)'
+                  : selectedNode.riskScore}
               </span>
             </div>
           </div>

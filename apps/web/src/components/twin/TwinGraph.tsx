@@ -37,6 +37,8 @@ interface AttackedInfo {
 function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: TwinGraphProps) {
   const selectedNodeId = useUI((s) => s.selectedNodeId);
   const setSelectedNode = useUI((s) => s.setSelectedNode);
+  const blockedIps = useUI((s) => s.blockedIps);
+  const blockedAssetIds = useUI((s) => s.blockedAssetIds);
 
   const { data: detections } = useDetections();
   const { data: incidents } = useIncidents();
@@ -55,6 +57,12 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
         const timeMs = rawTime ? new Date(rawTime).getTime() : 0;
         const isRecent = !timeMs || (now - timeMs) <= RECENT_WINDOW_MS;
         const targetId = det.nodeId || (det as any).primaryAssetId;
+
+        const detIp = (det as any).metadata?.sourceIp || (det as any).sourceIp || (det as any).attackerIp || (det as any).ip;
+        if (targetId && blockedAssetIds.includes(targetId)) continue;
+        if (detIp && blockedIps.includes(detIp)) continue;
+        const rawSum = (det.summary || (det as any).evidenceSummary || '').toLowerCase();
+        if (blockedIps.some((ip: string) => rawSum.includes(ip.toLowerCase()))) continue;
 
         if (targetId && isRecent) {
           const ruleObj = typeof det.rule === 'object' ? det.rule : null;
@@ -89,8 +97,13 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
     if (incidents && Array.isArray(incidents)) {
       for (const inc of incidents) {
         const status = String(inc.status).toUpperCase();
+        const targetId = (inc as any).primaryAffectedAssetId || inc.pathId;
+        const incIp = (inc as any).attackerIp || (inc as any).sourceIp;
+        if (targetId && blockedAssetIds.includes(targetId)) continue;
+        if (incIp && blockedIps.includes(incIp)) continue;
+        if (blockedIps.some((ip: string) => (inc.title || '').includes(ip) || (inc.summary || '').includes(ip))) continue;
+
         if (status === 'ACTIVE' || status === 'INVESTIGATING' || status === 'OPEN') {
-          const targetId = (inc as any).primaryAffectedAssetId || inc.pathId;
           if (targetId) {
             const existing = map.get(targetId);
             if (!existing) {
@@ -121,7 +134,7 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
     }
 
     // 3. Simulated test threat injection (if triggered via UI toggle)
-    if (simulatedAttackNodeId && !map.has(simulatedAttackNodeId)) {
+    if (simulatedAttackNodeId && !blockedAssetIds.includes(simulatedAttackNodeId) && blockedIps.length === 0 && !map.has(simulatedAttackNodeId)) {
       map.set(simulatedAttackNodeId, {
         technique: 'T1110 · Brute Force',
         severity: 'critical',
@@ -131,7 +144,7 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
     }
 
     return map;
-  }, [detections, incidents, simulatedAttackNodeId]);
+  }, [detections, incidents, simulatedAttackNodeId, blockedIps, blockedAssetIds]);
 
   const inPath = useMemo(() => {
     if (!activePath) return null;
@@ -147,9 +160,11 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
     () =>
       twin.nodes.map((n) => {
         const onPath = inPath?.nodes.has(n.id) ?? false;
-        const attackInfo = attackedMap.get(n.id);
-        const isAttacked = !!attackInfo;
-        const dimmed = !!inPath && !onPath && !isAttacked;
+        const isBlocked = blockedAssetIds.includes(n.id) || (blockedIps.length > 0 && (n.id === 'auth-svc' || n.id === 'nexus-target' || n.id === 'api-gateway'));
+        const attackInfo = isBlocked ? undefined : attackedMap.get(n.id);
+        const isAttacked = !isBlocked && !!attackInfo;
+        const isSecured = isBlocked && !isAttacked;
+        const dimmed = !!inPath && !onPath && !isAttacked && !isSecured;
 
         return {
           id: n.id,
@@ -161,13 +176,14 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
             kind: n.kind,
             provider: n.provider,
             exposure: n.exposure,
-            riskScore: isAttacked ? 99 : n.riskScore,
+            riskScore: isAttacked ? 99 : isSecured ? 15 : n.riskScore,
             criticality: n.criticality,
             isCrownJewel: n.isCrownJewel,
             dimmed,
-            onPath: onPath || highlight.has(n.id) || isAttacked,
+            onPath: isSecured ? false : (onPath || highlight.has(n.id) || isAttacked),
             selected: selectedNodeId === n.id,
             isAttacked,
+            isSecured,
             attackTechnique: attackInfo?.technique,
             attackSeverity: attackInfo?.severity,
             attackSummary: attackInfo?.summary,
@@ -175,7 +191,7 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
           } satisfies TwinNodeData,
         };
       }),
-    [twin.nodes, inPath, highlight, selectedNodeId, attackedMap],
+    [twin.nodes, inPath, highlight, selectedNodeId, attackedMap, blockedAssetIds, blockedIps],
   );
 
   const rfEdges: Edge[] = useMemo(
