@@ -212,3 +212,18 @@ PYTHONPATH=apps/api pytest apps/api/tests/unit/
 2. **Cryptographic Audit Hash Chain**: Every response proposal, approval, and execution event is committed to a tamper-evident, SHA-256 hash-chained audit ledger accessible via `/responses/audit`.
 3. **Four-Eyes Authorization**: High-impact containment actions require operator confirmation with blast-radius analysis before firewall changes are committed.
 4. **Zero Shell Execution**: No dynamic command strings or untrusted shell execution are permitted anywhere in the platform.
+
+---
+
+## 9. Project Team & Contributors
+
+This project was engineered and developed by:
+
+| Contributor | Student / Identification ID |
+| :--- | :--- |
+| **Naod Brhane** | CTC-624-26 |
+| **Abenezer Haile** | CTC-017-26 |
+| **Dawit Biset** | CTC-1097-26 |
+| **Abdurahman Muhidin** | CTC-2354-26 |
+| **Yordanos Bisrat** | CTC-1971-26 |
+| **Debi Mesfin Shimelis** | CTC-3655 |
