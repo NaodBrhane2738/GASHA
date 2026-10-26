@@ -1,14 +1,27 @@
 'use client';
 
-import { Suspense, useMemo } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useResponses, useApproveResponse, useProposeResponse } from '@/lib/api/queries';
+import { useResponses, useApproveResponse, useIncidents } from '@/lib/api/queries';
 import { ActionCard } from '@/components/response/ActionCard';
+import { IncidentArchiveView } from '@/components/archive/IncidentArchiveView';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Shield, Lock, CheckCircle2, Radar, Activity, ArrowRight, AlertTriangle, Flame, Database } from 'lucide-react';
+import {
+  Shield,
+  Lock,
+  CheckCircle2,
+  Radar,
+  Activity,
+  ArrowRight,
+  AlertTriangle,
+  Flame,
+  Database,
+  FolderArchive,
+  Folder,
+} from 'lucide-react';
 import { toast } from 'sonner';
 
 function ResponseContent() {
@@ -17,7 +30,10 @@ function ResponseContent() {
   const quarantineIp = searchParams.get('quarantine') || searchParams.get('ip');
 
   const { data, refetch } = useResponses();
+  const { data: incidents } = useIncidents();
   const approve = useApproveResponse();
+
+  const [viewMode, setViewMode] = useState<'containment' | 'archives'>('containment');
 
   const allActions = useMemo(() => {
     const list = [...(data ?? [])];
@@ -59,120 +75,190 @@ function ResponseContent() {
   };
 
   return (
-    <div className="h-[calc(100vh-100px)] overflow-y-auto p-4 space-y-5">
-      {/* Page Title & Context */}
+    <div className="h-[calc(100vh-100px)] overflow-y-auto p-4 space-y-4">
+      {/* Page Title & Controls Strip */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-[14px] font-bold text-foreground flex items-center gap-2">
+          <h1 className="text-[14px] font-bold text-foreground flex items-center gap-2">
             <Lock className="size-4 text-primary" />
             Controlled Response & Active Containment Center
-          </h2>
-          <p className="text-[11.5px] text-muted-foreground">
-            Enforce verified host isolation and adversary IP perimeter quarantine to neutralize live attacks.
+          </h1>
+          <p className="text-[11.5px] text-muted-foreground mt-0.5">
+            Enforce verified host isolation and adversary IP perimeter quarantine, or browse historical date-based incident archives.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* ARCHIVE BUTTON IN RESPOND SECTION */}
+          <Button
+            variant={viewMode === 'archives' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode(viewMode === 'archives' ? 'containment' : 'archives')}
+            className="h-8 gap-1.5 text-[11.5px] border-amber-500/50 text-amber-300 hover:bg-amber-500/15 shadow-sm shadow-amber-500/10 font-bold"
+          >
+            <FolderArchive className="size-3.5 text-amber-400" />
+            <span>{viewMode === 'archives' ? 'Show Active Containment' : 'Incident Archives'}</span>
+            <Badge variant="secondary" className="px-1.5 py-0 text-[9px] font-mono bg-amber-500/20 text-amber-300 font-bold">
+              By Date
+            </Badge>
+          </Button>
+
+          <Link href="/database">
+            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-[11.5px]">
+              <Database className="size-3.5 text-primary" /> Database Ledger
+            </Button>
+          </Link>
+
           <Link href="/twin">
             <Button variant="outline" size="sm" className="h-8 gap-1.5 text-[11.5px]">
               <Radar className="size-3.5 text-primary" /> Digital Twin
             </Button>
           </Link>
-          <Link href="/telemetry">
-            <Button variant="outline" size="sm" className="h-8 gap-1.5 text-[11.5px]">
-              <Activity className="size-3.5 text-primary" /> Observe Feed
-            </Button>
-          </Link>
         </div>
       </div>
 
-      {/* Target Quarantine Inbound Alert Banner (if arriving from Digital Twin / Observe) */}
-      {quarantineIp && (
-        <Card className="border-red-500/50 bg-red-950/20 p-4 shadow-lg animate-in fade-in">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-red-500/50 bg-red-500/20 text-red-400">
-                <Flame className="size-5 animate-pulse text-red-500" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[13px] font-bold text-foreground">
-                    Targeted Adversary Quarantine Requested
-                  </span>
-                  <Badge variant="destructive" className="font-mono text-[10px] uppercase font-bold">
-                    INCOMING QUARANTINE
-                  </Badge>
+      {/* Sub-Tabs: Containment vs Date Archives */}
+      <div className="flex items-center gap-2 border-b border-border pb-2">
+        <Button
+          variant={viewMode === 'containment' ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => setViewMode('containment')}
+          className="h-7 text-[11.5px] gap-1.5"
+        >
+          <Lock className="size-3 text-primary" />
+          <span>Active Containment Orders</span>
+          {proposed.length > 0 && (
+            <Badge variant="destructive" className="px-1 py-0 text-[9px] font-mono font-bold">
+              {proposed.length}
+            </Badge>
+          )}
+        </Button>
+
+        <Button
+          variant={viewMode === 'archives' ? 'default' : 'ghost'}
+          size="sm"
+          onClick={() => setViewMode('archives')}
+          className="h-7 text-[11.5px] gap-1.5 border border-amber-500/30 text-amber-300"
+        >
+          <FolderArchive className="size-3 text-amber-400" />
+          <span>Archives (Folders by Date)</span>
+          <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono bg-amber-500/20 text-amber-300 font-bold">
+            Folders
+          </Badge>
+        </Button>
+      </div>
+
+      {/* VIEW: ARCHIVES OR ACTIVE CONTAINMENT */}
+      {viewMode === 'archives' ? (
+        <IncidentArchiveView incidents={incidents} />
+      ) : (
+        <div className="space-y-4">
+          {/* Target Quarantine Inbound Alert Banner (if arriving from Digital Twin / Observe) */}
+          {quarantineIp && (
+            <Card className="border-red-500/50 bg-red-950/20 p-4 shadow-lg animate-in fade-in">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-red-500/50 bg-red-500/20 text-red-400">
+                    <Flame className="size-5 animate-pulse text-red-500" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[13px] font-bold text-foreground">
+                        Targeted Adversary Quarantine Requested
+                      </span>
+                      <Badge variant="destructive" className="font-mono text-[10px] uppercase font-bold">
+                        INCOMING QUARANTINE
+                      </Badge>
+                    </div>
+                    <p className="text-[11.5px] text-muted-foreground mt-0.5">
+                      Adversary IP <span className="font-mono text-red-400 font-bold">{quarantineIp}</span> was flagged during active security incursion on the Digital Twin. Enforce containment to block all inbound traffic at the perimeter firewall.
+                    </p>
+                  </div>
                 </div>
-                <p className="text-[11.5px] text-muted-foreground mt-0.5">
-                  Adversary IP <span className="font-mono text-red-400 font-bold">{quarantineIp}</span> was flagged during active security incursion on the Digital Twin. Enforce containment to block all inbound traffic at the perimeter firewall.
-                </p>
+
+                {proposed.length > 0 && (
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => handleInstantQuarantine(proposed[0])}
+                    disabled={approve.isPending}
+                    className="h-8 font-bold text-[11.5px] gap-1.5 shrink-0 shadow-md shadow-red-500/30"
+                  >
+                    <Lock className="size-3.5" />
+                    {approve.isPending ? 'Enforcing Perimeter Block…' : 'Enforce Immediate Quarantine'}
+                  </Button>
+                )}
+              </div>
+            </Card>
+          )}
+
+          {/* Awaiting Operator Approval Section */}
+          <div>
+            <div className="mb-2.5 flex items-center justify-between">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <span>Awaiting Approval & Containment</span>
+                <Badge variant="outline" className="font-mono text-[10px] border-amber-500/40 text-amber-400">
+                  {proposed.length} Action{proposed.length !== 1 ? 's' : ''}
+                </Badge>
               </div>
             </div>
 
-            {proposed.length > 0 && (
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={() => handleInstantQuarantine(proposed[0])}
-                disabled={approve.isPending}
-                className="h-8 font-bold text-[11.5px] gap-1.5 shrink-0 shadow-md shadow-red-500/30"
-              >
-                <Lock className="size-3.5" />
-                {approve.isPending ? 'Enforcing Perimeter Block…' : 'Enforce Immediate Quarantine'}
-              </Button>
+            {proposed.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border p-6 text-center text-[12px] text-muted-foreground">
+                No containment actions currently pending approval. All perimeter policies are stable.
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {proposed.map((a) => (
+                  <ActionCard key={a.id} action={a} />
+                ))}
+              </div>
             )}
           </div>
-        </Card>
+
+          {/* Enforced Containment History & Verification */}
+          <div>
+            <div className="mb-2.5 flex items-center justify-between">
+              <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                <CheckCircle2 className="size-3.5 text-emerald-400" />
+                <span>Enforced Containment History & Verified Defense</span>
+                <Badge variant="outline" className="font-mono text-[10px] border-emerald-500/40 text-emerald-400">
+                  {history.length} Enforced
+                </Badge>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setViewMode('archives')}
+                  className="h-6 text-[10.5px] text-amber-300 hover:text-amber-200 hover:bg-amber-500/10 gap-1 px-2"
+                >
+                  <FolderArchive className="size-3 text-amber-400" /> View Incident Archives by Date &rarr;
+                </Button>
+
+                <Link href="/database">
+                  <Button variant="ghost" size="sm" className="h-6 text-[10.5px] text-primary gap-1 px-2 hover:bg-primary/10">
+                    <Database className="size-3" /> Database Ledger &rarr;
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            {history.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border p-6 text-center text-[12px] text-muted-foreground">
+                No previous containment history recorded in this session.
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                {history.map((a) => (
+                  <ActionCard key={a.id} action={a} />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       )}
-
-      {/* Awaiting Operator Approval Section */}
-      <div>
-        <div className="mb-2.5 flex items-center justify-between">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-            <span>Awaiting Approval & Containment</span>
-            <Badge variant="outline" className="font-mono text-[10px] border-amber-500/40 text-amber-400">
-              {proposed.length} Action{proposed.length !== 1 ? 's' : ''}
-            </Badge>
-          </div>
-        </div>
-
-        {proposed.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-border p-6 text-center text-[12px] text-muted-foreground">
-            No containment actions currently pending approval. All perimeter policies are stable.
-          </div>
-        ) : (
-          <div className="space-y-2.5">
-            {proposed.map((a) => (
-              <ActionCard key={a.id} action={a} />
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Enforced Containment History & Verification ("See After That") */}
-      <div>
-        <div className="mb-2.5 flex items-center justify-between">
-          <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-            <CheckCircle2 className="size-3.5 text-emerald-400" />
-            <span>Enforced Containment History & Verified Defense</span>
-            <Badge variant="outline" className="font-mono text-[10px] border-emerald-500/40 text-emerald-400">
-              {history.length} Enforced
-            </Badge>
-          </div>
-        </div>
-
-        {history.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-border p-6 text-center text-[12px] text-muted-foreground">
-            No previous containment history recorded in this session.
-          </div>
-        ) : (
-          <div className="space-y-2.5">
-            {history.map((a) => (
-              <ActionCard key={a.id} action={a} />
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
