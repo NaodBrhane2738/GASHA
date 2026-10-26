@@ -1,26 +1,36 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { loginUser } from '@/lib/api/client';
 
 export default function Home() {
-  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('gasha_token') : null;
-    if (token) {
-      router.replace('/twin');
-    } else {
-      router.replace('/login');
-    }
-  }, [router]);
+    let cancelled = false;
+
+    const enterDashboard = async () => {
+      const result = await loginUser('analyst01', 'agis');
+      if (cancelled) return;
+      if (result.success) {
+        window.location.replace('/twin');
+      } else {
+        setError(result.error || 'Could not start the GASHA dashboard.');
+      }
+    };
+
+    void enterDashboard();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background text-muted-foreground text-[13px]">
-      <div className="flex items-center gap-2">
-        <span className="size-3 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-        <span>Initializing Security Operations…</span>
+    <main className="flex min-h-screen items-center justify-center bg-background text-muted-foreground text-[13px]">
+      <div className="flex flex-col items-center gap-3">
+        <span className="size-3 border-2 border-primary border-t-transparent animate-spin rounded-full" />
+        <span>{error || 'Opening GASHA dashboard…'}</span>
       </div>
-    </div>
+    </main>
   );
 }
