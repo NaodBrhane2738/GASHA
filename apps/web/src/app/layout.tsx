@@ -3,7 +3,7 @@ import './globals.css';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
-  title: 'Gasha — AEGIS Security Operations',
+  title: 'Gasha — GASHA Security Operations',
   description: 'Digital twin, attack path intelligence, and closed-loop defense.',
 };
 
