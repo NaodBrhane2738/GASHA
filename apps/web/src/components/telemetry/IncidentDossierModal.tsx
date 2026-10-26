@@ -70,7 +70,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
   const isHigh = dossier.severity === 'high';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm sm:p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 p-4 backdrop-blur-sm sm:p-6">
       <div
         className="relative flex h-[90vh] w-full max-w-4xl flex-col rounded-xl border border-border bg-card shadow-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
@@ -82,7 +82,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
               className={cn(
                 'flex size-10 shrink-0 items-center justify-center rounded-lg border',
                 isCritical
-                  ? 'border-red-500/50 bg-red-500/15 text-red-500 shadow-[0_0_12px_rgba(239,68,68,0.3)]'
+                  ? 'border-red-500/50 bg-red-500/15 text-red-500'
                   : isHigh
                   ? 'border-orange-500/50 bg-orange-500/15 text-orange-400'
                   : 'border-yellow-500/50 bg-yellow-500/15 text-yellow-400',

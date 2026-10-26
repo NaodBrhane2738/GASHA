@@ -204,18 +204,13 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
 
         let stroke = 'hsl(var(--border))';
         let strokeWidth = 1.2;
-        let animated = false;
-        let className = '';
 
         if (isAttackEdge) {
           stroke = '#ef4444';
-          strokeWidth = 3;
-          animated = true;
-          className = 'threat-edge-active';
+          strokeWidth = 2;
         } else if (onPath) {
           stroke = 'hsl(var(--critical))';
-          strokeWidth = 2.5;
-          animated = true;
+          strokeWidth = 2;
         } else if (e.exploitable) {
           stroke = 'hsl(var(--high))';
         }
@@ -225,12 +220,11 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
           source: e.source,
           target: e.target,
           type: 'smoothstep',
-          animated,
-          className,
+          animated: false,
           style: {
             stroke,
             strokeWidth,
-            opacity: inPath && !onPath && !isAttackEdge ? 0.12 : 1,
+            opacity: inPath && !onPath && !isAttackEdge ? 0.2 : 1,
           },
         };
       }),

@@ -373,7 +373,7 @@ export default function TwinPage() {
                   size="sm"
                   onClick={() => handleExecuteBlock(selectedNodeThreat)}
                   disabled={approveResponse.isPending}
-                  className="w-full h-8 text-[11.5px] font-bold gap-1.5 shadow-md shadow-red-500/25"
+                  className="w-full h-8 text-[11.5px] font-bold gap-1.5 shadow-sm"
                 >
                   <Lock className="size-3.5" />
                   {approveResponse.isPending ? 'Enforcing Block…' : 'Execute Block & Move to Archive'}

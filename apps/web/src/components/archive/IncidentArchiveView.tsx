@@ -526,7 +526,7 @@ export function IncidentArchiveView({
 
                     {/* EXPANDABLE FULL FORENSIC DESCRIPTION (Shown when touched / clicked) */}
                     {isSelected && (
-                      <div className="mt-3.5 pt-3.5 border-t border-border space-y-3 animate-in fade-in">
+                      <div className="mt-3.5 pt-3.5 border-t border-border space-y-3">
                         <div className="rounded-lg border border-primary/40 bg-primary/5 p-3.5 space-y-2">
                           <div className="text-[11.5px] font-bold text-foreground flex items-center gap-1.5">
                             <Info className="size-3.5 text-primary" />

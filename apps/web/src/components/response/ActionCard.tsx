@@ -13,7 +13,7 @@ import { toast } from 'sonner';
 const STATE_STYLE: Record<string, string> = {
   proposed: 'bg-secondary text-muted-foreground border-border',
   approved: 'bg-primary/15 text-primary border-primary/30',
-  executing: 'bg-primary/15 text-primary border-primary/30 animate-pulse',
+  executing: 'bg-primary/15 text-primary border-primary/30',
   done: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   failed: 'bg-red-500/15 text-red-400 border-red-500/30',
   rejected: 'bg-secondary text-muted-foreground border-border',

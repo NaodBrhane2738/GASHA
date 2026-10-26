@@ -46,8 +46,8 @@ export default function LoginPage() {
       <Card className="relative z-10 w-full max-w-[420px] border-border bg-card/90 p-8 shadow-2xl backdrop-blur-xl">
         {/* Header Branding */}
         <div className="mb-6 flex flex-col items-center text-center">
-          <div className="mb-3 flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary border border-primary/30 shadow-[0_0_20px_rgba(6,182,212,0.25)]">
-            <Shield className="size-6 text-primary animate-pulse" />
+          <div className="mb-3 flex size-12 items-center justify-center rounded-xl bg-primary/15 text-primary border border-primary/30 ">
+            <Shield className="size-6 text-primary" />
           </div>
           <div className="flex items-center gap-2 mb-1">
             <h1 className="text-[17px] font-bold tracking-tight text-foreground">GASHA AEGIS</h1>
@@ -112,7 +112,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={loading}
-            className="w-full h-10 mt-2 font-medium text-[13px] shadow-md shadow-primary/20 transition-all hover:shadow-primary/30"
+            className="w-full h-10 mt-2 font-medium text-[13px] shadow-sm"
           >
             {loading ? (
               <span className="flex items-center gap-2">

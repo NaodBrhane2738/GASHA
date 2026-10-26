@@ -37,34 +37,23 @@ export function TwinNode({ data }: NodeProps) {
   return (
     <div
       className={cn(
-        'group relative w-[230px] rounded-lg border bg-card p-3 shadow-sm transition-all',
+        'group relative w-[230px] rounded-lg border bg-card p-3 shadow-sm transition-colors',
         isAttacked
-          ? 'threat-node-active bg-gradient-to-b from-red-950/40 via-card to-card ring-2 ring-red-500/70'
+          ? 'border-red-500/70 bg-red-950/20'
           : isSecured
-          ? 'border-emerald-500/50 bg-emerald-950/10 ring-1 ring-emerald-500/30'
+          ? 'border-emerald-500/50 bg-emerald-950/10'
           : d.onPath
-          ? 'border-[hsl(var(--critical))] ring-2 ring-[hsl(var(--critical))]/40'
+          ? 'border-[hsl(var(--critical))]'
           : 'border-border',
         d.dimmed && !isAttacked && !isSecured && 'opacity-20',
-        d.selected && !isAttacked && 'ring-2 ring-primary',
+        d.selected && !isAttacked && 'ring-1 ring-primary',
       )}
     >
-      {/* Outer Radar Waves & Glow ONLY when actively under attack */}
+      {/* Static Threat or Secured Pill Badge */}
       {isAttacked && (
-        <>
-          <span className="pointer-events-none absolute -inset-2.5 rounded-xl border border-red-500/70 bg-red-500/10 threat-radar-wave" />
-          <span className="pointer-events-none absolute -inset-1 rounded-xl bg-red-500/20 blur-sm animate-pulse" />
-        </>
-      )}
-
-      {/* Floating Threat or Secured Pill Badge */}
-      {isAttacked && (
-        <div className="mb-2 flex items-center justify-between rounded bg-red-500/20 border border-red-500/50 px-2 py-0.5 text-[10px] font-semibold text-red-400">
+        <div className="mb-2 flex items-center justify-between rounded bg-red-500/10 border border-red-500/30 px-2 py-0.5 text-[10px] font-semibold text-red-400">
           <div className="flex items-center gap-1.5">
-            <span className="relative flex size-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-              <span className="relative inline-flex size-2 rounded-full bg-red-500" />
-            </span>
+            <span className="size-2 rounded-full bg-red-500" />
             <span className="tracking-wide text-red-300 font-bold">UNDER ATTACK</span>
           </div>
           <span className="font-mono text-[9px] uppercase tracking-wider text-red-300">
@@ -74,7 +63,7 @@ export function TwinNode({ data }: NodeProps) {
       )}
 
       {isSecured && (
-        <div className="mb-2 flex items-center justify-between rounded bg-emerald-500/15 border border-emerald-500/40 px-2 py-0.5 text-[9.5px] font-semibold text-emerald-400">
+        <div className="mb-2 flex items-center justify-between rounded bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[9.5px] font-semibold text-emerald-400">
           <div className="flex items-center gap-1.5 font-mono">
             <ShieldCheck className="size-3 text-emerald-400" />
             <span>PROTECTED & NOMINAL</span>
@@ -91,7 +80,7 @@ export function TwinNode({ data }: NodeProps) {
           className={cn(
             'flex size-7 shrink-0 items-center justify-center rounded-md transition-colors',
             isAttacked
-              ? 'bg-red-500/20 text-red-400 shadow-[0_0_8px_rgba(239,68,68,0.5)]'
+              ? 'bg-red-500/15 text-red-400'
               : isSecured
               ? 'bg-emerald-500/15 text-emerald-400'
               : 'bg-secondary text-muted-foreground',

@@ -205,7 +205,7 @@ function ResponseContent() {
         <div className="space-y-4">
           {/* Target Quarantine Inbound Alert Banner (if arriving from Digital Twin / Observe) */}
           {quarantineIp && !blockedIps.includes(quarantineIp) && (
-            <Card className="border-red-500/50 bg-red-950/20 p-4 shadow-lg animate-in fade-in">
+            <Card className="border-red-500/40 bg-red-950/20 p-4 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-3">
                   <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-red-500/50 bg-red-500/20 text-red-400">
@@ -231,7 +231,7 @@ function ResponseContent() {
                   size="sm"
                   onClick={() => handleInstantQuarantine(proposed[0] || { id: `resp-${Date.now()}`, target: quarantineIp })}
                   disabled={approve.isPending}
-                  className="h-8 font-bold text-[11.5px] gap-1.5 shrink-0 shadow-md shadow-red-500/30"
+                  className="h-8 font-bold text-[11.5px] gap-1.5 shrink-0 shadow-sm"
                 >
                   <Lock className="size-3.5" />
                   {approve.isPending ? 'Enforcing Perimeter Block…' : 'Execute Block & Move to Archive'}
