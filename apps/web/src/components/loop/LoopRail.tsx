@@ -11,6 +11,7 @@ import {
   BookOpen,
   Gauge,
   Zap,
+  Database,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePaths, useDetections, useIncidents, useResponses, useTwin, useRisk } from '@/lib/api/queries';
@@ -24,6 +25,7 @@ const STAGES = [
   { key: 'incidents', label: 'Reconstruct', href: '/incidents', icon: BookOpen, metricKey: 'incs' },
   { key: 'risk', label: 'Measure', href: '/risk', icon: Gauge, metricKey: 'risk' },
   { key: 'response', label: 'Respond', href: '/response', icon: Zap, metricKey: 'acts' },
+  { key: 'database', label: 'Database', href: '/database', icon: Database, metricKey: 'enforced' },
 ] as const;
 
 export function LoopRail() {
@@ -53,6 +55,10 @@ export function LoopRail() {
       const s = String(r.state ?? (r as any).status ?? '').toLowerCase();
       return s === 'proposed';
     }).length ?? 0,
+    enforced: resps?.filter((r) => {
+      const s = String(r.state ?? (r as any).status ?? '').toLowerCase();
+      return s === 'done' || s === 'succeeded' || s === 'completed';
+    }).length ?? 0,
   };
 
   return (
@@ -69,17 +75,19 @@ export function LoopRail() {
               className={cn(
                 'group flex items-center justify-center gap-2 rounded-md py-1.5 px-2.5 text-[12px] transition-all text-center border',
                 active
-                  ? 'bg-primary/15 text-primary border-primary/40 font-semibold shadow-sm shadow-primary/15'
-                  : 'text-muted-foreground hover:bg-secondary/70 hover:text-foreground border-transparent',
+                  ? 'bg-white/15 text-white border-white/50 font-semibold shadow-sm shadow-white/10 hover:bg-white/20 hover:text-white hover:border-white/70'
+                  : 'text-muted-foreground hover:bg-white/10 hover:text-white hover:border-white/30 border-transparent',
               )}
             >
-              <Icon className="size-3.5 shrink-0" />
+              <Icon className={cn('size-3.5 shrink-0 transition-colors', active ? 'text-white' : 'group-hover:text-white')} />
               <span className="truncate">{s.label}</span>
               {metric > 0 && (
                 <span
                   className={cn(
-                    'rounded px-1.5 py-0.2 text-[10px] font-mono shrink-0',
-                    active ? 'bg-primary/25 text-primary font-bold' : 'bg-secondary text-muted-foreground',
+                    'rounded px-1.5 py-0.2 text-[10px] font-mono shrink-0 transition-colors',
+                    active
+                      ? 'bg-white/25 text-white font-bold border border-white/25'
+                      : 'bg-secondary text-muted-foreground group-hover:bg-white/15 group-hover:text-white',
                   )}
                 >
                   {metric}
