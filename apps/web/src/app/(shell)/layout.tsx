@@ -42,7 +42,7 @@ export default function ShellLayout({ children }: { children: React.ReactNode })
           </div>
           <div>
             <div className="text-[13px] font-semibold leading-none flex items-center gap-1.5">
-              <span>Gasha AEGIS</span>
+              <span>Gasha</span>
               <Badge variant="outline" className="text-[9.5px] font-mono border-primary/30 text-primary py-0 px-1">
                 CSOC
               </Badge>
