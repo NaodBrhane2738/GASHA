@@ -250,26 +250,26 @@ export default function TwinPage() {
   return (
     <div className="relative h-[calc(100vh-100px)]">
       {/* Floating Status Pill Header */}
-      <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-lg border border-border bg-card/90 backdrop-blur px-3 py-1.5 shadow-md">
+      <div className="absolute left-4 top-4 z-10 flex items-center gap-2 rounded-lg border border-border bg-card/90 backdrop-blur px-3 py-1.5 shadow-sm">
         {activeThreats.length > 0 ? (
           <div className="flex items-center gap-2">
-            <ShieldAlert className="size-4 text-red-400" />
-            <span className="text-[12px] font-bold text-red-300">
+            <ShieldAlert className="size-4 text-foreground" />
+            <span className="text-[12px] font-bold text-foreground">
               {activeThreats.length} Active Security Incursion{activeThreats.length > 1 ? 's' : ''} Detected
             </span>
-            <Badge variant="destructive" className="font-mono text-[9px] uppercase font-bold">
+            <Badge variant="outline" className="font-mono text-[9px] uppercase font-bold border-border text-foreground">
               {activeThreats[0].nodeId}
             </Badge>
           </div>
         ) : (
           <div className="flex items-center gap-2">
-            <ShieldCheck className="size-4 text-emerald-400" />
+            <ShieldCheck className="size-4 text-primary" />
             <span className="text-[12px] font-semibold text-foreground">
               {blockedIps.length > 0 ? 'All Systems Nominal · Active Perimeter Defense Enforced' : 'Digital Twin · All Systems Nominal'}
             </span>
             {blockedIps.length > 0 && (
               <Link href="/response?view=archives">
-                <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 hover:bg-emerald-950/30 font-mono text-[9px] cursor-pointer ml-1">
+                <Badge variant="outline" className="border-border text-foreground hover:bg-secondary font-mono text-[9px] cursor-pointer ml-1">
                   {blockedIps.length} Threat{blockedIps.length > 1 ? 's' : ''} Contained in Archive &rarr;
                 </Badge>
               </Link>
@@ -293,7 +293,7 @@ export default function TwinPage() {
               <span className="text-[13.5px] font-bold text-foreground">{selectedNode.label}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Badge variant={isSelectedNodeAttacked ? 'destructive' : isNodeSecured ? 'outline' : 'outline'} className={`font-mono text-[10px] ${isNodeSecured ? 'border-emerald-500/40 text-emerald-400' : ''}`}>
+              <Badge variant="outline" className="font-mono text-[10px] border-border text-foreground">
                 {selectedNode.kind}
               </Badge>
               <button
@@ -308,18 +308,18 @@ export default function TwinPage() {
 
           {/* SECURED & NOMINAL INSPECTION STATE */}
           {isNodeSecured && (
-            <div className="mb-3 space-y-2.5 rounded-lg border border-emerald-500/50 bg-emerald-950/20 p-3 shadow-sm">
+            <div className="mb-3 space-y-2.5 rounded-lg border border-border bg-secondary/30 p-3 shadow-sm">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-400">
-                  <ShieldCheck className="size-4 text-emerald-400" />
+                <div className="flex items-center gap-1.5 text-[11px] font-bold text-primary">
+                  <ShieldCheck className="size-4 text-primary" />
                   <span>ALL SYSTEMS NOMINAL & PROTECTED</span>
                 </div>
-                <Badge variant="outline" className="border-emerald-500/50 text-emerald-300 font-mono text-[9px] uppercase font-bold">
+                <Badge variant="outline" className="border-border text-foreground font-mono text-[9px] uppercase font-bold">
                   CONTAINED
                 </Badge>
               </div>
 
-              <p className="text-[11.5px] text-emerald-200/90 leading-relaxed">
+              <p className="text-[11.5px] text-muted-foreground leading-relaxed">
                 Adversary threat was successfully executed and blocked at the perimeter firewall. Node risk dropped to nominal baseline (15). Record moved to Archive.
               </p>
 
@@ -328,9 +328,9 @@ export default function TwinPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => router.push('/response?view=archives')}
-                  className="w-full h-8 text-[11px] font-semibold gap-1.5 border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/40 hover:text-white"
+                  className="w-full h-8 text-[11px] font-semibold gap-1.5 border-border text-foreground hover:bg-secondary"
                 >
-                  <Database className="size-3 text-emerald-400" /> View Incident in Archive &rarr;
+                  <Database className="size-3 text-primary" /> View Incident in Archive &rarr;
                 </Button>
               </div>
             </div>
@@ -338,38 +338,38 @@ export default function TwinPage() {
 
           {/* ACTIVE SECURITY INCURSION & FORENSIC EXPLANATION */}
           {isSelectedNodeAttacked && selectedNodeThreat && (
-            <div className="mb-3 space-y-2 rounded-lg border border-red-500/60 bg-red-950/30 p-3">
+            <div className="mb-3 space-y-2 rounded-lg border border-border bg-secondary/30 p-3 shadow-sm">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-[11px] font-bold text-red-400">
-                  <AlertTriangle className="size-3.5 text-red-400" />
+                <div className="flex items-center gap-1.5 text-[11px] font-bold text-foreground">
+                  <AlertTriangle className="size-3.5 text-foreground" />
                   ACTIVE THREAT DETECTED
                 </div>
-                <Badge variant="destructive" className="font-mono text-[9.5px] uppercase tracking-wider font-bold">
+                <Badge variant="outline" className="font-mono text-[9.5px] uppercase tracking-wider font-bold border-border text-foreground">
                   {selectedNodeThreat.cveId}
                 </Badge>
               </div>
 
               {/* Attacker IP Indicator */}
-              <div className="flex items-center justify-between rounded bg-red-900/30 px-2 py-1 text-[11px] font-mono border border-red-500/30">
-                <span className="text-red-300">Adversary IP:</span>
-                <span className="font-bold text-red-200">{selectedNodeThreat.attackerIp}</span>
+              <div className="flex items-center justify-between rounded bg-secondary px-2 py-1 text-[11px] font-mono border border-border">
+                <span className="text-muted-foreground">Adversary IP:</span>
+                <span className="font-bold text-foreground">{selectedNodeThreat.attackerIp}</span>
               </div>
 
               {/* Forensic Explanation Narrative */}
-              <div className="text-[11px] leading-relaxed text-red-200/90">
-                <p className="font-semibold text-white mb-0.5">Forensic Incursion Analysis:</p>
+              <div className="text-[11px] leading-relaxed text-muted-foreground">
+                <p className="font-semibold text-foreground mb-0.5">Forensic Incursion Analysis:</p>
                 <p>{selectedNodeThreat.explanation}</p>
               </div>
 
-              <div className="text-[10.5px] text-red-300/80 font-mono pt-1 border-t border-red-500/20 flex justify-between">
+              <div className="text-[10.5px] text-muted-foreground font-mono pt-1 border-t border-border flex justify-between">
                 <span>Technique: {selectedNodeThreat.technique}</span>
-                <span className="text-red-400 font-bold">RISK: 99 CRITICAL</span>
+                <span className="text-foreground font-bold">RISK: 99 CRITICAL</span>
               </div>
 
               {/* ACTIONS: EXECUTE BLOCK OR QUARANTINE */}
               <div className="pt-2 space-y-2">
                 <Button
-                  variant="destructive"
+                  variant="default"
                   size="sm"
                   onClick={() => handleExecuteBlock(selectedNodeThreat)}
                   disabled={approveResponse.isPending}
@@ -383,7 +383,7 @@ export default function TwinPage() {
                   variant="outline"
                   size="sm"
                   onClick={() => handleQuarantine(selectedNodeThreat)}
-                  className="w-full h-7 text-[11px] gap-1.5 text-red-300 hover:text-white border-red-500/40 hover:bg-red-950/30"
+                  className="w-full h-7 text-[11px] gap-1.5 text-foreground hover:bg-secondary border-border"
                 >
                   Quarantine & Review in Response &rarr;
                 </Button>

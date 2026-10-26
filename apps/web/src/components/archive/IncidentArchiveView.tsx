@@ -382,7 +382,7 @@ export function IncidentArchiveView({
                       
 
                       {hasCritical && (
-                        <Badge variant="destructive" className="font-mono text-[9px] px-1.5 py-0.5">
+                        <Badge variant="outline" className="font-mono text-[9px] px-1.5 py-0.5 border-border text-foreground">
                           {folder.criticalIncidents.length} CRITICAL
                         </Badge>
                       )}
@@ -458,7 +458,7 @@ export function IncidentArchiveView({
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2 flex-wrap">
                         <Badge
-                          variant={isCritical ? 'destructive' : 'outline'}
+                          variant="outline"
                           className="font-mono text-[9.5px] uppercase font-bold tracking-wider"
                         >
                           {inc.severity}
@@ -478,7 +478,7 @@ export function IncidentArchiveView({
                           variant="outline"
                           className={
                             String(inc.status).toLowerCase() === 'contained' || String(inc.status).toLowerCase() === 'resolved'
-                              ? 'border-emerald-500/50 text-emerald-400 font-mono text-[9px]'
+                              ? 'border-border text-foreground font-mono text-[9px]'
                               : 'border-border text-muted-foreground font-mono text-[9px]'
                           }
                         >
@@ -546,7 +546,7 @@ export function IncidentArchiveView({
                           </div>
                           <div>
                             <span className="text-muted-foreground">Risk Contained:</span>{' '}
-                            <strong className="text-emerald-400">{inc.riskAfter ?? 15}</strong>
+                            <strong className="text-primary">{inc.riskAfter ?? 15}</strong>
                           </div>
                           <div>
                             <span className="text-muted-foreground">Confidence:</span>{' '}
@@ -573,7 +573,7 @@ export function IncidentArchiveView({
                           </Link>
 
                           <Link href="/database">
-                            <Button variant="outline" size="sm" className="h-7 text-[11px] gap-1 px-2.5 border-emerald-500/40 text-emerald-400">
+                            <Button variant="outline" size="sm" className="h-7 text-[11px] gap-1 px-2.5 border-border text-foreground">
                               Database Containment &rarr;
                             </Button>
                           </Link>

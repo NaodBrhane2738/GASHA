@@ -32,43 +32,43 @@ export function TwinNode({ data }: NodeProps) {
   const isAttacked = !!d.isAttacked;
   const isSecured = !!d.isSecured && !isAttacked;
   const effectiveRisk = isAttacked ? 99 : isSecured ? 15 : d.riskScore;
-  const rc = isAttacked ? '#ef4444' : isSecured ? '#10b981' : riskColor(effectiveRisk);
+  const rc = isAttacked ? 'hsl(var(--critical))' : isSecured ? 'hsl(var(--primary))' : riskColor(effectiveRisk);
 
   return (
     <div
       className={cn(
         'group relative w-[230px] rounded-lg border bg-card p-3 shadow-sm transition-colors',
         isAttacked
-          ? 'border-red-500/70 bg-red-950/20'
+          ? 'border-border bg-card'
           : isSecured
-          ? 'border-emerald-500/50 bg-emerald-950/10'
+          ? 'border-border bg-card'
           : d.onPath
-          ? 'border-[hsl(var(--critical))]'
+          ? 'border-primary'
           : 'border-border',
         d.dimmed && !isAttacked && !isSecured && 'opacity-20',
-        d.selected && !isAttacked && 'ring-1 ring-primary',
+        d.selected && 'ring-1 ring-primary',
       )}
     >
       {/* Static Threat or Secured Pill Badge */}
       {isAttacked && (
-        <div className="mb-2 flex items-center justify-between rounded bg-red-500/10 border border-red-500/30 px-2 py-0.5 text-[10px] font-semibold text-red-400">
+        <div className="mb-2 flex items-center justify-between rounded bg-secondary border border-border px-2 py-0.5 text-[10px] font-semibold text-foreground">
           <div className="flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-red-500" />
-            <span className="tracking-wide text-red-300 font-bold">UNDER ATTACK</span>
+            <span className="size-2 rounded-full bg-primary" />
+            <span className="tracking-wide text-foreground font-bold">UNDER ATTACK</span>
           </div>
-          <span className="font-mono text-[9px] uppercase tracking-wider text-red-300">
+          <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
             {d.attackTechnique || 'INCURSION'}
           </span>
         </div>
       )}
 
       {isSecured && (
-        <div className="mb-2 flex items-center justify-between rounded bg-emerald-500/10 border border-emerald-500/30 px-2 py-0.5 text-[9.5px] font-semibold text-emerald-400">
+        <div className="mb-2 flex items-center justify-between rounded bg-secondary border border-border px-2 py-0.5 text-[9.5px] font-semibold text-foreground">
           <div className="flex items-center gap-1.5 font-mono">
-            <ShieldCheck className="size-3 text-emerald-400" />
+            <ShieldCheck className="size-3 text-primary" />
             <span>PROTECTED & NOMINAL</span>
           </div>
-          <span className="font-mono text-[9px] text-emerald-300">CONTAINED</span>
+          <span className="font-mono text-[9px] text-muted-foreground">CONTAINED</span>
         </div>
       )}
 
@@ -80,22 +80,22 @@ export function TwinNode({ data }: NodeProps) {
           className={cn(
             'flex size-7 shrink-0 items-center justify-center rounded-md transition-colors',
             isAttacked
-              ? 'bg-red-500/15 text-red-400'
+              ? 'bg-secondary text-foreground'
               : isSecured
-              ? 'bg-emerald-500/15 text-emerald-400'
+              ? 'bg-secondary text-primary'
               : 'bg-secondary text-muted-foreground',
           )}
         >
           {isAttacked ? (
-            <ShieldAlert className="size-3.5 text-red-400" />
+            <ShieldAlert className="size-3.5 text-foreground" />
           ) : isSecured ? (
-            <ShieldCheck className="size-3.5 text-emerald-400" />
+            <ShieldCheck className="size-3.5 text-primary" />
           ) : (
             <Icon className="size-3.5" />
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <div className={cn('truncate text-[12.5px] font-medium', isAttacked && 'text-red-200 font-semibold')}>
+          <div className="truncate text-[12.5px] font-medium text-foreground">
             {d.label}
           </div>
           <div className="truncate text-[10.5px] uppercase tracking-wide text-muted-foreground">
@@ -111,18 +111,10 @@ export function TwinNode({ data }: NodeProps) {
 
       <div className="mt-2.5">
         <div className="mb-1 flex items-center justify-between text-[10px] text-muted-foreground">
-          <span className={cn(isAttacked && 'font-semibold text-red-400 flex items-center gap-1')}>
-            {isAttacked ? (
-              <>
-                <ShieldAlert className="size-3 text-red-400" /> Threat Surge
-              </>
-            ) : isSecured ? (
-              <span className="text-emerald-400 font-mono">Secured Risk</span>
-            ) : (
-              'Risk'
-            )}
+          <span className="font-mono text-muted-foreground flex items-center gap-1">
+            {isAttacked ? 'Threat Level' : isSecured ? 'Secured Risk' : 'Risk'}
           </span>
-          <span className="font-mono font-bold" style={{ color: rc }}>
+          <span className="font-mono font-bold text-foreground">
             {effectiveRisk}
           </span>
         </div>
@@ -135,18 +127,18 @@ export function TwinNode({ data }: NodeProps) {
       </div>
 
       {isAttacked ? (
-        <div className="mt-2 flex items-center gap-1 text-[10px] font-medium text-red-400">
-          <ShieldAlert className="size-3 shrink-0 text-red-400" />
+        <div className="mt-2 flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+          <ShieldAlert className="size-3 shrink-0 text-foreground" />
           <span className="truncate">{d.attackSummary || 'Active telemetry indicates target incursion'}</span>
         </div>
       ) : isSecured ? (
-        <div className="mt-2 flex items-center gap-1 text-[10px] text-emerald-400/90 font-mono">
-          <ShieldCheck className="size-3 shrink-0 text-emerald-400" />
+        <div className="mt-2 flex items-center gap-1 text-[10px] text-muted-foreground font-mono">
+          <ShieldCheck className="size-3 shrink-0 text-primary" />
           <span>Threat blocked · Zero active incursions</span>
         </div>
       ) : (
         d.exposure === 'public' && (
-          <div className="mt-2 flex items-center gap-1 text-[10px] text-[hsl(var(--high))]">
+          <div className="mt-2 flex items-center gap-1 text-[10px] text-muted-foreground">
             <ShieldAlert className="size-3" /> Public exposure
           </div>
         )
