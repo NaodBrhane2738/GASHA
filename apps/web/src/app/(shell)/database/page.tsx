@@ -39,7 +39,8 @@ import {
   Filter,
   Check,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from 'sonner';
+
 import { IncidentArchiveView } from '@/components/archive/IncidentArchiveView';
 
 type DatabaseTab = 'all' | 'ips' | 'assets' | 'sessions' | 'incidents' | 'hashchain' | 'archives';
@@ -259,7 +260,7 @@ export default function DatabasePage() {
         <Card className="p-3 border-border bg-card/80">
           <div className="flex items-center justify-between text-muted-foreground text-[11px]">
             <span>Isolated Assets</span>
-            <Server className="size-3.5 text-amber-400" />
+            <Server className="size-3.5 text-muted-foreground" />
           </div>
           <div className="mt-1 text-[20px] font-mono font-bold text-foreground">
             {isolatedAssets.length}
@@ -332,7 +333,7 @@ export default function DatabasePage() {
             onClick={() => setActiveTab('assets')}
             className="h-7 text-[11.5px] px-2.5 gap-1.5"
           >
-            <Server className="size-3 text-amber-400" />
+            <Server className="size-3 text-muted-foreground" />
             <span>Isolated Assets</span>
             <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono">
               {isolatedAssets.length}
@@ -562,7 +563,7 @@ export default function DatabasePage() {
                               isIp
                                 ? 'border-red-500/40 text-red-400 bg-red-500/10 font-mono text-[9.5px]'
                                 : isAsset
-                                ? 'border-amber-500/40 text-amber-400 bg-amber-500/10 font-mono text-[9.5px]'
+                                ? 'border-border text-muted-foreground bg-secondary font-mono text-[9.5px]'
                                 : 'border-blue-500/40 text-blue-400 bg-blue-500/10 font-mono text-[9.5px]'
                             }
                           >
@@ -578,8 +579,7 @@ export default function DatabasePage() {
                         </td>
                         <td className="py-2.5 px-3">
                           <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-400 text-[11px]">
-                            <CheckCircle2 className="size-3.5 text-emerald-400" />
-                            VERIFIED ENFORCED
+                            <CheckCircle2 className="size-3 text-emerald-400" /> Verified
                           </span>
                         </td>
                         <td className="py-2.5 px-3 font-mono font-semibold text-emerald-400">
@@ -632,7 +632,7 @@ export default function DatabasePage() {
                   <div className="flex items-center gap-2.5">
                     <ShieldCheck className="size-5 text-emerald-400" />
                     <div>
-                      <div className="font-bold text-emerald-300">Target State: VERIFIED & ENFORCED</div>
+                      <div className="font-bold text-emerald-300">Target State: Verified & Secured</div>
                       <div className="text-[11px] text-emerald-200/80">
                         {selectedCase.executionMessage || `Successfully enforced perimeter containment for ${selectedCase.target || (selectedCase as any).targetIdentifier}`}
                       </div>

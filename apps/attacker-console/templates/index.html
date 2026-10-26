@@ -603,7 +603,7 @@
         const data = await res.json();
         (data.logs || []).forEach(l => {
           const detail = l.isBlocked 
-            ? `🛑 403 BLOCKED BY GASHA! Target quarantined attacker IP.`
+            ? `403 BLOCKED BY GASHA! Target quarantined attacker IP.`
             : `Neutralized pattern: [${l.detectedPattern}]. Target returned safe handled response.`;
           logTerminal('SSRF_PROBE', `${l.action} -> ${detail}`, l.status, l.latencyMs);
         });
@@ -625,7 +625,7 @@
         const data = await res.json();
         (data.logs || []).forEach(l => {
           const detail = l.isBlocked 
-            ? `🛑 QUARANTINED! Inbound IP blocked by GASHA Active Defense.`
+            ? `QUARANTINED! Inbound IP blocked by GASHA Active Defense.`
             : `Attempt ${l.step}/5: 401 Unauthorized for user "${l.user}"`;
           logTerminal('BRUTE_FORCE', detail, l.status, l.latencyMs);
         });
@@ -647,7 +647,7 @@
         const data = await res.json();
         (data.logs || []).forEach(l => {
           const detail = l.isBlocked 
-            ? `🛑 BLOCKED BY GASHA CSOC Policy.`
+            ? `BLOCKED BY GASHA CSOC Policy.`
             : `Probe [${l.payload}] detected as [${l.detectedPattern}]. Neutralized.`;
           logTerminal('SQL_INJECTION', detail, l.status, l.latencyMs);
         });
@@ -687,7 +687,7 @@
         });
         const data = await res.json();
         const detail = data.isBlocked 
-          ? `🛑 403 ACCESS DENIED! Target denied unauthorized crown jewel access.`
+          ? `403 ACCESS DENIED! Target denied unauthorized crown jewel access.`
           : `HTTP ${data.status} response`;
         logTerminal('CROWN_JEWEL', detail, data.status, data.latencyMs);
         pollTargetRadar();
@@ -708,7 +708,7 @@
 
         if (data.isQuarantined) {
           radar.className = "target-radar-badge quarantined";
-          radarText.innerHTML = `⚠️ QUARANTINED BY GASHA CSOC (IP ${ip} BLOCKED)`;
+          radarText.innerHTML = `QUARANTINED BY GASHA CSOC (IP ${ip} BLOCKED)`;
         } else {
           radar.className = "target-radar-badge unrestricted";
           radarText.innerHTML = `STATUS: UNRESTRICTED (Target Vulnerable)`;

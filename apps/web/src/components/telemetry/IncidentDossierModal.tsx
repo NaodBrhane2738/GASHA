@@ -338,7 +338,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
                 }
               }}
             >
-              <Button variant="outline" size="sm" className="h-8 gap-1.5 text-[11.5px] border-amber-500/30 text-amber-400 hover:text-amber-300 hover:border-amber-500/50">
+              <Button variant="outline" size="sm" className="h-8 gap-1.5 text-[11.5px] border-border text-foreground hover:bg-secondary">
                 <Route className="size-3.5" /> View Attack Paths
               </Button>
             </Link>

@@ -289,15 +289,15 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
               <ArrowLeft className="size-3" /> Back to Date Folders
             </Button>
           ) : (
-            <div className="flex size-7 items-center justify-center rounded-md bg-amber-500/15 text-amber-400 border border-amber-500/30">
+            <div className="flex size-7 items-center justify-center rounded-md bg-secondary text-muted-foreground border border-border">
               <FolderArchive className="size-4" />
             </div>
           )}
 
           <div>
             <div className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
-              <span>{activeFolderDate ? `📁 Archive Folder: ${currentFolder?.label}` : 'Incident Archives (Grouped by Date)'}</span>
-              <Badge variant="outline" className="font-mono text-[9px] border-amber-500/40 text-amber-400">
+              <span>{activeFolderDate ? `Archive Folder: ${currentFolder?.label}` : 'Incident Archives (Grouped by Date)'}</span>
+              <Badge variant="outline" className="font-mono text-[9px] border-border text-muted-foreground">
                 {activeFolderDate ? `${folderCriticalIncidents.length} Critical Cases` : `${dateFolders.length} Date Folders`}
               </Badge>
             </div>
@@ -342,27 +342,25 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
                   }}
                   className="group relative cursor-pointer transition-all duration-200 transform hover:-translate-y-1"
                 >
-                  {/* Folder Tab on Top */}
-                  <div className="w-24 h-3 rounded-t-md bg-amber-500/30 border-t border-x border-amber-500/50 ml-3 transition-colors group-hover:bg-amber-500/40" />
+                  
 
                   {/* Folder Body Container */}
-                  <Card className="p-4 border-amber-500/40 bg-gradient-to-b from-card to-secondary/30 shadow-md group-hover:shadow-amber-500/10 group-hover:border-amber-500/70 transition-all rounded-t-none">
+                  <Card className="p-4 border-border hover:border-primary/40 bg-card hover:bg-secondary/20 transition-all rounded-lg">
                     <div className="flex items-start justify-between mb-3">
-                      <div className="flex size-10 items-center justify-center rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 group-hover:scale-105 transition-transform">
+                      <div className="flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground border border-border transition-colors">
                         <Folder className="size-5 group-hover:hidden" />
-                        <FolderOpen className="size-5 hidden group-hover:block text-amber-300" />
+                        <FolderOpen className="size-5 hidden group-hover:block text-foreground" />
                       </div>
 
                       {hasCritical && (
-                        <Badge variant="destructive" className="font-mono text-[9px] gap-1 px-1.5 py-0.5 animate-pulse">
-                          <Flame className="size-2.5" />
+                        <Badge variant="destructive" className="font-mono text-[9px] px-1.5 py-0.5">
                           {folder.criticalIncidents.length} CRITICAL
                         </Badge>
                       )}
                     </div>
 
                     {/* Date Title */}
-                    <div className="text-[13px] font-bold text-foreground group-hover:text-amber-300 transition-colors">
+                    <div className="text-[13px] font-bold text-foreground group-hover:text-foreground transition-colors">
                       {folder.label}
                     </div>
 
@@ -377,7 +375,7 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
                         {folder.totalCount} Total Incidents
                       </span>
 
-                      <span className="text-[10.5px] font-semibold text-amber-400 flex items-center gap-1 group-hover:underline">
+                      <span className="text-[10.5px] font-semibold text-muted-foreground group-hover:text-foreground flex items-center gap-1">
                         Open Folder <ChevronRight className="size-3" />
                       </span>
                     </div>
@@ -394,7 +392,7 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
         <div className="space-y-3">
           <div className="flex items-center justify-between text-[11.5px] text-muted-foreground">
             <div className="flex items-center gap-1.5 font-medium">
-              <FolderOpen className="size-4 text-amber-400" />
+              <FolderOpen className="size-4 text-muted-foreground" />
               <span>Showing Critical Incidents in <strong>{currentFolder?.label}</strong>:</span>
             </div>
             <span className="text-[11px] font-mono text-muted-foreground">
@@ -452,7 +450,7 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
                           className={
                             String(inc.status).toLowerCase() === 'contained' || String(inc.status).toLowerCase() === 'resolved'
                               ? 'border-emerald-500/50 text-emerald-400 font-mono text-[9px]'
-                              : 'border-amber-500/50 text-amber-400 font-mono text-[9px]'
+                              : 'border-border text-muted-foreground font-mono text-[9px]'
                           }
                         >
                           {String(inc.status).toUpperCase()}

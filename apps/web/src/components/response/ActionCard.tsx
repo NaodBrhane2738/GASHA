@@ -10,10 +10,10 @@ import { useApproveResponse } from '@/lib/api/queries';
 import { toast } from 'sonner';
 
 const STATE_STYLE: Record<string, string> = {
-  proposed: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+  proposed: 'bg-secondary text-muted-foreground border-border',
   approved: 'bg-primary/15 text-primary border-primary/30',
   executing: 'bg-primary/15 text-primary border-primary/30 animate-pulse',
-  done: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+  done: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   failed: 'bg-red-500/15 text-red-400 border-red-500/30',
   rejected: 'bg-secondary text-muted-foreground border-border',
 };
@@ -65,7 +65,7 @@ export function ActionCard({ action }: { action: any }) {
               {target}
             </span>
             <Badge variant="outline" className={`ml-1 text-[10px] uppercase font-mono font-bold ${STATE_STYLE[state] || STATE_STYLE.proposed}`}>
-              {state === 'done' ? 'ENFORCED' : state}
+              {state === 'done' ? 'Contained' : state}
             </Badge>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-[11.5px] text-muted-foreground">

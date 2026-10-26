@@ -17,7 +17,7 @@ import {
   Activity,
   ArrowRight,
   AlertTriangle,
-  Flame,
+  ShieldAlert,
   Database,
   FolderArchive,
   Folder,
@@ -94,11 +94,11 @@ function ResponseContent() {
             variant={viewMode === 'archives' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setViewMode(viewMode === 'archives' ? 'containment' : 'archives')}
-            className="h-8 gap-1.5 text-[11.5px] border-amber-500/50 text-amber-300 hover:bg-amber-500/15 shadow-sm shadow-amber-500/10 font-bold"
+            className="h-8 gap-1.5 text-[11.5px] border-border text-foreground hover:bg-secondary font-medium"
           >
-            <FolderArchive className="size-3.5 text-amber-400" />
+            <FolderArchive className="size-3.5 text-muted-foreground" />
             <span>{viewMode === 'archives' ? 'Show Active Containment' : 'Incident Archives'}</span>
-            <Badge variant="secondary" className="px-1.5 py-0 text-[9px] font-mono bg-amber-500/20 text-amber-300 font-bold">
+            <Badge variant="secondary" className="px-1.5 py-0 text-[9px] font-mono">
               By Date
             </Badge>
           </Button>
@@ -138,13 +138,10 @@ function ResponseContent() {
           variant={viewMode === 'archives' ? 'default' : 'ghost'}
           size="sm"
           onClick={() => setViewMode('archives')}
-          className="h-7 text-[11.5px] gap-1.5 border border-amber-500/30 text-amber-300"
+          className="h-7 text-[11.5px] gap-1.5 text-muted-foreground hover:text-foreground"
         >
-          <FolderArchive className="size-3 text-amber-400" />
+          <FolderArchive className="size-3" />
           <span>Archives (Folders by Date)</span>
-          <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono bg-amber-500/20 text-amber-300 font-bold">
-            Folders
-          </Badge>
         </Button>
       </div>
 
@@ -159,7 +156,7 @@ function ResponseContent() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-3">
                   <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-red-500/50 bg-red-500/20 text-red-400">
-                    <Flame className="size-5 animate-pulse text-red-500" />
+                    <ShieldAlert className="size-5 text-red-400" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
@@ -197,7 +194,7 @@ function ResponseContent() {
             <div className="mb-2.5 flex items-center justify-between">
               <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                 <span>Awaiting Approval & Containment</span>
-                <Badge variant="outline" className="font-mono text-[10px] border-amber-500/40 text-amber-400">
+                <Badge variant="outline" className="font-mono text-[10px] border-border text-muted-foreground">
                   {proposed.length} Action{proposed.length !== 1 ? 's' : ''}
                 </Badge>
               </div>
@@ -222,9 +219,7 @@ function ResponseContent() {
               <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                 <CheckCircle2 className="size-3.5 text-emerald-400" />
                 <span>Enforced Containment History & Verified Defense</span>
-                <Badge variant="outline" className="font-mono text-[10px] border-emerald-500/40 text-emerald-400">
-                  {history.length} Enforced
-                </Badge>
+                
               </div>
 
               <div className="flex items-center gap-2">
@@ -232,9 +227,9 @@ function ResponseContent() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setViewMode('archives')}
-                  className="h-6 text-[10.5px] text-amber-300 hover:text-amber-200 hover:bg-amber-500/10 gap-1 px-2"
+                  className="h-6 text-[10.5px] text-muted-foreground hover:text-foreground hover:bg-secondary gap-1 px-2"
                 >
-                  <FolderArchive className="size-3 text-amber-400" /> View Incident Archives by Date &rarr;
+                  <FolderArchive className="size-3" /> View Incident Archives by Date &rarr;
                 </Button>
 
                 <Link href="/database">

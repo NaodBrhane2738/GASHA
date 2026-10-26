@@ -34,11 +34,11 @@ export default function IncidentsPage() {
             variant={viewMode === 'archives' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setViewMode(viewMode === 'archives' ? 'live' : 'archives')}
-            className="h-8 gap-1.5 text-[11.5px] border-amber-500/50 text-amber-300 hover:bg-amber-500/15 shadow-sm shadow-amber-500/10"
+            className="h-8 gap-1.5 text-[11.5px] border-border text-foreground hover:bg-secondary font-medium"
           >
-            <FolderArchive className="size-3.5 text-amber-400" />
+            <FolderArchive className="size-3.5 text-muted-foreground" />
             <span>{viewMode === 'archives' ? 'Show Active Incursions' : 'Incident Archives'}</span>
-            <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono bg-amber-500/20 text-amber-300">
+            <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono">
               By Date
             </Badge>
           </Button>

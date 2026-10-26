@@ -25,7 +25,7 @@ const STAGES = [
   { key: 'incidents', label: 'Reconstruct', href: '/incidents', icon: BookOpen, metricKey: 'incs' },
   { key: 'risk', label: 'Measure', href: '/risk', icon: Gauge, metricKey: 'risk' },
   { key: 'response', label: 'Respond', href: '/response', icon: Zap, metricKey: 'acts' },
-  { key: 'database', label: 'Database', href: '/database', icon: Database, metricKey: 'enforced' },
+  { key: 'database', label: 'Database', href: '/database', icon: Database, metricKey: '' },
 ] as const;
 
 export function LoopRail() {
