@@ -6,13 +6,11 @@ export class ApiError extends Error {
 }
 
 export function getBaseApiUrl(): string {
+  if (typeof window !== 'undefined') {
+    return '/api/v1';
+  }
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
-  }
-  if (typeof window !== 'undefined') {
-    const protocol = window.location.protocol;
-    const hostname = window.location.hostname;
-    return `${protocol}//${hostname}:4000/api/v1`;
   }
   return 'http://127.0.0.1:4000/api/v1';
 }
