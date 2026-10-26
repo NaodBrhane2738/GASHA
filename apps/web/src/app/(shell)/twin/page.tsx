@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTwin, usePaths, useDetections, useIncidents, useResponses, useProposeResponse } from '@/lib/api/queries';
 import { TwinGraph } from '@/components/twin/TwinGraph';
-import { GraphToolbar } from '@/components/twin/GraphToolbar';
 import { useUI } from '@/store/ui';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -176,11 +175,7 @@ export default function TwinPage() {
         simulatedAttackNodeId={simulatedThreat ? 'auth-svc' : null}
       />
 
-      <GraphToolbar
-        eventCount={8}
-        simulatedThreat={simulatedThreat}
-        onToggleSimulatedThreat={() => setSimulatedThreat((prev) => !prev)}
-      />
+
 
       {/* Selected Node Inspector Side Card */}
       {selectedNode && (

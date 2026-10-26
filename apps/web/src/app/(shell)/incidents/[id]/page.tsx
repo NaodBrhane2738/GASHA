@@ -5,7 +5,6 @@ import { useIncident, useStory, usePaths, useTwin } from '@/lib/api/queries';
 import { StoryTimeline } from '@/components/story/StoryTimeline';
 import { KillChainStrip } from '@/components/story/KillChainStrip';
 import { TwinGraph } from '@/components/twin/TwinGraph';
-import { GraphToolbar } from '@/components/twin/GraphToolbar';
 import { useUI } from '@/store/ui';
 import { useReplay } from '@/hooks/useReplay';
 import { RiskDelta } from '@/components/risk/RiskDelta';
@@ -39,7 +38,6 @@ export default function IncidentDetailPage({ params }: { params: Promise<{ id: s
             highlightNodeIds={highlightNodeIds}
           />
         )}
-        <GraphToolbar eventCount={events.length} />
       </div>
 
       <div className="flex flex-col overflow-hidden">
