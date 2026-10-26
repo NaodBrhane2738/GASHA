@@ -1,7 +1,7 @@
 'use client';
 
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import { Crown, ShieldAlert, AlertTriangle, Zap, Flame, ShieldCheck } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { NodeKind, Exposure } from '@/types/domain';
 import { KIND_ICON, riskColor } from '@/lib/graph/nodeMeta';
@@ -79,7 +79,7 @@ export function TwinNode({ data }: NodeProps) {
           )}
         >
           {isAttacked ? (
-            <Zap className="size-3.5 text-red-500 animate-bounce" />
+            <ShieldAlert className="size-3.5 text-red-400" />
           ) : (
             <Icon className="size-3.5" />
           )}
@@ -92,9 +92,7 @@ export function TwinNode({ data }: NodeProps) {
             {d.provider} · {d.exposure}
           </div>
         </div>
-        {d.isCrownJewel && (
-          <Crown className="size-3.5 shrink-0 text-[hsl(var(--medium))]" />
-        )}
+        {d.isCrownJewel && (<span className="text-[9px] font-mono px-1 rounded bg-secondary text-muted-foreground uppercase">Core</span>)}
       </div>
 
       <div className="mt-2.5">
@@ -102,7 +100,7 @@ export function TwinNode({ data }: NodeProps) {
           <span className={cn(isAttacked && 'font-semibold text-red-400 flex items-center gap-1')}>
             {isAttacked ? (
               <>
-                <Flame className="size-3 text-red-500 animate-pulse" /> Threat Surge
+                <ShieldAlert className="size-3 text-red-400" /> Threat Surge
               </>
             ) : (
               'Risk'

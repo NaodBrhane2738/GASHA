@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, RotateCcw, Filter, Zap } from 'lucide-react';
+import { Play, Pause, RotateCcw, Filter } from 'lucide-react';
 import { useReplay } from '@/hooks/useReplay';
 import { useUI } from '@/store/ui';
 import { cn } from '@/lib/utils';
@@ -58,7 +58,6 @@ export function GraphToolbar({
             className={cn('h-7 gap-1.5 text-[11px] font-medium transition-all', simulatedThreat && 'animate-pulse shadow-[0_0_12px_rgba(239,68,68,0.5)]')}
             onClick={onToggleSimulatedThreat}
           >
-            <Zap className="size-3.5" />
             {simulatedThreat ? 'Threat Active (Click to Reset)' : 'Simulate Threat Action'}
           </Button>
         </>

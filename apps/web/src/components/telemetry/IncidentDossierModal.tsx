@@ -9,12 +9,10 @@ import {
   X,
   ShieldAlert,
   AlertTriangle,
-  Flame,
-  Bug,
-  Copy,
+      Copy,
   Check,
   ExternalLink,
-  Server,
+  Radar,
   Crosshair,
   Lock,
   Terminal,
@@ -90,7 +88,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
                   : 'border-yellow-500/50 bg-yellow-500/15 text-yellow-400',
               )}
             >
-              <Flame className="size-5 animate-pulse" />
+              <ShieldAlert className="size-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -142,7 +140,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
                 : 'border-transparent text-muted-foreground hover:text-foreground',
             )}
           >
-            <Bug className="size-3.5" /> CVE Vulnerability & CVSS Dossier
+            <ShieldAlert className="size-3.5" /> CVE Vulnerability & CVSS Dossier
           </button>
           <button
             onClick={() => setActiveTab('telemetry')}
@@ -327,7 +325,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
               }}
             >
               <Button variant="outline" size="sm" className="h-8 gap-1.5 text-[11.5px]">
-                <Server className="size-3.5 text-primary" /> Locate on Digital Twin
+                <Radar className="size-3.5 text-primary" /> Locate on Digital Twin
               </Button>
             </Link>
             <Link

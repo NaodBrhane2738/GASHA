@@ -247,7 +247,7 @@ export default function DatabasePage() {
         <Card className="p-3 border-border bg-card/80">
           <div className="flex items-center justify-between text-muted-foreground text-[11px]">
             <span>Quarantined IPs</span>
-            <Lock className="size-3.5 text-red-400" />
+            
           </div>
           <div className="mt-1 text-[20px] font-mono font-bold text-red-400">
             {quarantinedIps.length}
@@ -260,7 +260,7 @@ export default function DatabasePage() {
         <Card className="p-3 border-border bg-card/80">
           <div className="flex items-center justify-between text-muted-foreground text-[11px]">
             <span>Isolated Assets</span>
-            <Server className="size-3.5 text-muted-foreground" />
+            
           </div>
           <div className="mt-1 text-[20px] font-mono font-bold text-foreground">
             {isolatedAssets.length}
@@ -273,7 +273,7 @@ export default function DatabasePage() {
         <Card className="p-3 border-border bg-card/80">
           <div className="flex items-center justify-between text-muted-foreground text-[11px]">
             <span>Resolved Incidents</span>
-            <FileCheck className="size-3.5 text-blue-400" />
+            
           </div>
           <div className="mt-1 text-[20px] font-mono font-bold text-foreground">
             {resolvedIncidents.length}
@@ -286,7 +286,7 @@ export default function DatabasePage() {
         <Card className="p-3 border-border bg-card/80 col-span-2 sm:col-span-1">
           <div className="flex items-center justify-between text-muted-foreground text-[11px]">
             <span>Ledger Integrity</span>
-            <Hash className="size-3.5 text-emerald-400" />
+            
           </div>
           <div className="mt-1 flex items-center gap-1.5 text-[15px] font-bold text-emerald-400 font-mono">
             <Check className="size-4 text-emerald-400 shrink-0" />
@@ -320,7 +320,6 @@ export default function DatabasePage() {
             onClick={() => setActiveTab('ips')}
             className="h-7 text-[11.5px] px-2.5 gap-1.5"
           >
-            <Lock className="size-3 text-red-400" />
             <span>Quarantined IPs</span>
             <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono">
               {quarantinedIps.length}
@@ -333,7 +332,6 @@ export default function DatabasePage() {
             onClick={() => setActiveTab('assets')}
             className="h-7 text-[11.5px] px-2.5 gap-1.5"
           >
-            <Server className="size-3 text-muted-foreground" />
             <span>Isolated Assets</span>
             <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono">
               {isolatedAssets.length}
@@ -346,7 +344,6 @@ export default function DatabasePage() {
             onClick={() => setActiveTab('sessions')}
             className="h-7 text-[11.5px] px-2.5 gap-1.5"
           >
-            <Key className="size-3 text-blue-400" />
             <span>Revoked Sessions</span>
             <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono">
               {revokedSessions.length}
@@ -359,7 +356,6 @@ export default function DatabasePage() {
             onClick={() => setActiveTab('incidents')}
             className="h-7 text-[11.5px] px-2.5 gap-1.5"
           >
-            <FileCheck className="size-3 text-emerald-400" />
             <span>Resolved Incidents</span>
             <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono">
               {resolvedIncidents.length}
@@ -372,7 +368,6 @@ export default function DatabasePage() {
             onClick={() => setActiveTab('hashchain')}
             className="h-7 text-[11.5px] px-2.5 gap-1.5"
           >
-            <Hash className="size-3 text-primary" />
             <span>Audit Hash Chain</span>
             <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono">
               {auditTrail?.length ?? 0}

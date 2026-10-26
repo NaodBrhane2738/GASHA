@@ -19,8 +19,6 @@ import {
   AlertTriangle,
   ShieldAlert,
   Database,
-  FolderArchive,
-  Folder,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -96,7 +94,7 @@ function ResponseContent() {
             onClick={() => setViewMode(viewMode === 'archives' ? 'containment' : 'archives')}
             className="h-8 gap-1.5 text-[11.5px] border-border text-foreground hover:bg-secondary font-medium"
           >
-            <FolderArchive className="size-3.5 text-muted-foreground" />
+            
             <span>{viewMode === 'archives' ? 'Show Active Containment' : 'Incident Archives'}</span>
             <Badge variant="secondary" className="px-1.5 py-0 text-[9px] font-mono">
               By Date
@@ -140,7 +138,7 @@ function ResponseContent() {
           onClick={() => setViewMode('archives')}
           className="h-7 text-[11.5px] gap-1.5 text-muted-foreground hover:text-foreground"
         >
-          <FolderArchive className="size-3" />
+          
           <span>Archives (Folders by Date)</span>
         </Button>
       </div>
@@ -229,7 +227,7 @@ function ResponseContent() {
                   onClick={() => setViewMode('archives')}
                   className="h-6 text-[10.5px] text-muted-foreground hover:text-foreground hover:bg-secondary gap-1 px-2"
                 >
-                  <FolderArchive className="size-3" /> View Incident Archives by Date &rarr;
+                   View Incident Archives by Date &rarr;
                 </Button>
 
                 <Link href="/database">

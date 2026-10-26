@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { SEVERITY_TOKEN } from '@/lib/graph/nodeMeta';
-import { ArrowRight, Activity, FolderArchive, Database, GitMerge } from 'lucide-react';
+import { ArrowRight, Activity, Database, GitMerge } from 'lucide-react';
 import { IncidentArchiveView } from '@/components/archive/IncidentArchiveView';
 
 export default function IncidentsPage() {
@@ -36,7 +36,7 @@ export default function IncidentsPage() {
             onClick={() => setViewMode(viewMode === 'archives' ? 'live' : 'archives')}
             className="h-8 gap-1.5 text-[11.5px] border-border text-foreground hover:bg-secondary font-medium"
           >
-            <FolderArchive className="size-3.5 text-muted-foreground" />
+            
             <span>{viewMode === 'archives' ? 'Show Active Incursions' : 'Incident Archives'}</span>
             <Badge variant="secondary" className="px-1 py-0 text-[9px] font-mono">
               By Date

@@ -10,7 +10,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { riskColor } from '@/lib/graph/nodeMeta';
-import { AlertTriangle, Zap, ShieldAlert, Flame, Lock, Activity, X, ShieldCheck, Database } from 'lucide-react';
+import { AlertTriangle, ShieldAlert, Lock, Activity, X, ShieldCheck, Database } from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface NodeThreatDetail {
@@ -209,7 +209,7 @@ export default function TwinPage() {
             <div className="mb-3 space-y-2 rounded-lg border border-red-500/60 bg-red-950/30 p-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-[11px] font-bold text-red-400">
-                  <Flame className="size-3.5 text-red-500 animate-pulse" />
+                  <AlertTriangle className="size-3.5 text-red-400" />
                   ACTIVE THREAT DETECTED
                 </div>
                 <Badge variant="destructive" className="font-mono text-[9.5px] uppercase tracking-wider font-bold">

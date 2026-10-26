@@ -8,12 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  FolderArchive,
-  Folder,
-  FolderOpen,
   Calendar,
   AlertTriangle,
-  Flame,
   ShieldCheck,
   Search,
   ChevronRight,
@@ -25,8 +21,6 @@ import {
   Database,
   ExternalLink,
   Info,
-  Clock,
-  Server,
   Hash,
 } from 'lucide-react';
 
@@ -288,11 +282,7 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
             >
               <ArrowLeft className="size-3" /> Back to Date Folders
             </Button>
-          ) : (
-            <div className="flex size-7 items-center justify-center rounded-md bg-secondary text-muted-foreground border border-border">
-              <FolderArchive className="size-4" />
-            </div>
-          )}
+          ) : null}
 
           <div>
             <div className="text-[13px] font-bold text-foreground flex items-center gap-1.5">
@@ -347,10 +337,7 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
                   {/* Folder Body Container */}
                   <Card className="p-4 border-border hover:border-primary/40 bg-card hover:bg-secondary/20 transition-all rounded-lg">
                     <div className="flex items-start justify-between mb-3">
-                      <div className="flex size-10 items-center justify-center rounded-lg bg-secondary text-muted-foreground border border-border transition-colors">
-                        <Folder className="size-5 group-hover:hidden" />
-                        <FolderOpen className="size-5 hidden group-hover:block text-foreground" />
-                      </div>
+                      
 
                       {hasCritical && (
                         <Badge variant="destructive" className="font-mono text-[9px] px-1.5 py-0.5">
@@ -392,7 +379,7 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
         <div className="space-y-3">
           <div className="flex items-center justify-between text-[11.5px] text-muted-foreground">
             <div className="flex items-center gap-1.5 font-medium">
-              <FolderOpen className="size-4 text-muted-foreground" />
+              
               <span>Showing Critical Incidents in <strong>{currentFolder?.label}</strong>:</span>
             </div>
             <span className="text-[11px] font-mono text-muted-foreground">
@@ -485,12 +472,12 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
                       )}
                       {inc.primaryAffectedAssetId && (
                         <span className="flex items-center gap-1 text-foreground">
-                          <Server className="size-2.5 text-primary" />
+                          
                           {inc.primaryAffectedAssetId}
                         </span>
                       )}
                       <span className="flex items-center gap-1">
-                        <Clock className="size-2.5" />
+                        
                         {new Date(inc.openedAt || inc.createdAt || '').toLocaleTimeString()}
                       </span>
                     </div>
@@ -533,19 +520,19 @@ export function IncidentArchiveView({ incidents = [], onSelectIncident, classNam
                         <div className="flex flex-wrap items-center justify-end gap-2 pt-1">
                           <Link href={`/incidents/${inc.id}`}>
                             <Button variant="outline" size="sm" className="h-7 text-[11px] gap-1 px-2.5">
-                              <BookOpen className="size-3 text-primary" /> Reconstruct Story &rarr;
+                              Reconstruct Story &rarr;
                             </Button>
                           </Link>
 
                           <Link href={`/telemetry?inspect=${inc.detectionIds?.[0] || inc.id}`}>
                             <Button variant="outline" size="sm" className="h-7 text-[11px] gap-1 px-2.5">
-                              <Activity className="size-3 text-primary" /> Observe Telemetry &rarr;
+                              Observe Telemetry &rarr;
                             </Button>
                           </Link>
 
                           <Link href="/database">
                             <Button variant="outline" size="sm" className="h-7 text-[11px] gap-1 px-2.5 border-emerald-500/40 text-emerald-400">
-                              <Database className="size-3 text-emerald-400" /> Database Containment &rarr;
+                              Database Containment &rarr;
                             </Button>
                           </Link>
                         </div>

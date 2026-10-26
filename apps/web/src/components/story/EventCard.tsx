@@ -3,7 +3,7 @@
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import type { StoryEvent } from '@/types/domain';
-import { Sparkles } from 'lucide-react';
+import {  } from 'lucide-react';
 
 const KIND_LABEL: Record<StoryEvent['kind'], string> = {
   'initial-access': 'Initial Access',
@@ -52,7 +52,7 @@ export function EventCard({
             variant="outline"
             className="ml-auto gap-1 border-dashed text-[10px] text-muted-foreground"
           >
-            <Sparkles className="size-2.5" /> Inferred
+            <span className="size-1.5 rounded-full bg-primary inline-block mr-1" />Inferred
           </Badge>
         )}
       </div>

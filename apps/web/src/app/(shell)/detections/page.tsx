@@ -5,7 +5,7 @@ import { useDetections, useIncidents } from '@/lib/api/queries';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { SEVERITY_TOKEN } from '@/lib/graph/nodeMeta';
-import { ShieldAlert, ArrowRight, Flame } from 'lucide-react';
+import { ShieldAlert, ArrowRight } from 'lucide-react';
 
 export default function DetectionsPage() {
   const router = useRouter();
@@ -54,7 +54,7 @@ export default function DetectionsPage() {
       {activeIncidents.length > 0 && (
         <div className="space-y-2">
           <div className="text-[12px] font-semibold text-foreground flex items-center gap-2">
-            <Flame className="size-3.5 text-red-500 animate-pulse" />
+            <ShieldAlert className="size-3.5 text-red-400" />
             Active Correlated Incidents
             <Badge variant="outline" className="text-[10px] font-mono border-red-500/40 text-red-400">
               {activeIncidents.length} Under Active Attack

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bot, Send, X } from 'lucide-react';
+import { Terminal, Send, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useUI } from '@/store/ui';
@@ -23,14 +23,14 @@ export function AnalystDock() {
         onClick={() => setOpen(true)}
         className="fixed bottom-5 right-5 z-40 h-11 gap-2 rounded-full shadow-lg"
       >
-        <Bot className="size-4" /> AI Analyst
+        <Terminal className="size-4" /> AI Analyst
       </Button>
 
       {open && (
         <div className="fixed bottom-5 right-5 z-50 w-[380px] rounded-lg border border-border bg-card shadow-2xl">
           <div className="flex items-center justify-between border-b border-border px-3 py-2">
             <div className="flex items-center gap-2 text-[12.5px] font-medium">
-              <Bot className="size-4 text-primary" /> AI Analyst
+              <Terminal className="size-4 text-primary" /> AI Analyst
               {selectedIncident && (
                 <span className="font-mono text-[10.5px] text-muted-foreground">
                   ctx: {selectedIncident}

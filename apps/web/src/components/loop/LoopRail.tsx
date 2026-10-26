@@ -10,7 +10,7 @@ import {
   GitMerge,
   BookOpen,
   Gauge,
-  Zap,
+  Shield,
   Database,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -24,7 +24,7 @@ const STAGES = [
   { key: 'incidents', label: 'Correlate', href: '/incidents', icon: GitMerge, metricKey: 'incs' },
   { key: 'incidents', label: 'Reconstruct', href: '/incidents', icon: BookOpen, metricKey: 'incs' },
   { key: 'risk', label: 'Measure', href: '/risk', icon: Gauge, metricKey: 'risk' },
-  { key: 'response', label: 'Respond', href: '/response', icon: Zap, metricKey: 'acts' },
+  { key: 'response', label: 'Respond', href: '/response', icon: Shield, metricKey: 'acts' },
   { key: 'database', label: 'Database', href: '/database', icon: Database, metricKey: '' },
 ] as const;
 

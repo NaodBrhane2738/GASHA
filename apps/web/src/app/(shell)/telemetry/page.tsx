@@ -14,11 +14,9 @@ import {
   ShieldAlert,
   Search,
   Filter,
-  Bug,
   Activity,
   ArrowRight,
-  Flame,
-  Radio,
+    Radio,
   ExternalLink,
 } from 'lucide-react';
 import type { Detection } from '@/types/domain';
@@ -159,7 +157,7 @@ function TelemetryView() {
             onClick={() => setFilterCategory('critical')}
             className={cn('h-7 text-[11px]', filterCategory === 'critical' && 'font-bold')}
           >
-            <Flame className="size-3 mr-1" /> Critical & High
+            Critical & High
           </Button>
           <Button
             variant={filterCategory === 'ssrf' ? 'secondary' : 'ghost'}

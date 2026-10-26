@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import type { ResponseAction } from '@/types/domain';
 import { ApprovalDialog } from './ApprovalDialog';
-import { CheckCircle2, Clock, XCircle, Zap, Lock, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, Clock, XCircle, Lock, ShieldCheck } from 'lucide-react';
 import { useApproveResponse } from '@/lib/api/queries';
 import { toast } from 'sonner';
 
@@ -56,9 +56,7 @@ export function ActionCard({ action }: { action: any }) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-lg border border-border bg-card p-4 transition-all hover:border-primary/40">
         <div className="min-w-0">
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
-            <span className="flex size-6 items-center justify-center rounded bg-secondary text-primary">
-              <Lock className="size-3.5" />
-            </span>
+            
             <span className="font-mono text-[12.5px] font-bold text-foreground uppercase">{kind}</span>
             <span className="text-muted-foreground">&rarr;</span>
             <span className="font-mono text-[12.5px] font-bold text-red-400 bg-red-950/40 px-2 py-0.5 rounded border border-red-500/30">
@@ -70,7 +68,6 @@ export function ActionCard({ action }: { action: any }) {
           </div>
           <div className="flex flex-wrap items-center gap-3 text-[11.5px] text-muted-foreground">
             <span className="flex items-center gap-1 font-mono">
-              <Clock className="size-3" />
               incident {action.incidentId || 'inc-active'}
             </span>
             <span className="text-emerald-400 font-mono font-semibold">
