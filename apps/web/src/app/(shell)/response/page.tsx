@@ -177,7 +177,7 @@ function ResponseContent() {
           <Lock className="size-3 text-primary" />
           <span>Active Containment Orders</span>
           {proposed.length > 0 && (
-            <Badge variant="destructive" className="px-1 py-0 text-[9px] font-mono font-bold">
+            <Badge variant="outline" className="px-1 py-0 text-[9px] font-mono font-bold border-border text-foreground">
               {proposed.length}
             </Badge>
           )}
@@ -205,29 +205,29 @@ function ResponseContent() {
         <div className="space-y-4">
           {/* Target Quarantine Inbound Alert Banner (if arriving from Digital Twin / Observe) */}
           {quarantineIp && !blockedIps.includes(quarantineIp) && (
-            <Card className="border-red-500/40 bg-red-950/20 p-4 shadow-sm">
+            <Card className="border-border bg-card p-4 shadow-sm">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-red-500/50 bg-red-500/20 text-red-400">
-                    <ShieldAlert className="size-5 text-red-400" />
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-secondary text-foreground">
+                    <ShieldAlert className="size-5 text-foreground" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-[13px] font-bold text-foreground">
                         Targeted Adversary Quarantine Requested
                       </span>
-                      <Badge variant="destructive" className="font-mono text-[10px] uppercase font-bold">
+                      <Badge variant="outline" className="font-mono text-[10px] uppercase font-bold border-border text-foreground">
                         INCOMING QUARANTINE
                       </Badge>
                     </div>
                     <p className="text-[11.5px] text-muted-foreground mt-0.5">
-                      Adversary IP <span className="font-mono text-red-400 font-bold">{quarantineIp}</span> was flagged during active security incursion on the Digital Twin. Execute block to drop all inbound traffic at the perimeter firewall, restore the Digital Twin to normal, and move this incident to the Archive.
+                      Adversary IP <span className="font-mono text-foreground font-bold">{quarantineIp}</span> was flagged during active security incursion on the Digital Twin. Execute block to drop all inbound traffic at the perimeter firewall, restore the Digital Twin to normal, and move this incident to the Archive.
                     </p>
                   </div>
                 </div>
 
                 <Button
-                  variant="destructive"
+                  variant="default"
                   size="sm"
                   onClick={() => handleInstantQuarantine(proposed[0] || { id: `resp-${Date.now()}`, target: quarantineIp })}
                   disabled={approve.isPending}
@@ -275,7 +275,7 @@ function ResponseContent() {
           <div>
             <div className="mb-2.5 flex items-center justify-between">
               <div className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
-                <CheckCircle2 className="size-3.5 text-emerald-400" />
+                <CheckCircle2 className="size-3.5 text-primary" />
                 <span>Enforced Containment History & Verified Defense</span>
               </div>
 

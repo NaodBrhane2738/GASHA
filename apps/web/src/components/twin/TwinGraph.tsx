@@ -206,7 +206,7 @@ function Inner({ twin, activePath, highlightNodeIds, simulatedAttackNodeId }: Tw
         let strokeWidth = 1.2;
 
         if (isAttackEdge) {
-          stroke = '#ef4444';
+          stroke = 'hsl(var(--primary))';
           strokeWidth = 2;
         } else if (onPath) {
           stroke = 'hsl(var(--critical))';

@@ -205,9 +205,9 @@ export default function DatabasePage() {
             size="sm"
             onClick={handleManualVerification}
             disabled={isVerifying}
-            className="h-8 gap-1.5 text-[11.5px] border-emerald-500/40 text-emerald-400 hover:bg-emerald-500/10"
+            className="h-8 gap-1.5 text-[11.5px] border-border text-foreground hover:bg-secondary"
           >
-            <ShieldCheck className="size-3.5 text-emerald-400" />
+            <ShieldCheck className="size-3.5 text-primary" />
             {isVerifying ? 'Verifying Hashes…' : 'Verify Ledger Integrity'}
           </Button>
 
@@ -234,12 +234,12 @@ export default function DatabasePage() {
         <Card className="p-3 border-border bg-card/80">
           <div className="flex items-center justify-between text-muted-foreground text-[11px]">
             <span>Total Enforced</span>
-            <CheckCircle2 className="size-3.5 text-emerald-400" />
+            <CheckCircle2 className="size-3.5 text-primary" />
           </div>
           <div className="mt-1 text-[20px] font-mono font-bold text-foreground">
             {enforcedResponses.length}
           </div>
-          <div className="text-[10px] text-emerald-400/90 mt-0.5 font-medium">
+          <div className="text-[10px] text-muted-foreground mt-0.5 font-medium">
             Active Containment Orders
           </div>
         </Card>
@@ -288,8 +288,8 @@ export default function DatabasePage() {
             <span>Ledger Integrity</span>
             
           </div>
-          <div className="mt-1 flex items-center gap-1.5 text-[15px] font-bold text-emerald-400 font-mono">
-            <Check className="size-4 text-emerald-400 shrink-0" />
+          <div className="mt-1 flex items-center gap-1.5 text-[15px] font-bold text-primary font-mono">
+            <Check className="size-4 text-primary shrink-0" />
             <span>{verification?.verified ? 'VERIFIED' : 'ACTIVE'}</span>
           </div>
           <div className="text-[9.5px] font-mono text-muted-foreground truncate mt-0.5" title={verification?.latestHash || ''}>
@@ -393,13 +393,13 @@ export default function DatabasePage() {
         <div className="space-y-3">
           <div className="flex items-center justify-between text-[11.5px] text-muted-foreground bg-secondary/30 rounded-lg p-2.5 border border-border">
             <div className="flex items-center gap-2">
-              <ShieldCheck className="size-4 text-emerald-400" />
+              <ShieldCheck className="size-4 text-primary" />
               <span>
                 Cryptographically linked SHA-256 hash chain. Every state alteration is immutably sealed by its preceding block hash.
               </span>
             </div>
             <div className="font-mono text-[10.5px]">
-              Root: <span className="text-emerald-400">{verification?.latestHash ? `${verification.latestHash.slice(0, 20)}…` : 'Genesis'}</span>
+              Root: <span className="text-primary">{verification?.latestHash ? `${verification.latestHash.slice(0, 20)}…` : 'Genesis'}</span>
             </div>
           </div>
 
@@ -443,7 +443,7 @@ export default function DatabasePage() {
                             variant="outline"
                             className={
                               entry.eventType.includes('SUCCEEDED') || entry.eventType.includes('APPROVED')
-                                ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10'
+                                ? 'border-border text-foreground bg-secondary'
                                 : 'border-border text-muted-foreground'
                             }
                           >
@@ -459,11 +459,11 @@ export default function DatabasePage() {
                         <td className="py-2.5 px-3 text-muted-foreground text-[10px]" title={entry.previousHash}>
                           {entry.previousHash.slice(0, 10)}…{entry.previousHash.slice(-6)}
                         </td>
-                        <td className="py-2.5 px-3 text-emerald-400 text-[10px] font-bold" title={entry.recordHash}>
+                        <td className="py-2.5 px-3 text-foreground text-[10px] font-bold" title={entry.recordHash}>
                           {entry.recordHash.slice(0, 12)}…{entry.recordHash.slice(-8)}
                         </td>
                         <td className="py-2.5 px-3 text-right font-sans">
-                          <span className="inline-flex items-center gap-1 rounded bg-emerald-500/10 px-2 py-0.5 text-[10.5px] font-semibold text-emerald-400">
+                          <span className="inline-flex items-center gap-1 rounded bg-secondary px-2 py-0.5 text-[10.5px] font-semibold text-foreground border border-border">
                             <Check className="size-3" /> Valid
                           </span>
                         </td>
@@ -490,7 +490,7 @@ export default function DatabasePage() {
                     <span className="font-mono text-[11.5px] font-bold text-primary">{inc.id}</span>
                     <span className="text-[13px] font-semibold text-foreground">{inc.title}</span>
                   </div>
-                  <Badge variant="outline" className="border-emerald-500/40 text-emerald-400 font-mono text-[10px] w-fit">
+                  <Badge variant="outline" className="border-border text-primary font-mono text-[10px] w-fit">
                     {String(inc.status).toUpperCase()}
                   </Badge>
                 </div>
@@ -498,7 +498,7 @@ export default function DatabasePage() {
                   <span>Severity: <strong className="text-foreground">{inc.severity}</strong></span>
                   <span>Detections: <strong className="text-foreground">{inc.detectionIds?.length ?? 0}</strong></span>
                   <span>Confidence: <strong className="text-foreground">{((inc.confidence || 0.95) * 100).toFixed(0)}%</strong></span>
-                  <span>Risk Score: <strong className="text-emerald-400 font-mono">{inc.riskAfter ?? 20}</strong> (was {inc.riskBefore ?? 85})</span>
+                  <span>Risk Score: <strong className="text-primary font-mono">{inc.riskAfter ?? 20}</strong> (was {inc.riskBefore ?? 85})</span>
                   <div className="sm:ml-auto flex items-center gap-2">
                     <Link href={`/incidents/${inc.id}`}>
                       <Button variant="ghost" size="sm" className="h-6 text-[11px] text-primary gap-1 px-2">
@@ -573,11 +573,11 @@ export default function DatabasePage() {
                           {c.reason || 'Perimeter active defense response'}
                         </td>
                         <td className="py-2.5 px-3">
-                          <span className="inline-flex items-center gap-1.5 font-semibold text-emerald-400 text-[11px]">
-                            <CheckCircle2 className="size-3 text-emerald-400" /> Verified
+                          <span className="inline-flex items-center gap-1.5 font-semibold text-foreground text-[11px]">
+                            <CheckCircle2 className="size-3 text-primary" /> Verified
                           </span>
                         </td>
-                        <td className="py-2.5 px-3 font-mono font-semibold text-emerald-400">
+                        <td className="py-2.5 px-3 font-mono font-semibold text-primary">
                           -{c.riskReduction ?? 15} pts
                         </td>
                         <td className="py-2.5 px-3 text-muted-foreground font-mono">
@@ -623,17 +623,17 @@ export default function DatabasePage() {
 
               <div className="space-y-3.5 py-2 text-[12px]">
                 {/* Target & Status Banner */}
-                <div className="rounded-lg border border-emerald-500/40 bg-emerald-950/20 p-3 flex items-center justify-between">
+                <div className="rounded-lg border border-border bg-card p-3 flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <ShieldCheck className="size-5 text-emerald-400" />
+                    <ShieldCheck className="size-5 text-primary" />
                     <div>
-                      <div className="font-bold text-emerald-300">Target State: Verified & Secured</div>
-                      <div className="text-[11px] text-emerald-200/80">
+                      <div className="font-bold text-foreground">Target State: Verified & Secured</div>
+                      <div className="text-[11px] text-muted-foreground">
                         {selectedCase.executionMessage || `Successfully enforced perimeter containment for ${selectedCase.target || (selectedCase as any).targetIdentifier}`}
                       </div>
                     </div>
                   </div>
-                  <Badge variant="outline" className="border-emerald-500/50 text-emerald-400 font-mono text-[10px]">
+                  <Badge variant="outline" className="border-border text-primary font-mono text-[10px]">
                     NOMINAL BASELINE
                   </Badge>
                 </div>
@@ -654,7 +654,7 @@ export default function DatabasePage() {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Risk Reduction:</span>{' '}
-                    <strong className="font-mono text-emerald-400">-{selectedCase.riskReduction ?? 15} points</strong>
+                    <strong className="font-mono text-primary">-{selectedCase.riskReduction ?? 15} points</strong>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Approved By:</span>{' '}
@@ -717,7 +717,7 @@ export default function DatabasePage() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-2 text-[14px]">
-                  <Hash className="size-4 text-emerald-400" />
+                  <Hash className="size-4 text-primary" />
                   Audit Block #{selectedAuditEntry.sequenceNumber} Cryptographic Proof
                 </DialogTitle>
                 <DialogDescription className="text-[11.5px]">
@@ -728,7 +728,7 @@ export default function DatabasePage() {
               <div className="space-y-3 py-2 text-[11.5px] font-mono">
                 <div className="space-y-1 bg-secondary/40 p-3 rounded-lg border border-border">
                   <div className="text-[10.5px] text-muted-foreground uppercase">Record SHA-256 Hash:</div>
-                  <div className="font-bold text-emerald-400 break-all">{selectedAuditEntry.recordHash}</div>
+                  <div className="font-bold text-foreground break-all">{selectedAuditEntry.recordHash}</div>
                 </div>
 
                 <div className="space-y-1 bg-secondary/40 p-3 rounded-lg border border-border">
@@ -742,7 +742,7 @@ export default function DatabasePage() {
                   <div>Action: <strong className="text-foreground">{selectedAuditEntry.actionType}</strong></div>
                   <div>Target: <strong className="text-foreground">{selectedAuditEntry.targetIdentifier}</strong></div>
                   <div>Timestamp: <strong className="text-foreground">{selectedAuditEntry.timestamp}</strong></div>
-                  <div>Outcome: <strong className="text-emerald-400 font-bold">{selectedAuditEntry.outcome}</strong></div>
+                  <div>Outcome: <strong className="text-primary font-bold">{selectedAuditEntry.outcome}</strong></div>
                 </div>
               </div>
             </>

@@ -14,8 +14,8 @@ const STATE_STYLE: Record<string, string> = {
   proposed: 'bg-secondary text-muted-foreground border-border',
   approved: 'bg-primary/15 text-primary border-primary/30',
   executing: 'bg-primary/15 text-primary border-primary/30',
-  done: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-  failed: 'bg-red-500/15 text-red-400 border-red-500/30',
+  done: 'bg-secondary text-foreground border-border',
+  failed: 'bg-secondary text-muted-foreground border-border',
   rejected: 'bg-secondary text-muted-foreground border-border',
 };
 
@@ -89,7 +89,7 @@ export function ActionCard({ action, onExecuted }: { action: any; onExecuted?: (
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
             <span className="font-mono text-[12.5px] font-bold text-foreground uppercase">{kind}</span>
             <span className="text-muted-foreground">&rarr;</span>
-            <span className="font-mono text-[12.5px] font-bold text-red-400 bg-red-950/40 px-2 py-0.5 rounded border border-red-500/30">
+            <span className="font-mono text-[12.5px] font-bold text-foreground bg-secondary px-2 py-0.5 rounded border border-border">
               {target}
             </span>
             <Badge variant="outline" className={`ml-1 text-[10px] uppercase font-mono font-bold ${STATE_STYLE[state] || STATE_STYLE.proposed}`}>
@@ -100,7 +100,7 @@ export function ActionCard({ action, onExecuted }: { action: any; onExecuted?: (
             <span className="flex items-center gap-1 font-mono">
               incident {action.incidentId || 'inc-active'}
             </span>
-            <span className="text-emerald-400 font-mono font-semibold">
+            <span className="text-primary font-mono font-semibold">
               −{action.riskReduction ?? 15} risk pts
             </span>
             {action.reason && (
@@ -116,7 +116,7 @@ export function ActionCard({ action, onExecuted }: { action: any; onExecuted?: (
             <>
               <Button
                 size="sm"
-                variant="destructive"
+                variant="default"
                 disabled={approve.isPending}
                 onClick={onQuickApprove}
                 className="h-8 text-[11.5px] font-bold gap-1 shadow-sm"
@@ -129,8 +129,8 @@ export function ActionCard({ action, onExecuted }: { action: any; onExecuted?: (
               </Button>
             </>
           ) : state === 'done' ? (
-            <div className="flex items-center gap-1.5 rounded bg-emerald-500/10 px-2.5 py-1 text-[11px] font-mono text-emerald-400 border border-emerald-500/30">
-              <CheckCircle2 className="size-3.5" />
+            <div className="flex items-center gap-1.5 rounded bg-secondary px-2.5 py-1 text-[11px] font-mono text-foreground border border-border">
+              <CheckCircle2 className="size-3.5 text-primary" />
               <span>ACTIVE PERIMETER DROP · ARCHIVED</span>
             </div>
           ) : state === 'rejected' ? (

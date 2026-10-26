@@ -1,7 +1,9 @@
 'use client';
 
-import { usePaths, useTwin, useResponses } from '@/lib/api/queries';
-import { ShieldCheck, Database, Check } from 'lucide-react';
+import { usePaths, useTwin, useResponses } from '@/lib/api/queries';
+
+import { ShieldCheck, Database, Check } from 'lucide-react';
+
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -66,7 +68,7 @@ export default function PathsPage() {
                   {(active.nodeIds ?? []).length} nodes · {(active.edgeIds ?? []).length} edges
                 </span>
               </div>
-              <Button size="sm" variant="destructive">
+              <Button size="sm" variant="default">
                 Open response options
               </Button>
             </div>

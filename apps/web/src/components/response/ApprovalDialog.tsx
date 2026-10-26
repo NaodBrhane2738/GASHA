@@ -113,7 +113,7 @@ export function ApprovalDialog({
             Reject
           </Button>
           <Button
-            variant="destructive"
+            variant="default"
             disabled={typed !== confirmWord || approve.isPending}
             onClick={onConfirm}
           >

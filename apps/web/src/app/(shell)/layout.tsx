@@ -78,7 +78,7 @@ export default function ShellLayout({ children }: { children: React.ReactNode })
             variant="ghost"
             size="sm"
             onClick={logoutUser}
-            className="h-7 gap-1.5 px-2.5 text-[11.5px] text-muted-foreground hover:text-red-400 hover:bg-red-500/10 transition-colors"
+            className="h-7 gap-1.5 px-2.5 text-[11.5px] text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
           >
             <LogOut className="size-3.5" />
             <span>Sign out</span>

@@ -85,7 +85,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
                   ? 'border-red-500/50 bg-red-500/15 text-red-500'
                   : isHigh
                   ? 'border-orange-500/50 bg-orange-500/15 text-orange-400'
-                  : 'border-yellow-500/50 bg-yellow-500/15 text-yellow-400',
+                  : 'border-border bg-secondary text-foreground',
               )}
             >
               <ShieldAlert className="size-5" />
@@ -94,7 +94,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
               <div className="flex items-center gap-2">
                 <h2 className="text-[15px] font-bold text-foreground">{dossier.title}</h2>
                 <Badge
-                  variant={isCritical ? 'destructive' : 'outline'}
+                  variant="outline"
                   className="font-mono text-[10px] uppercase font-bold tracking-wider"
                 >
                   {dossier.severity} SEVERITY
@@ -235,7 +235,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
                       <span className="font-mono text-[16px] font-extrabold text-red-400">
                         {dossier.cve.id}
                       </span>
-                      <Badge variant="destructive" className="font-mono text-[10px] font-bold">
+                      <Badge variant="outline" className="font-mono text-[10px] font-bold border-border text-foreground">
                         CVSS {dossier.cve.cvssScore} {dossier.cve.cvssSeverity}
                       </Badge>
                     </div>
@@ -269,13 +269,13 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
               {/* Remediation & Hardening Guidance */}
               <Card className="p-5 border-border bg-card">
                 <div className="flex items-center gap-2 text-[13px] font-semibold text-foreground mb-3">
-                  <ShieldCheck className="size-4 text-emerald-400" />
+                  <ShieldCheck className="size-4 text-primary" />
                   <h3>Remediation Guidance & Patch Advisory</h3>
                 </div>
                 <div className="space-y-2.5">
                   {dossier.cve.remediation.map((step, idx) => (
                     <div key={idx} className="flex items-start gap-2.5 text-[12px] text-muted-foreground">
-                      <CheckCircle2 className="size-4 shrink-0 text-emerald-400 mt-0.5" />
+                      <CheckCircle2 className="size-4 shrink-0 text-primary mt-0.5" />
                       <span>{step}</span>
                     </div>
                   ))}
@@ -297,7 +297,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
                   onClick={copyPayload}
                   className="h-7 text-[11px] gap-1.5"
                 >
-                  {copied ? <Check className="size-3 text-emerald-400" /> : <Copy className="size-3" />}
+                  {copied ? <Check className="size-3 text-primary" /> : <Copy className="size-3" />}
                   {copied ? 'Copied' : 'Copy JSON'}
                 </Button>
               </div>
@@ -341,7 +341,7 @@ export function IncidentDossierModal({ dossier, onClose }: Props) {
               </Button>
             </Link>
             <Button
-              variant="destructive"
+              variant="default"
               size="sm"
               onClick={handleQuarantine}
               className="h-8 gap-1.5 text-[11.5px] font-semibold shadow-sm"
