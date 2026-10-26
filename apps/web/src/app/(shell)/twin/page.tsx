@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTwin, usePaths, useDetections, useIncidents, useProposeResponse } from '@/lib/api/queries';
+import { useTwin, usePaths, useDetections, useIncidents, useResponses, useProposeResponse } from '@/lib/api/queries';
 import { TwinGraph } from '@/components/twin/TwinGraph';
 import { GraphToolbar } from '@/components/twin/GraphToolbar';
 import { useUI } from '@/store/ui';
@@ -10,7 +10,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { riskColor } from '@/lib/graph/nodeMeta';
-import { AlertTriangle, Zap, ShieldAlert, Flame, Lock, Activity, X } from 'lucide-react';
+import { AlertTriangle, Zap, ShieldAlert, Flame, Lock, Activity, X, ShieldCheck, Database } from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface NodeThreatDetail {

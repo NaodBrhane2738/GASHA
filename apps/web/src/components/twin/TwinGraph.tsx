@@ -15,7 +15,7 @@ import '@xyflow/react/dist/style.css';
 import { TwinNode, type TwinNodeData } from './TwinNode';
 import { layout } from '@/lib/graph/layout';
 import { useUI } from '@/store/ui';
-import { useDetections, useIncidents } from '@/lib/api/queries';
+import { useDetections, useIncidents, useResponses } from '@/lib/api/queries';
 import type { AttackPath, TwinGraphData } from '@/types/domain';
 
 const nodeTypes = { twinNode: TwinNode };

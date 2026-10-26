@@ -57,7 +57,7 @@ export function LoopRail() {
 
   return (
     <nav className="w-full border-b border-border bg-card/60 backdrop-blur-sm px-4 py-2" aria-label="Security Lifecycle Loop">
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 w-full">
+      <div className="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-9 gap-1.5 w-full">
         {STAGES.map((s, i) => {
           const Icon = s.icon;
           const active = pathname.startsWith(s.href) && (i === 0 || s.key !== 'twin');

@@ -8,7 +8,7 @@ import { ActionCard } from '@/components/response/ActionCard';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Shield, Lock, CheckCircle2, Radar, Activity, ArrowRight, AlertTriangle, Flame } from 'lucide-react';
+import { Shield, Lock, CheckCircle2, Radar, Activity, ArrowRight, AlertTriangle, Flame, Database } from 'lucide-react';
 import { toast } from 'sonner';
 
 function ResponseContent() {

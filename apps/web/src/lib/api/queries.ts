@@ -11,6 +11,8 @@ import type {
   StoryEvent,
   TwinGraphData,
   Vulnerability,
+  AuditEntry,
+  AuditVerification,
 } from '@/types/domain';
 
 export const qk = {
@@ -23,6 +25,8 @@ export const qk = {
   responses: ['responses'] as const,
   risk: ['risk'] as const,
   vulnerabilities: ['vulnerabilities'] as const,
+  auditTrail: ['auditTrail'] as const,
+  auditVerification: ['auditVerification'] as const,
 };
 
 export const useTwin = () =>
@@ -72,6 +76,8 @@ export const useApproveResponse = () => {
       qc.invalidateQueries({ queryKey: qk.twin });
       qc.invalidateQueries({ queryKey: qk.paths });
       qc.invalidateQueries({ queryKey: qk.risk });
+      qc.invalidateQueries({ queryKey: qk.auditTrail });
+      qc.invalidateQueries({ queryKey: qk.auditVerification });
     },
   });
 };
@@ -81,7 +87,11 @@ export const useRejectResponse = () => {
   return useMutation({
     mutationFn: (id: string) =>
       api<ResponseAction>(`/responses/${id}/reject`, { method: 'POST' }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.responses }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: qk.responses });
+      qc.invalidateQueries({ queryKey: qk.auditTrail });
+      qc.invalidateQueries({ queryKey: qk.auditVerification });
+    },
   });
 };
 
@@ -104,6 +114,22 @@ export const useProposeResponse = () => {
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: qk.responses });
+      qc.invalidateQueries({ queryKey: qk.auditTrail });
+      qc.invalidateQueries({ queryKey: qk.auditVerification });
     },
   });
 };
+
+export const useAuditTrail = () =>
+  useQuery({
+    queryKey: qk.auditTrail,
+    queryFn: () => api<AuditEntry[]>('/responses/audit'),
+    refetchInterval: 3000,
+  });
+
+export const useAuditVerification = () =>
+  useQuery({
+    queryKey: qk.auditVerification,
+    queryFn: () => api<AuditVerification>('/responses/audit/verify'),
+    refetchInterval: 5000,
+  });

@@ -1,7 +1,7 @@
 'use client';
 
 import { Handle, Position, type NodeProps } from '@xyflow/react';
-import { Crown, ShieldAlert, AlertTriangle, Zap, Flame } from 'lucide-react';
+import { Crown, ShieldAlert, AlertTriangle, Zap, Flame, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { NodeKind, Exposure } from '@/types/domain';
 import { KIND_ICON, riskColor } from '@/lib/graph/nodeMeta';

@@ -135,6 +135,45 @@ export interface ResponseAction {
   state: 'proposed' | 'approved' | 'executing' | 'done' | 'failed' | 'rejected';
   blastRadius: BlastRadius;
   riskReduction?: number;
+  actionType?: string;
+  targetType?: string;
+  targetIdentifier?: string;
+  status?: string;
+  reason?: string;
+  approvedBy?: string;
+  approvedAt?: string;
+  executedBy?: string;
+  executedAt?: string;
+  executionMessage?: string;
+  verificationStatus?: string;
+  verificationMessage?: string;
+  auditId?: string;
+  environmentId?: string;
+}
+
+export interface AuditEntry {
+  auditId: string;
+  sequenceNumber: number;
+  timestamp: string;
+  eventType: string;
+  actor: string;
+  environmentId: string;
+  incidentId: string;
+  responseId: string;
+  actionType: string;
+  targetIdentifier: string;
+  outcome: string;
+  details?: Record<string, unknown>;
+  previousHash: string;
+  recordHash: string;
+}
+
+export interface AuditVerification {
+  verified: boolean;
+  totalRecords: number;
+  environmentId: string;
+  latestHash?: string;
+  error?: string;
 }
 
 export interface RiskSnapshot {
