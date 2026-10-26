@@ -89,6 +89,14 @@ export interface Incident {
   riskBefore: number;
   riskAfter?: number;
   confidence: number;
+  summary?: string;
+  description?: string;
+  primaryAffectedAssetId?: string;
+  relatedAssetIds?: string[];
+  createdAt?: string;
+  updatedAt?: string;
+  cveId?: string;
+  technique?: string;
 }
 
 export type StoryEventKind =

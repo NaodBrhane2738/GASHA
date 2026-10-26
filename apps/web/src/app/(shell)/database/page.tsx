@@ -39,9 +39,10 @@ import {
   Filter,
   Check,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { toast } from 'sonner';
+import { IncidentArchiveView } from '@/components/archive/IncidentArchiveView';
 
-type DatabaseTab = 'all' | 'ips' | 'assets' | 'sessions' | 'incidents' | 'hashchain';
+type DatabaseTab = 'all' | 'ips' | 'assets' | 'sessions' | 'incidents' | 'hashchain' | 'archives';
 
 export default function DatabasePage() {
   const { data: responses, refetch: refetchResponses } = useResponses();
