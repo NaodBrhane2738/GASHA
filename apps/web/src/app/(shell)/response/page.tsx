@@ -53,8 +53,8 @@ function ResponseContent() {
       await approve.mutateAsync(action.id);
       toast.success(`Successfully enforced perimeter block for IP ${action.target || (action as any).targetIdentifier}`);
       refetch();
-    } catch {
-      toast.error('Execution failed');
+    } catch (err: any) {
+      toast.error(err?.message || 'Execution failed');
     }
   };
 

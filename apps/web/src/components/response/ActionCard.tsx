@@ -35,8 +35,8 @@ export function ActionCard({ action }: { action: any }) {
     try {
       await approve.mutateAsync(action.id);
       toast.success(`Quarantine executed successfully for ${target}`);
-    } catch {
-      toast.error('Execution failed');
+    } catch (err: any) {
+      toast.error(err?.message || 'Execution failed');
     }
   };
 

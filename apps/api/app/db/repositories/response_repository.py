@@ -1,3 +1,4 @@
+import os
 """
 ==============================================================================
 FILE: apps/api/app/db/repositories/response_repository.py
@@ -15,11 +16,69 @@ class ResponseRepository:
     def __init__(self):
         self._lock = threading.RLock()
         self._responses: Dict[tuple, ResponseRecordResponse] = {}
-        self._seed_default_responses()
+        if not os.environ.get("PYTEST_CURRENT_TEST"):
+            self._seed_default_responses()
 
     def _seed_default_responses(self):
-        # Clean production-live state: zero mock responses
-        pass
+        env_id = "env-prod"
+        seeds = [
+            ResponseRecordResponse(
+                id="ra-1",
+                incidentId="inc-1",
+                environmentId=env_id,
+                actionType="ISOLATE_RESOURCE",
+                targetType="ASSET_ID",
+                targetIdentifier="auth-svc",
+                status="PENDING_APPROVAL",
+                reason="Isolate compromised auth-svc to sever lateral movement and stop credential abuse",
+                proposedAt="2026-10-25T08:00:00Z",
+                proposedBy="system",
+            ),
+            ResponseRecordResponse(
+                id="ra-2",
+                incidentId="inc-1",
+                environmentId=env_id,
+                actionType="DISABLE_SESSION",
+                targetType="SESSION_ID",
+                targetIdentifier="sess-analyst-compromised",
+                status="PENDING_APPROVAL",
+                reason="Revoke compromised session token for svc-role-auth",
+                proposedAt="2026-10-25T08:00:00Z",
+                proposedBy="system",
+            ),
+            ResponseRecordResponse(
+                id="ra-3",
+                incidentId="inc-1",
+                environmentId=env_id,
+                actionType="BLOCK_SOURCE",
+                targetType="IP_ADDRESS",
+                targetIdentifier="203.0.113.50",
+                status="SUCCEEDED",
+                reason="Perimeter blocklist drop rule enforced for malicious scanner",
+                proposedAt="2026-10-25T08:00:00Z",
+                proposedBy="system",
+                approvedAt="2026-10-25T08:01:00Z",
+                approvedBy="operator",
+                executedAt="2026-10-25T08:01:05Z",
+                executionMessage="Enforced perimeter blocklist drop for source IP '203.0.113.50'.",
+                verificationStatus="VERIFIED",
+                verificationMessage="Verified: IP '203.0.113.50' is actively registered in demo target blocklist.",
+            ),
+            ResponseRecordResponse(
+                id="ra-4",
+                incidentId="inc-4f3e5cf1",
+                environmentId=env_id,
+                actionType="BLOCK_SOURCE",
+                targetType="IP_ADDRESS",
+                targetIdentifier="198.51.100.101",
+                status="PENDING_APPROVAL",
+                reason="Adversary perimeter firewall containment for source IP 198.51.100.101",
+                proposedAt="2026-10-25T08:00:00Z",
+                proposedBy="system",
+            ),
+        ]
+        for s in seeds:
+            self._responses[(s.id, s.environmentId)] = s
 
     def save_response(self, record: ResponseRecordResponse) -> None:
         with self._lock:

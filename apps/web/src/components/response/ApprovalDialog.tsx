@@ -37,8 +37,8 @@ export function ApprovalDialog({
       toast.success(`Executed: ${action.kind} on ${action.target}`);
       onOpenChange(false);
       setTyped('');
-    } catch {
-      toast.error('Execution failed');
+    } catch (err: any) {
+      toast.error(err?.message || 'Execution failed');
     }
   };
 

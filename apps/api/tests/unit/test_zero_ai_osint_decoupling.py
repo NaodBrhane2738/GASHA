@@ -36,7 +36,15 @@ def test_backend_import_and_startup_requires_no_ai_or_osint():
     app = create_app()
     assert app is not None
 
-    registered_paths = [r.path for r in app.routes if hasattr(r, "path")]
+    registered_paths = []
+    for r in app.routes:
+        if hasattr(r, "path"):
+            registered_paths.append(r.path)
+        elif hasattr(r, "original_router"):
+            prefix = r.include_context.prefix if hasattr(r, "include_context") else ""
+            for sub in r.original_router.routes:
+                if hasattr(sub, "path"):
+                    registered_paths.append(f"{prefix}{sub.path}")
     
     # Assert obsolete AI/OSINT routes are NOT registered
     assert "/api/v1/model/predict" not in registered_paths

@@ -63,8 +63,10 @@ export const useRisk = () =>
 export const useApproveResponse = () => {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) =>
-      api<ResponseAction>(`/responses/${id}/approve`, { method: 'POST' }),
+    mutationFn: async (id: string) => {
+      await api<ResponseAction>(`/responses/${id}/approve`, { method: 'POST' });
+      return api<ResponseAction>(`/responses/${id}/execute`, { method: 'POST' });
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: qk.responses });
       qc.invalidateQueries({ queryKey: qk.twin });

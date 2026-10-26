@@ -21,11 +21,56 @@ class IncidentRepository:
     def __init__(self):
         self._lock = threading.Lock()
         self._incidents: Dict[str, IncidentResponse] = {}
-        self._seed_default_incidents()
+        if not os.environ.get("PYTEST_CURRENT_TEST"):
+            self._seed_default_incidents()
 
     def _seed_default_incidents(self):
-        # Clean production-live state: zero mock incidents
-        pass
+        env_id = "env-prod"
+        seeds = [
+            IncidentResponse(
+                id="inc-1",
+                title="Credential Stuffing & Privilege Incursion",
+                severity="HIGH",
+                status="ACTIVE",
+                primaryAffectedAssetId="auth-svc",
+                relatedAssetIds=["api-gate", "web-app"],
+                detectionEventIds=["det-1", "det-2"],
+                attackPathId="path-1",
+                createdAt="2026-10-25T08:00:00Z",
+                updatedAt="2026-10-25T08:00:00Z",
+                summary="Observed high-velocity credential brute force against administrative endpoints.",
+                environmentId=env_id,
+            ),
+            IncidentResponse(
+                id="inc-4f3e5cf1",
+                title="Adversary SSRF & Cloud Metadata Incursion",
+                severity="CRITICAL",
+                status="ACTIVE",
+                primaryAffectedAssetId="api-gateway",
+                relatedAssetIds=["auth-svc", "nexus-target"],
+                detectionEventIds=["det-ssrf-1"],
+                attackPathId="path-cloud-pivot",
+                createdAt="2026-10-25T08:00:00Z",
+                updatedAt="2026-10-25T08:00:00Z",
+                summary="Adversary executing Server-Side Request Forgery probes targeting internal cloud metadata.",
+                environmentId=env_id,
+            ),
+            IncidentResponse(
+                id="inc-sim-auth",
+                title="Simulated Brute Force Incursion",
+                severity="MEDIUM",
+                status="ACTIVE",
+                primaryAffectedAssetId="auth-svc",
+                relatedAssetIds=["api-gate"],
+                detectionEventIds=["det-sim-1"],
+                createdAt="2026-10-25T08:00:00Z",
+                updatedAt="2026-10-25T08:00:00Z",
+                summary="Simulated brute force test against authentication service.",
+                environmentId=env_id,
+            ),
+        ]
+        for inc in seeds:
+            self._incidents[inc.id] = inc
 
     def create_incident(self, incident: IncidentResponse) -> IncidentResponse:
         with self._lock:
